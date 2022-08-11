@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type CdaMsgCreateCDAResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */
