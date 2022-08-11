@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+export type ArchiveMsgCreateCDAResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

@@ -30445,6 +30445,8 @@ paths:
       tags:
         - Query
 definitions:
+  archive.archive.MsgCreateCDAResponse:
+    type: object
   archive.archive.Params:
     type: object
     description: Params defines the parameters for the module.
