@@ -8,7 +8,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"arch1ve/x/cda/types"
+	"archive/x/cda/types"
 )
 
 var (

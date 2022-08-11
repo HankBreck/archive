@@ -3,7 +3,7 @@ package cli
 import (
 	"context"
 
-	"arch1ve/x/cda/types"
+	"archive/x/cda/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"

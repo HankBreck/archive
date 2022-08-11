@@ -1,9 +1,9 @@
 syntax = "proto3";
-package arch1ve.cda;
+package archive.cda;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "arch1ve/x/cda/types";
+option go_package = "archive/x/cda/types";
 
 // Params defines the parameters for the module.
 message Params {

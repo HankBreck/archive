@@ -3,10 +3,10 @@ package cda_test
 import (
 	"testing"
 
-	keepertest "arch1ve/testutil/keeper"
-	"arch1ve/testutil/nullify"
-	"arch1ve/x/cda"
-	"arch1ve/x/cda/types"
+	keepertest "archive/testutil/keeper"
+	"archive/testutil/nullify"
+	"archive/x/cda"
+	"archive/x/cda/types"
 	"github.com/stretchr/testify/require"
 )
 

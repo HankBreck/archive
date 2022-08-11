@@ -3,9 +3,9 @@ package cda
 import (
 	"math/rand"
 
-	"arch1ve/testutil/sample"
-	cdasimulation "arch1ve/x/cda/simulation"
-	"arch1ve/x/cda/types"
+	"archive/testutil/sample"
+	cdasimulation "archive/x/cda/simulation"
+	"archive/x/cda/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"

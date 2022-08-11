@@ -12,14 +12,14 @@
 /**
  * Params defines the parameters for the module.
  */
-export type Arch1VeParams = object;
+export type archiveParams = object;
 
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
-export interface Arch1VeQueryParamsResponse {
+export interface archiveQueryParamsResponse {
   /** params holds all the parameters of this module. */
-  params?: Arch1VeParams;
+  params?: archiveParams;
 }
 
 export interface ProtobufAny {
@@ -225,7 +225,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title arch1ve/genesis.proto
+ * @title archive/genesis.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
@@ -235,11 +235,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryParams
    * @summary Parameters queries the parameters of the module.
-   * @request GET:/arch1ve/arch1ve/params
+   * @request GET:/archive/archive/params
    */
   queryParams = (params: RequestParams = {}) =>
-    this.request<Arch1VeQueryParamsResponse, RpcStatus>({
-      path: `/arch1ve/arch1ve/params`,
+    this.request<archiveQueryParamsResponse, RpcStatus>({
+      path: `/archive/archive/params`,
       method: "GET",
       format: "json",
       ...params,

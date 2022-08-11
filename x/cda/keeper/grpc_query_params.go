@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"arch1ve/x/cda/types"
+	"archive/x/cda/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

@@ -10,7 +10,7 @@ import (
 	// "github.com/cosmos/cosmos-sdk/client/flags"
 	// sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"arch1ve/x/cda/types"
+	"archive/x/cda/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

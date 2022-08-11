@@ -3,8 +3,8 @@ package keeper
 import (
 	"testing"
 
-	"arch1ve/x/cda/keeper"
-	"arch1ve/x/cda/types"
+	"archive/x/cda/keeper"
+	"archive/x/cda/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"

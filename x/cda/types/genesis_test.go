@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"arch1ve/x/cda/types"
+	"archive/x/cda/types"
 	"github.com/stretchr/testify/require"
 )
 

@@ -1,4 +1,4 @@
-module arch1ve
+module archive
 
 go 1.18
 

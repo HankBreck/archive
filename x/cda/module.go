@@ -11,9 +11,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"arch1ve/x/cda/client/cli"
-	"arch1ve/x/cda/keeper"
-	"arch1ve/x/cda/types"
+	"archive/x/cda/client/cli"
+	"archive/x/cda/keeper"
+	"archive/x/cda/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"

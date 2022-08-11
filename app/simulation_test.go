@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"arch1ve/app"
+	"archive/app"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp"

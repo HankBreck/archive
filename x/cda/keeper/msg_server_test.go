@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	keepertest "arch1ve/testutil/keeper"
-	"arch1ve/x/cda/keeper"
-	"arch1ve/x/cda/types"
+	keepertest "archive/testutil/keeper"
+	"archive/x/cda/keeper"
+	"archive/x/cda/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

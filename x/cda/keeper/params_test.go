@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "arch1ve/testutil/keeper"
-	"arch1ve/x/cda/types"
+	testkeeper "archive/testutil/keeper"
+	"archive/x/cda/types"
 	"github.com/stretchr/testify/require"
 )
 

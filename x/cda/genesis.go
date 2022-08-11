@@ -1,8 +1,8 @@
 package cda
 
 import (
-	"arch1ve/x/cda/keeper"
-	"arch1ve/x/cda/types"
+	"archive/x/cda/keeper"
+	"archive/x/cda/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

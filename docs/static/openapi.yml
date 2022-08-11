@@ -4,10 +4,10 @@ info:
   name: ''
   description: ''
 paths:
-  /arch1ve/arch1ve/params:
+  /archive/archive/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: Arch1VeArch1VeParams
+      operationId: ArchiveArchiveParams
       responses:
         '200':
           description: A successful response.
@@ -40,10 +40,10 @@ paths:
                   additionalProperties: {}
       tags:
         - Query
-  /arch1ve/cda/params:
+  /archive/cda/params:
     get:
       summary: Parameters queries the parameters of the module.
-      operationId: Arch1VeCdaParams
+      operationId: ArchiveCdaParams
       responses:
         '200':
           description: A successful response.
@@ -30445,10 +30445,10 @@ paths:
       tags:
         - Query
 definitions:
-  arch1ve.arch1ve.Params:
+  archive.archive.Params:
     type: object
     description: Params defines the parameters for the module.
-  arch1ve.arch1ve.QueryParamsResponse:
+  archive.archive.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -30778,10 +30778,10 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
-  arch1ve.cda.Params:
+  archive.cda.Params:
     type: object
     description: Params defines the parameters for the module.
-  arch1ve.cda.QueryParamsResponse:
+  archive.cda.QueryParamsResponse:
     type: object
     properties:
       params:

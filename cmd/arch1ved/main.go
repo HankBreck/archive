@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"arch1ve/app"
+	"archive/app"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 )
