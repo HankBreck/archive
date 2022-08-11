@@ -1,6 +1,7 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
 import Arch1VeArch1VeArch1Ve from './arch1ve/arch1ve.arch1ve'
+import Arch1VeArch1VeCda from './arch1ve/arch1ve.cda'
 import CosmosCosmosSdkCosmosAuthV1Beta1 from './cosmos/cosmos-sdk/cosmos.auth.v1beta1'
 import CosmosCosmosSdkCosmosBankV1Beta1 from './cosmos/cosmos-sdk/cosmos.bank.v1beta1'
 import CosmosCosmosSdkCosmosBaseTendermintV1Beta1 from './cosmos/cosmos-sdk/cosmos.base.tendermint.v1beta1'
@@ -25,6 +26,7 @@ import CosmosIbcGoIbcCorePortV1 from './cosmos/ibc-go/ibc.core.port.v1'
 
 export default { 
   Arch1VeArch1VeArch1Ve: load(Arch1VeArch1VeArch1Ve, 'arch1ve.arch1ve'),
+  Arch1VeArch1VeCda: load(Arch1VeArch1VeCda, 'arch1ve.cda'),
   CosmosCosmosSdkCosmosAuthV1Beta1: load(CosmosCosmosSdkCosmosAuthV1Beta1, 'cosmos.auth.v1beta1'),
   CosmosCosmosSdkCosmosBankV1Beta1: load(CosmosCosmosSdkCosmosBankV1Beta1, 'cosmos.bank.v1beta1'),
   CosmosCosmosSdkCosmosBaseTendermintV1Beta1: load(CosmosCosmosSdkCosmosBaseTendermintV1Beta1, 'cosmos.base.tendermint.v1beta1'),
