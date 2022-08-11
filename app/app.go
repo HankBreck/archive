@@ -100,9 +100,6 @@ import (
 
 	"archive/docs"
 
-	archivemodule "archive/x/archive"
-	archivemodulekeeper "archive/x/archive/keeper"
-	archivemoduletypes "archive/x/archive/types"
 	cdamodule "archive/x/cda"
 	cdamodulekeeper "archive/x/cda/keeper"
 	cdamoduletypes "archive/x/cda/types"
@@ -160,7 +157,6 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
-		archivemodule.AppModuleBasic{},
 		cdamodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -234,8 +230,6 @@ type App struct {
 	ScopedTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
-	archiveKeeper archivemodulekeeper.Keeper
-
 	CdaKeeper cdamodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
@@ -273,7 +267,6 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
-		archivemoduletypes.StoreKey,
 		cdamoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -396,14 +389,6 @@ func New(
 	)
 	monitoringModule := monitoringp.NewAppModule(appCodec, app.MonitoringKeeper)
 
-	app.archiveKeeper = *archivemodulekeeper.NewKeeper(
-		appCodec,
-		keys[archivemoduletypes.StoreKey],
-		keys[archivemoduletypes.MemStoreKey],
-		app.GetSubspace(archivemoduletypes.ModuleName),
-	)
-	archiveModule := archivemodule.NewAppModule(appCodec, app.archiveKeeper, app.AccountKeeper, app.BankKeeper)
-
 	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
 		appCodec,
 		keys[cdamoduletypes.StoreKey],
@@ -453,7 +438,6 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		monitoringModule,
-		archiveModule,
 		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -482,7 +466,6 @@ func New(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
-		archivemoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
@@ -507,7 +490,6 @@ func New(
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
-		archivemoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
@@ -537,7 +519,6 @@ func New(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
-		archivemoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -563,7 +544,6 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		monitoringModule,
-		archiveModule,
 		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -754,7 +734,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
-	paramsKeeper.Subspace(archivemoduletypes.ModuleName)
 	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
