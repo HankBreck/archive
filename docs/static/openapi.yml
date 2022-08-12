@@ -30411,6 +30411,10 @@ paths:
 definitions:
   archive.cda.MsgCreateCDAResponse:
     type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   archive.cda.Params:
     type: object
     description: Params defines the parameters for the module.

@@ -9,7 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-export type CdaMsgCreateCDAResponse = object;
+export interface CdaMsgCreateCDAResponse {
+  /** @format uint64 */
+  id?: string;
+}
 
 /**
  * Params defines the parameters for the module.
@@ -227,7 +230,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title cda/genesis.proto
+ * @title cda/cda.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {

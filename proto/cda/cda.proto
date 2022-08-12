@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package archive.cda;
+
+option go_package = "archive/x/cda/types";
+
+message CDA {
+    string creator = 1;
+    uint64 id = 2;
+    string cid = 3;
+}

@@ -17,6 +17,7 @@ message MsgCreateCDA {
 }
 
 message MsgCreateCDAResponse {
+  uint64 id = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

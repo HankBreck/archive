@@ -1,9 +1,10 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
+import { CDA } from "./module/types/cda/cda"
 import { Params } from "./module/types/cda/params"
 
 
-export { Params };
+export { CDA, Params };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -44,6 +45,7 @@ const getDefaultState = () => {
 				Params: {},
 				
 				_Structure: {
+						CDA: getStructure(CDA.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
 		},
