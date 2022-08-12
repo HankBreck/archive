@@ -8,5 +8,5 @@ import (
 
 // x/cda module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrInvalidCid = sdkerrors.Register(ModuleName, 111, "Cid must be a valid string")
 )

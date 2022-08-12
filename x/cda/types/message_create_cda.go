@@ -42,5 +42,8 @@ func (msg *MsgCreateCDA) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.Cid) == 0 {
+		return sdkerrors.Wrapf(ErrInvalidCid, "invalid cid length (0)")
+	}
 	return nil
 }
