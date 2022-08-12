@@ -15,7 +15,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/archive/cda/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a list of Cda items.
+	rpc Cda(QueryCdaRequest) returns (QueryCdaResponse) {
+		option (google.api.http).get = "/archive/cda/cda/{cdaId}/{id}/{cid}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +30,16 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryCdaRequest {
+  string cdaId = 1;
+  string id = 2;
+  string cid = 3;
+}
+
+message QueryCdaResponse {
+  string creator = 1;
 }
 
 // this line is used by starport scaffolding # 3

@@ -4,6 +4,51 @@ info:
   name: ''
   description: ''
 paths:
+  '/archive/cda/cda/{cdaId}/{id}/{cid}':
+    get:
+      summary: Queries a list of Cda items.
+      operationId: ArchiveCdaCda
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              creator:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: cdaId
+          in: path
+          required: true
+          type: string
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: cid
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /archive/cda/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -30418,6 +30463,11 @@ definitions:
   archive.cda.Params:
     type: object
     description: Params defines the parameters for the module.
+  archive.cda.QueryCdaResponse:
+    type: object
+    properties:
+      creator:
+        type: string
   archive.cda.QueryParamsResponse:
     type: object
     properties:
