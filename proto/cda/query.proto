@@ -34,7 +34,6 @@ message QueryParamsResponse {
 
 message QueryCdaRequest {
   string id = 1;
-  string cdaId = 1;
 }
 
 message QueryCdaResponse {

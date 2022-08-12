@@ -19,8 +19,8 @@ export interface QueryCdaRequest {
 
 export interface QueryCdaResponse {
   creator: string;
-  cid: string;
   id: string;
+  cid: string;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -175,18 +175,18 @@ export const QueryCdaRequest = {
   },
 };
 
-const baseQueryCdaResponse: object = { creator: "", cid: "", id: "" };
+const baseQueryCdaResponse: object = { creator: "", id: "", cid: "" };
 
 export const QueryCdaResponse = {
   encode(message: QueryCdaResponse, writer: Writer = Writer.create()): Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.cid !== "") {
-      writer.uint32(18).string(message.cid);
-    }
     if (message.id !== "") {
-      writer.uint32(26).string(message.id);
+      writer.uint32(18).string(message.id);
+    }
+    if (message.cid !== "") {
+      writer.uint32(26).string(message.cid);
     }
     return writer;
   },
@@ -202,10 +202,10 @@ export const QueryCdaResponse = {
           message.creator = reader.string();
           break;
         case 2:
-          message.cid = reader.string();
+          message.id = reader.string();
           break;
         case 3:
-          message.id = reader.string();
+          message.cid = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -222,15 +222,15 @@ export const QueryCdaResponse = {
     } else {
       message.creator = "";
     }
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
-    } else {
-      message.cid = "";
-    }
     if (object.id !== undefined && object.id !== null) {
       message.id = String(object.id);
     } else {
       message.id = "";
+    }
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = String(object.cid);
+    } else {
+      message.cid = "";
     }
     return message;
   },
@@ -238,8 +238,8 @@ export const QueryCdaResponse = {
   toJSON(message: QueryCdaResponse): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.cid !== undefined && (obj.cid = message.cid);
     message.id !== undefined && (obj.id = message.id);
+    message.cid !== undefined && (obj.cid = message.cid);
     return obj;
   },
 
@@ -250,15 +250,15 @@ export const QueryCdaResponse = {
     } else {
       message.creator = "";
     }
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
-    } else {
-      message.cid = "";
-    }
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
       message.id = "";
+    }
+    if (object.cid !== undefined && object.cid !== null) {
+      message.cid = object.cid;
+    } else {
+      message.cid = "";
     }
     return message;
   },

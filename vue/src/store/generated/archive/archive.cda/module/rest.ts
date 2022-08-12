@@ -21,8 +21,8 @@ export type CdaParams = object;
 
 export interface CdaQueryCdaResponse {
   creator?: string;
-  cid?: string;
   id?: string;
+  cid?: string;
 }
 
 /**

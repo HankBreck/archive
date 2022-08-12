@@ -16,9 +16,9 @@ paths:
             properties:
               creator:
                 type: string
-              cid:
-                type: string
               id:
+                type: string
+              cid:
                 type: string
         default:
           description: An unexpected error response.
@@ -30464,9 +30464,9 @@ definitions:
     properties:
       creator:
         type: string
-      cid:
-        type: string
       id:
+        type: string
+      cid:
         type: string
   archive.cda.QueryParamsResponse:
     type: object

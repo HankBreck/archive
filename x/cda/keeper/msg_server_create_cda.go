@@ -18,6 +18,9 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 		Cid:     msg.Cid,
 	}
 
+	ctx.Logger().Info("Creator: " + cda.Creator)
+	ctx.Logger().Info("Cid: " + cda.Cid)
+
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
 
