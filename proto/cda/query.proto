@@ -17,7 +17,7 @@ service Query {
   }
   // Queries a list of Cda items.
 	rpc Cda(QueryCdaRequest) returns (QueryCdaResponse) {
-		option (google.api.http).get = "/archive/cda/cda/{cdaId}/{id}/{cid}";
+		option (google.api.http).get = "/archive/cda/cda/{id}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -33,13 +33,13 @@ message QueryParamsResponse {
 }
 
 message QueryCdaRequest {
-  string cdaId = 1;
-  string id = 2;
-  string cid = 3;
+  string id = 1;
 }
 
 message QueryCdaResponse {
   string creator = 1;
+  string cid = 2;
+  string id = 3;
 }
 
 // this line is used by starport scaffolding # 3

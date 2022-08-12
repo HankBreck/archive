@@ -4,7 +4,7 @@ info:
   name: ''
   description: ''
 paths:
-  '/archive/cda/cda/{cdaId}/{id}/{cid}':
+  '/archive/cda/cda/{id}':
     get:
       summary: Queries a list of Cda items.
       operationId: ArchiveCdaCda
@@ -15,6 +15,10 @@ paths:
             type: object
             properties:
               creator:
+                type: string
+              cid:
+                type: string
+              id:
                 type: string
         default:
           description: An unexpected error response.
@@ -35,15 +39,7 @@ paths:
                       type: string
                   additionalProperties: {}
       parameters:
-        - name: cdaId
-          in: path
-          required: true
-          type: string
         - name: id
-          in: path
-          required: true
-          type: string
-        - name: cid
           in: path
           required: true
           type: string
@@ -30467,6 +30463,10 @@ definitions:
     type: object
     properties:
       creator:
+        type: string
+      cid:
+        type: string
+      id:
         type: string
   archive.cda.QueryParamsResponse:
     type: object

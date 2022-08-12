@@ -21,6 +21,8 @@ export type CdaParams = object;
 
 export interface CdaQueryCdaResponse {
   creator?: string;
+  cid?: string;
+  id?: string;
 }
 
 /**
@@ -244,11 +246,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @tags Query
    * @name QueryCda
    * @summary Queries a list of Cda items.
-   * @request GET:/archive/cda/cda/{cdaId}/{id}/{cid}
+   * @request GET:/archive/cda/cda/{id}
    */
-  queryCda = (cdaId: string, id: string, cid: string, params: RequestParams = {}) =>
+  queryCda = (id: string, params: RequestParams = {}) =>
     this.request<CdaQueryCdaResponse, RpcStatus>({
-      path: `/archive/cda/cda/${cdaId}/${id}/${cid}`,
+      path: `/archive/cda/cda/${id}`,
       method: "GET",
       format: "json",
       ...params,

@@ -153,7 +153,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryCda( key.cdaId,  key.id,  key.cid)).data
+				let value= (await queryClient.queryCda( key.id)).data
 				
 					
 				commit('QUERY', { query: 'Cda', key: { params: {...key}, query}, value })
