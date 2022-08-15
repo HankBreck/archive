@@ -20,6 +20,11 @@ service Query {
 		option (google.api.http).get = "/archive/cda/cda/{id}";
 	}
 
+// Queries a list of Cdas items.
+	rpc Cdas(QueryCdasRequest) returns (QueryCdasResponse) {
+		option (google.api.http).get = "/archive/cda/cdas";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -40,6 +45,12 @@ message QueryCdaResponse {
   string creator = 1;
   string id = 2;
   string cid = 3;
+}
+
+message QueryCdasRequest {
+}
+
+message QueryCdasResponse {
 }
 
 // this line is used by starport scaffolding # 3

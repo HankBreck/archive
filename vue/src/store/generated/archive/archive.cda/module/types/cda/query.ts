@@ -23,6 +23,10 @@ export interface QueryCdaResponse {
   cid: string;
 }
 
+export interface QueryCdasRequest {}
+
+export interface QueryCdasResponse {}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -264,12 +268,90 @@ export const QueryCdaResponse = {
   },
 };
 
+const baseQueryCdasRequest: object = {};
+
+export const QueryCdasRequest = {
+  encode(_: QueryCdasRequest, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryCdasRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryCdasRequest } as QueryCdasRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryCdasRequest {
+    const message = { ...baseQueryCdasRequest } as QueryCdasRequest;
+    return message;
+  },
+
+  toJSON(_: QueryCdasRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<QueryCdasRequest>): QueryCdasRequest {
+    const message = { ...baseQueryCdasRequest } as QueryCdasRequest;
+    return message;
+  },
+};
+
+const baseQueryCdasResponse: object = {};
+
+export const QueryCdasResponse = {
+  encode(_: QueryCdasResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryCdasResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryCdasResponse {
+    const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    return message;
+  },
+
+  toJSON(_: QueryCdasResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<QueryCdasResponse>): QueryCdasResponse {
+    const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   /** Queries a list of Cda items. */
   Cda(request: QueryCdaRequest): Promise<QueryCdaResponse>;
+  /** Queries a list of Cdas items. */
+  Cdas(request: QueryCdasRequest): Promise<QueryCdasResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -287,6 +369,12 @@ export class QueryClientImpl implements Query {
     const data = QueryCdaRequest.encode(request).finish();
     const promise = this.rpc.request("archive.cda.Query", "Cda", data);
     return promise.then((data) => QueryCdaResponse.decode(new Reader(data)));
+  }
+
+  Cdas(request: QueryCdasRequest): Promise<QueryCdasResponse> {
+    const data = QueryCdasRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.cda.Query", "Cdas", data);
+    return promise.then((data) => QueryCdasResponse.decode(new Reader(data)));
   }
 }
 

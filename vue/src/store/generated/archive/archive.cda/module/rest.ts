@@ -25,6 +25,8 @@ export interface CdaQueryCdaResponse {
   cid?: string;
 }
 
+export type CdaQueryCdasResponse = object;
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -251,6 +253,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryCda = (id: string, params: RequestParams = {}) =>
     this.request<CdaQueryCdaResponse, RpcStatus>({
       path: `/archive/cda/cda/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryCdas
+   * @summary Queries a list of Cdas items.
+   * @request GET:/archive/cda/cdas
+   */
+  queryCdas = (params: RequestParams = {}) =>
+    this.request<CdaQueryCdasResponse, RpcStatus>({
+      path: `/archive/cda/cdas`,
       method: "GET",
       format: "json",
       ...params,

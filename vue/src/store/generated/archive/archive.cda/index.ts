@@ -44,6 +44,7 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				Cda: {},
+				Cdas: {},
 				
 				_Structure: {
 						CDA: getStructure(CDA.fromPartial({})),
@@ -87,6 +88,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Cda[JSON.stringify(params)] ?? {}
+		},
+				getCdas: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Cdas[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -161,6 +168,28 @@ export default {
 				return getters['getCda']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryCda API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryCdas({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCdas()).data
+				
+					
+				commit('QUERY', { query: 'Cdas', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCdas', payload: { options: { all }, params: {...key},query }})
+				return getters['getCdas']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryCdas API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
