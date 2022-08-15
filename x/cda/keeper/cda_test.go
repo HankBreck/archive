@@ -9,13 +9,26 @@ import (
 )
 
 func TestGetCDACount(t *testing.T) {
-	// keeper, ctx := testkeeper.CdaKeeper(t)
+	keeper, ctx := testkeeper.CdaKeeper(t)
 
-	//
+	require.Equal(t, uint64(0), keeper.GetCDACount(ctx))
 }
 
 func TestSetCDACount(t *testing.T) {
-	// TODO: test the SetCDACount functionality
+	keeper, ctx := testkeeper.CdaKeeper(t)
+
+	// Get current CDA count (0)
+	oldCount := keeper.GetCDACount(ctx)
+
+	// Set current CDA count to 1
+	keeper.SetCDACount(ctx, oldCount+1)
+
+	// Get current CDA count (1)
+	newCount := keeper.GetCDACount(ctx)
+
+	// Require first CDA count count != second CDA count
+	require.Greater(t, newCount, oldCount)
+
 }
 
 func TestAppendCDA(t *testing.T) {
