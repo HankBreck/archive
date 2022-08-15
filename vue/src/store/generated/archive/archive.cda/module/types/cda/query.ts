@@ -1,6 +1,11 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../cda/params";
+import {
+  PageRequest,
+  PageResponse,
+} from "../cosmos/base/query/v1beta1/pagination";
+import { CDA } from "../cda/cda";
 
 export const protobufPackage = "archive.cda";
 
@@ -23,9 +28,17 @@ export interface QueryCdaResponse {
   cid: string;
 }
 
-export interface QueryCdasRequest {}
+export interface QueryCdasRequest {
+  /** Pagination to view all CDAs */
+  pagination: PageRequest | undefined;
+}
 
-export interface QueryCdasResponse {}
+export interface QueryCdasResponse {
+  /** List of CDA objects */
+  CDAs: CDA[];
+  /** Pagination to view all CDAs */
+  pagination: PageResponse | undefined;
+}
 
 const baseQueryParamsRequest: object = {};
 
@@ -271,7 +284,10 @@ export const QueryCdaResponse = {
 const baseQueryCdasRequest: object = {};
 
 export const QueryCdasRequest = {
-  encode(_: QueryCdasRequest, writer: Writer = Writer.create()): Writer {
+  encode(message: QueryCdasRequest, writer: Writer = Writer.create()): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -282,6 +298,9 @@ export const QueryCdasRequest = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -290,18 +309,32 @@ export const QueryCdasRequest = {
     return message;
   },
 
-  fromJSON(_: any): QueryCdasRequest {
+  fromJSON(object: any): QueryCdasRequest {
     const message = { ...baseQueryCdasRequest } as QueryCdasRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 
-  toJSON(_: QueryCdasRequest): unknown {
+  toJSON(message: QueryCdasRequest): unknown {
     const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryCdasRequest>): QueryCdasRequest {
+  fromPartial(object: DeepPartial<QueryCdasRequest>): QueryCdasRequest {
     const message = { ...baseQueryCdasRequest } as QueryCdasRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 };
@@ -309,7 +342,16 @@ export const QueryCdasRequest = {
 const baseQueryCdasResponse: object = {};
 
 export const QueryCdasResponse = {
-  encode(_: QueryCdasResponse, writer: Writer = Writer.create()): Writer {
+  encode(message: QueryCdasResponse, writer: Writer = Writer.create()): Writer {
+    for (const v of message.CDAs) {
+      CDA.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
     return writer;
   },
 
@@ -317,9 +359,16 @@ export const QueryCdasResponse = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    message.CDAs = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.CDAs.push(CDA.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -328,18 +377,49 @@ export const QueryCdasResponse = {
     return message;
   },
 
-  fromJSON(_: any): QueryCdasResponse {
+  fromJSON(object: any): QueryCdasResponse {
     const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    message.CDAs = [];
+    if (object.CDAs !== undefined && object.CDAs !== null) {
+      for (const e of object.CDAs) {
+        message.CDAs.push(CDA.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 
-  toJSON(_: QueryCdasResponse): unknown {
+  toJSON(message: QueryCdasResponse): unknown {
     const obj: any = {};
+    if (message.CDAs) {
+      obj.CDAs = message.CDAs.map((e) => (e ? CDA.toJSON(e) : undefined));
+    } else {
+      obj.CDAs = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryCdasResponse>): QueryCdasResponse {
+  fromPartial(object: DeepPartial<QueryCdasResponse>): QueryCdasResponse {
     const message = { ...baseQueryCdasResponse } as QueryCdasResponse;
+    message.CDAs = [];
+    if (object.CDAs !== undefined && object.CDAs !== null) {
+      for (const e of object.CDAs) {
+        message.CDAs.push(CDA.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
     return message;
   },
 };

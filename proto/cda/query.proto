@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "cda/params.proto";
+import "cda/cda.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "archive/x/cda/types";
@@ -48,9 +49,16 @@ message QueryCdaResponse {
 }
 
 message QueryCdasRequest {
+  // Pagination to view all CDAs
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
 message QueryCdasResponse {
+  // List of CDA objects
+  repeated CDA CDAs = 1;
+
+  // Pagination to view all CDAs
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

@@ -1,10 +1,12 @@
 package keeper
 
 import (
+	"fmt"
 	"testing"
 
 	"archive/x/cda/keeper"
 	"archive/x/cda/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -49,4 +51,15 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	k.SetParams(ctx, types.DefaultParams())
 
 	return k, ctx
+}
+
+func PopulateCdas(creator string, count int, k *keeper.Keeper, ctx sdk.Context) {
+	for i := 0; i < count; i++ {
+		cda := types.CDA{
+			Creator: creator,
+			Id:      uint64(i),
+			Cid:     fmt.Sprintf("pretend this is CID #%d", i),
+		}
+		k.AppendCDA(ctx, cda)
+	}
 }
