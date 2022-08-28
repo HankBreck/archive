@@ -12,6 +12,9 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	// var ownership []*types.CDA_Ownership
+	// ownership := msg.Ownership
+
 	// Create the CDA
 	var cda = types.CDA{
 		Creator:    msg.Creator,
@@ -22,8 +25,9 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
-	for owner := range cda.Ownership {
-		err := k.AppendOwnerCDA(ctx, owner, id)
+	for i := range cda.Ownership {
+		owner := cda.Ownership[i]
+		err := k.AppendOwnerCDA(ctx, owner.Owner, id)
 		// TODO: check if we need some sort of transaction/rollback option in case this fails
 		if err != nil {
 			return nil, err

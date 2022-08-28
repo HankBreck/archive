@@ -8,6 +8,11 @@ message CDA {
     string creator = 1;
     uint64 id = 2;
     string cid = 3;
-    map<string, uint64> ownership = 4;
+    repeated Ownership ownership = 4;
     uint64 expiration = 5;
+}
+
+message Ownership {
+    string owner = 1;
+    uint64 ownership = 2;
 }

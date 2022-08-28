@@ -68,10 +68,15 @@ paths:
                     cid:
                       type: string
                     ownership:
-                      type: object
-                      additionalProperties:
-                        type: string
-                        format: uint64
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          owner:
+                            type: string
+                          ownership:
+                            type: string
+                            format: uint64
                     expiration:
                       type: string
                       format: uint64
@@ -30587,10 +30592,15 @@ definitions:
       cid:
         type: string
       ownership:
-        type: object
-        additionalProperties:
-          type: string
-          format: uint64
+        type: array
+        items:
+          type: object
+          properties:
+            owner:
+              type: string
+            ownership:
+              type: string
+              format: uint64
       expiration:
         type: string
         format: uint64
@@ -30598,6 +30608,14 @@ definitions:
     type: object
     properties:
       id:
+        type: string
+        format: uint64
+  archive.cda.Ownership:
+    type: object
+    properties:
+      owner:
+        type: string
+      ownership:
         type: string
         format: uint64
   archive.cda.Params:
@@ -30628,10 +30646,15 @@ definitions:
             cid:
               type: string
             ownership:
-              type: object
-              additionalProperties:
-                type: string
-                format: uint64
+              type: array
+              items:
+                type: object
+                properties:
+                  owner:
+                    type: string
+                  ownership:
+                    type: string
+                    format: uint64
             expiration:
               type: string
               format: uint64

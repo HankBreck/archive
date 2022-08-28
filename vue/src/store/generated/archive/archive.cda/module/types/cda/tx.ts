@@ -1,19 +1,21 @@
 /* eslint-disable */
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
+import { Ownership } from "../cda/cda";
 
 export const protobufPackage = "archive.cda";
 
+/**
+ * message Ownership {
+ *     string owner = 1;
+ *     uint64 ownership = 2;
+ *   }
+ */
 export interface MsgCreateCDA {
   creator: string;
   cid: string;
-  ownership: { [key: string]: number };
+  ownership: Ownership[];
   expiration: number;
-}
-
-export interface MsgCreateCDA_OwnershipEntry {
-  key: string;
-  value: number;
 }
 
 export interface MsgCreateCDAResponse {
@@ -30,12 +32,9 @@ export const MsgCreateCDA = {
     if (message.cid !== "") {
       writer.uint32(18).string(message.cid);
     }
-    Object.entries(message.ownership).forEach(([key, value]) => {
-      MsgCreateCDA_OwnershipEntry.encode(
-        { key: key as any, value },
-        writer.uint32(26).fork()
-      ).ldelim();
-    });
+    for (const v of message.ownership) {
+      Ownership.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
     if (message.expiration !== 0) {
       writer.uint32(32).uint64(message.expiration);
     }
@@ -46,7 +45,7 @@ export const MsgCreateCDA = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreateCDA } as MsgCreateCDA;
-    message.ownership = {};
+    message.ownership = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -57,13 +56,7 @@ export const MsgCreateCDA = {
           message.cid = reader.string();
           break;
         case 3:
-          const entry3 = MsgCreateCDA_OwnershipEntry.decode(
-            reader,
-            reader.uint32()
-          );
-          if (entry3.value !== undefined) {
-            message.ownership[entry3.key] = entry3.value;
-          }
+          message.ownership.push(Ownership.decode(reader, reader.uint32()));
           break;
         case 4:
           message.expiration = longToNumber(reader.uint64() as Long);
@@ -78,7 +71,7 @@ export const MsgCreateCDA = {
 
   fromJSON(object: any): MsgCreateCDA {
     const message = { ...baseMsgCreateCDA } as MsgCreateCDA;
-    message.ownership = {};
+    message.ownership = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -90,9 +83,9 @@ export const MsgCreateCDA = {
       message.cid = "";
     }
     if (object.ownership !== undefined && object.ownership !== null) {
-      Object.entries(object.ownership).forEach(([key, value]) => {
-        message.ownership[key] = Number(value);
-      });
+      for (const e of object.ownership) {
+        message.ownership.push(Ownership.fromJSON(e));
+      }
     }
     if (object.expiration !== undefined && object.expiration !== null) {
       message.expiration = Number(object.expiration);
@@ -106,11 +99,12 @@ export const MsgCreateCDA = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.cid !== undefined && (obj.cid = message.cid);
-    obj.ownership = {};
     if (message.ownership) {
-      Object.entries(message.ownership).forEach(([k, v]) => {
-        obj.ownership[k] = v;
-      });
+      obj.ownership = message.ownership.map((e) =>
+        e ? Ownership.toJSON(e) : undefined
+      );
+    } else {
+      obj.ownership = [];
     }
     message.expiration !== undefined && (obj.expiration = message.expiration);
     return obj;
@@ -118,7 +112,7 @@ export const MsgCreateCDA = {
 
   fromPartial(object: DeepPartial<MsgCreateCDA>): MsgCreateCDA {
     const message = { ...baseMsgCreateCDA } as MsgCreateCDA;
-    message.ownership = {};
+    message.ownership = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -130,102 +124,14 @@ export const MsgCreateCDA = {
       message.cid = "";
     }
     if (object.ownership !== undefined && object.ownership !== null) {
-      Object.entries(object.ownership).forEach(([key, value]) => {
-        if (value !== undefined) {
-          message.ownership[key] = Number(value);
-        }
-      });
+      for (const e of object.ownership) {
+        message.ownership.push(Ownership.fromPartial(e));
+      }
     }
     if (object.expiration !== undefined && object.expiration !== null) {
       message.expiration = object.expiration;
     } else {
       message.expiration = 0;
-    }
-    return message;
-  },
-};
-
-const baseMsgCreateCDA_OwnershipEntry: object = { key: "", value: 0 };
-
-export const MsgCreateCDA_OwnershipEntry = {
-  encode(
-    message: MsgCreateCDA_OwnershipEntry,
-    writer: Writer = Writer.create()
-  ): Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== 0) {
-      writer.uint32(16).uint64(message.value);
-    }
-    return writer;
-  },
-
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): MsgCreateCDA_OwnershipEntry {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseMsgCreateCDA_OwnershipEntry,
-    } as MsgCreateCDA_OwnershipEntry;
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.string();
-          break;
-        case 2:
-          message.value = longToNumber(reader.uint64() as Long);
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgCreateCDA_OwnershipEntry {
-    const message = {
-      ...baseMsgCreateCDA_OwnershipEntry,
-    } as MsgCreateCDA_OwnershipEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = String(object.key);
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = Number(object.value);
-    } else {
-      message.value = 0;
-    }
-    return message;
-  },
-
-  toJSON(message: MsgCreateCDA_OwnershipEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
-  },
-
-  fromPartial(
-    object: DeepPartial<MsgCreateCDA_OwnershipEntry>
-  ): MsgCreateCDA_OwnershipEntry {
-    const message = {
-      ...baseMsgCreateCDA_OwnershipEntry,
-    } as MsgCreateCDA_OwnershipEntry;
-    if (object.key !== undefined && object.key !== null) {
-      message.key = object.key;
-    } else {
-      message.key = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
-    } else {
-      message.value = 0;
     }
     return message;
   },

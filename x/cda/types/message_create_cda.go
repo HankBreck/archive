@@ -11,10 +11,12 @@ const TypeMsgCreateCDA = "create_cda"
 
 var _ sdk.Msg = &MsgCreateCDA{}
 
-func NewMsgCreateCDA(creator string, cid string) *MsgCreateCDA {
+func NewMsgCreateCDA(creator string, cid string, ownership []*Ownership, expiration uint64) *MsgCreateCDA {
 	return &MsgCreateCDA{
-		Creator: creator,
-		Cid:     cid,
+		Creator:    creator,
+		Cid:        cid,
+		Ownership:  ownership,
+		Expiration: expiration,
 	}
 }
 
@@ -57,8 +59,9 @@ func (msg *MsgCreateCDA) ValidateBasic() error {
 		return sdkerrors.Wrapf(ErrInvalidOwnership, "Invalid ownership length")
 	}
 	// Ensure Ownership addresses are valid
-	for owner := range msg.Ownership {
-		_, err := sdk.AccAddressFromBech32(owner)
+	for i := range msg.Ownership {
+		owner := *msg.Ownership[i]
+		_, err := sdk.AccAddressFromBech32(owner.Owner)
 		if err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid owner address (%s)", err)
 		}
