@@ -14,15 +14,21 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 
 	// Create the CDA
 	var cda = types.CDA{
-		Creator: msg.Creator,
-		Cid:     msg.Cid,
+		Creator:    msg.Creator,
+		Cid:        msg.Cid,
+		Ownership:  msg.Ownership,
+		Expiration: msg.Expiration,
 	}
-
-	ctx.Logger().Info("Creator: " + cda.Creator)
-	ctx.Logger().Info("Cid: " + cda.Cid)
 
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
+	for owner := range cda.Ownership {
+		err := k.AppendOwnerCDA(ctx, owner, id)
+		// TODO: check if we need some sort of transaction/rollback option in case this fails
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// Return the id to the user
 	return &types.MsgCreateCDAResponse{Id: id}, nil

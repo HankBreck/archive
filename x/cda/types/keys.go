@@ -16,11 +16,24 @@ const (
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_cda"
 
-	/// Both CDA keys will be appended with the creator's address via CDA-value-{wallet_addr}-
-	// CDA Key
+	// CDAKey defines the prefix for storing CDA objects
 	CDAKey = "CDA-value-"
-	// CDA Count Key
+
+	// CDACountKey defines the prefix for storing the current number of CDA objects
 	CDACountKey = "CDA-count-"
+
+	// CDAOwnerKey defines the prefix for storing all ids of CDAs owned by an account.
+	// It is a subprefix that requires the owner's account be appended to the end.
+	//
+	// e.g. "CDA-owner-archive1ps3rtvcqw3p9megamtg8mrq3nn7fvzw2de6e62-" --> [1, 5, 6, 11]
+	CDAOwnerKey = "CDA-owner-"
+
+	// CDAOwnerCountKey defines the prefix for storing the current number of CDAs an account
+	// is an owner of.
+	// It is a subprefix that requires the owner's account be appended to the end.
+	//
+	// e.g. "CDA-owner-count-archive1ps3rtvcqw3p9megamtg8mrq3nn7fvzw2de6e62-" --> 4
+	CDAOwnerCountKey = "CDA-owner-count-"
 )
 
 func KeyPrefix(p string) []byte {

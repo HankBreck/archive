@@ -8,4 +8,6 @@ message CDA {
     string creator = 1;
     uint64 id = 2;
     string cid = 3;
+    map<string, uint64> ownership = 4;
+    uint64 expiration = 5;
 }

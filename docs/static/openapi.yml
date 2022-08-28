@@ -67,6 +67,14 @@ paths:
                       format: uint64
                     cid:
                       type: string
+                    ownership:
+                      type: object
+                      additionalProperties:
+                        type: string
+                        format: uint64
+                    expiration:
+                      type: string
+                      format: uint64
                 title: List of CDA objects
               pagination:
                 title: Pagination to view all CDAs
@@ -158,16 +166,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -30588,6 +30586,14 @@ definitions:
         format: uint64
       cid:
         type: string
+      ownership:
+        type: object
+        additionalProperties:
+          type: string
+          format: uint64
+      expiration:
+        type: string
+        format: uint64
   archive.cda.MsgCreateCDAResponse:
     type: object
     properties:
@@ -30621,6 +30627,14 @@ definitions:
               format: uint64
             cid:
               type: string
+            ownership:
+              type: object
+              additionalProperties:
+                type: string
+                format: uint64
+            expiration:
+              type: string
+              format: uint64
         title: List of CDA objects
       pagination:
         title: Pagination to view all CDAs
