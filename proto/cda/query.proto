@@ -26,6 +26,11 @@ service Query {
 		option (google.api.http).get = "/archive/cda/cdas";
 	}
 
+// Queries a list of CdasOwned items.
+	rpc CdasOwned(QueryCdasOwnedRequest) returns (QueryCdasOwnedResponse) {
+		option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -56,6 +61,22 @@ message QueryCdasRequest {
 message QueryCdasResponse {
   // List of CDA objects
   repeated CDA CDAs = 1;
+
+  // Pagination to view all CDAs
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryCdasOwnedRequest {
+  // Account address for the owner
+  string owner = 1;
+
+  // Pagination to view all ids
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryCdasOwnedResponse {
+  // List of CDA ids belonging to the owner
+  repeated string ids = 1;
 
   // Pagination to view all CDAs
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

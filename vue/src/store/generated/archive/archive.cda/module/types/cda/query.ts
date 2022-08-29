@@ -40,6 +40,20 @@ export interface QueryCdasResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryCdasOwnedRequest {
+  /** Account address for the owner */
+  owner: string;
+  /** Pagination to view all ids */
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryCdasOwnedResponse {
+  /** List of CDA ids belonging to the owner */
+  ids: string[];
+  /** Pagination to view all CDAs */
+  pagination: PageResponse | undefined;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -424,6 +438,176 @@ export const QueryCdasResponse = {
   },
 };
 
+const baseQueryCdasOwnedRequest: object = { owner: "" };
+
+export const QueryCdasOwnedRequest = {
+  encode(
+    message: QueryCdasOwnedRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.owner !== "") {
+      writer.uint32(10).string(message.owner);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryCdasOwnedRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryCdasOwnedRequest } as QueryCdasOwnedRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.owner = reader.string();
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCdasOwnedRequest {
+    const message = { ...baseQueryCdasOwnedRequest } as QueryCdasOwnedRequest;
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryCdasOwnedRequest): unknown {
+    const obj: any = {};
+    message.owner !== undefined && (obj.owner = message.owner);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryCdasOwnedRequest>
+  ): QueryCdasOwnedRequest {
+    const message = { ...baseQueryCdasOwnedRequest } as QueryCdasOwnedRequest;
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryCdasOwnedResponse: object = { ids: "" };
+
+export const QueryCdasOwnedResponse = {
+  encode(
+    message: QueryCdasOwnedResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.ids) {
+      writer.uint32(10).string(v!);
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryCdasOwnedResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryCdasOwnedResponse } as QueryCdasOwnedResponse;
+    message.ids = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.ids.push(reader.string());
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryCdasOwnedResponse {
+    const message = { ...baseQueryCdasOwnedResponse } as QueryCdasOwnedResponse;
+    message.ids = [];
+    if (object.ids !== undefined && object.ids !== null) {
+      for (const e of object.ids) {
+        message.ids.push(String(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryCdasOwnedResponse): unknown {
+    const obj: any = {};
+    if (message.ids) {
+      obj.ids = message.ids.map((e) => e);
+    } else {
+      obj.ids = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryCdasOwnedResponse>
+  ): QueryCdasOwnedResponse {
+    const message = { ...baseQueryCdasOwnedResponse } as QueryCdasOwnedResponse;
+    message.ids = [];
+    if (object.ids !== undefined && object.ids !== null) {
+      for (const e of object.ids) {
+        message.ids.push(e);
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -432,6 +616,8 @@ export interface Query {
   Cda(request: QueryCdaRequest): Promise<QueryCdaResponse>;
   /** Queries a list of Cdas items. */
   Cdas(request: QueryCdasRequest): Promise<QueryCdasResponse>;
+  /** Queries a list of CdasOwned items. */
+  CdasOwned(request: QueryCdasOwnedRequest): Promise<QueryCdasOwnedResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -455,6 +641,14 @@ export class QueryClientImpl implements Query {
     const data = QueryCdasRequest.encode(request).finish();
     const promise = this.rpc.request("archive.cda.Query", "Cdas", data);
     return promise.then((data) => QueryCdasResponse.decode(new Reader(data)));
+  }
+
+  CdasOwned(request: QueryCdasOwnedRequest): Promise<QueryCdasOwnedResponse> {
+    const data = QueryCdasOwnedRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.cda.Query", "CdasOwned", data);
+    return promise.then((data) =>
+      QueryCdasOwnedResponse.decode(new Reader(data))
+    );
   }
 }
 

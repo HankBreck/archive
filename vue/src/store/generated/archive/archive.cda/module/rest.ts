@@ -44,6 +44,21 @@ export interface CdaQueryCdaResponse {
   cid?: string;
 }
 
+export interface CdaQueryCdasOwnedResponse {
+  ids?: string[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 export interface CdaQueryCdasResponse {
   CDAs?: CdaCDA[];
 
@@ -115,13 +130,6 @@ export interface V1Beta1PageRequest {
    * is set.
    */
   count_total?: boolean;
-
-  /**
-   * reverse is set to true if results are to be returned in the descending order.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  reverse?: boolean;
 }
 
 /**
@@ -367,12 +375,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
     this.request<CdaQueryCdasResponse, RpcStatus>({
       path: `/archive/cda/cdas`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryCdasOwned
+   * @summary Queries a list of CdasOwned items.
+   * @request GET:/archive/cda/cdas_owned/{owner}
+   */
+  queryCdasOwned = (
+    owner: string,
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<CdaQueryCdasOwnedResponse, RpcStatus>({
+      path: `/archive/cda/cdas_owned/${owner}`,
       method: "GET",
       query: query,
       format: "json",

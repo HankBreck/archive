@@ -46,6 +46,7 @@ const getDefaultState = () => {
 				Params: {},
 				Cda: {},
 				Cdas: {},
+				CdasOwned: {},
 				
 				_Structure: {
 						CDA: getStructure(CDA.fromPartial({})),
@@ -96,6 +97,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Cdas[JSON.stringify(params)] ?? {}
+		},
+				getCdasOwned: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.CdasOwned[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -196,6 +203,32 @@ export default {
 				return getters['getCdas']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryCdas API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryCdasOwned({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCdasOwned( key.owner, query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryCdasOwned( key.owner, {...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'CdasOwned', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCdasOwned', payload: { options: { all }, params: {...key},query }})
+				return getters['getCdasOwned']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryCdasOwned API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
