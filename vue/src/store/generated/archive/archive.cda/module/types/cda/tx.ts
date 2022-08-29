@@ -5,12 +5,6 @@ import { Ownership } from "../cda/cda";
 
 export const protobufPackage = "archive.cda";
 
-/**
- * message Ownership {
- *     string owner = 1;
- *     uint64 ownership = 2;
- *   }
- */
 export interface MsgCreateCDA {
   creator: string;
   cid: string;

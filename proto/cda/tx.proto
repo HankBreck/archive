@@ -13,11 +13,6 @@ service Msg {
 }
 
 message MsgCreateCDA {
-//   message Ownership {
-//     string owner = 1;
-//     uint64 ownership = 2;
-//   }
-
   string creator = 1;
   string cid = 2;
   repeated Ownership ownership = 3;
