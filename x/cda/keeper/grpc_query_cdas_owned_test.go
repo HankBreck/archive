@@ -6,21 +6,48 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestQueryCdasOwned() {
-	println("in testquerycdasowned")
 	queryClient := suite.queryClient
 	owner := suite.TestAccs[0]
 	ids := suite.PrepareCdasForOwner(owner, 5)
 
 	response, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: owner.String()})
 
-	// Ensure query ran successfully
 	suite.Require().NoError(err)
-
-	// Ensure same length
 	suite.Require().Equal(len(ids), len(response.Ids))
 
-	// Ensure every item in `ids` is in `response.Ids`
 	for i := 0; i < len(ids); i++ {
 		suite.Require().Contains(response.Ids, ids[i])
 	}
+}
+
+func (suite *KeeperTestSuite) TestQueryCdasOwned_InvalidOwner() {
+	queryClient := suite.queryClient
+	owner := "invalid address"
+
+	_, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: owner})
+	suite.Require().EqualError(err, "decoding bech32 failed: invalid character in string: ' '")
+}
+
+func (suite *KeeperTestSuite) TestQueryCdasOwned_OwnerNotFound() {
+	queryClient := suite.queryClient
+	owner := suite.TestAccs[0]
+
+	res, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: owner.String()})
+
+	suite.Require().Nil(res.Ids)
+	suite.Require().NoError(err)
+}
+
+func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyStringRequest() {
+	queryClient := suite.queryClient
+
+	_, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: ""})
+	suite.Require().EqualError(err, "empty address string is not allowed")
+}
+
+func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyRequest() {
+	queryClient := suite.queryClient
+
+	_, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{})
+	suite.Require().EqualError(err, "empty address string is not allowed")
 }
