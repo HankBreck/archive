@@ -18,6 +18,7 @@ paths:
                 type: string
               id:
                 type: string
+                format: uint64
               cid:
                 type: string
         default:
@@ -43,6 +44,7 @@ paths:
           in: path
           required: true
           type: string
+          format: uint64
       tags:
         - Query
   /archive/cda/cdas:
@@ -200,6 +202,7 @@ paths:
                 type: array
                 items:
                   type: string
+                  format: uint64
                 title: List of CDA ids belonging to the owner
               pagination:
                 title: Pagination to view all CDAs
@@ -30763,6 +30766,7 @@ definitions:
         type: string
       id:
         type: string
+        format: uint64
       cid:
         type: string
   archive.cda.QueryCdasOwnedResponse:
@@ -30772,6 +30776,7 @@ definitions:
         type: array
         items:
           type: string
+          format: uint64
         title: List of CDA ids belonging to the owner
       pagination:
         title: Pagination to view all CDAs

@@ -103,12 +103,14 @@ import (
 	cdamodule "archive/x/cda"
 	cdamodulekeeper "archive/x/cda/keeper"
 	cdamoduletypes "archive/x/cda/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
+
+	appparams "archive/app/params"
 )
 
 const (
-	AccountAddressPrefix = "archive"
-	Name                 = "archive"
+	Name = "archive"
 )
 
 // this line is used by starport scaffolding # stargate/wasm/app/enabledProposals
@@ -187,6 +189,9 @@ func init() {
 	}
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
+
+	// Set address prefixes
+	appparams.SetAddressPrefixes()
 }
 
 // App extends an ABCI application, but with most of its parameters exported.

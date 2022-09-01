@@ -4,6 +4,8 @@ import (
 	"os"
 
 	"archive/app"
+	appparams "archive/app/params"
+
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 )
@@ -11,9 +13,9 @@ import (
 func main() {
 	rootCmd, _ := cosmoscmd.NewRootCmd(
 		app.Name,
-		app.AccountAddressPrefix,
+		appparams.Bech32PrefixAccAddr,
 		app.DefaultNodeHome,
-		app.Name,
+		appparams.AppName,
 		app.ModuleBasics,
 		app.New,
 		// this line is used by starport scaffolding # root/arguments

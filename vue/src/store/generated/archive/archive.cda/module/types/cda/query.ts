@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
+import { Reader, util, configure, Writer } from "protobufjs/minimal";
+import * as Long from "long";
 import { Params } from "../cda/params";
 import {
   PageRequest,
@@ -19,12 +20,12 @@ export interface QueryParamsResponse {
 }
 
 export interface QueryCdaRequest {
-  id: string;
+  id: number;
 }
 
 export interface QueryCdaResponse {
   creator: string;
-  id: string;
+  id: number;
   cid: string;
 }
 
@@ -49,7 +50,7 @@ export interface QueryCdasOwnedRequest {
 
 export interface QueryCdasOwnedResponse {
   /** List of CDA ids belonging to the owner */
-  ids: string[];
+  ids: number[];
   /** Pagination to view all CDAs */
   pagination: PageResponse | undefined;
 }
@@ -151,12 +152,12 @@ export const QueryParamsResponse = {
   },
 };
 
-const baseQueryCdaRequest: object = { id: "" };
+const baseQueryCdaRequest: object = { id: 0 };
 
 export const QueryCdaRequest = {
   encode(message: QueryCdaRequest, writer: Writer = Writer.create()): Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
     }
     return writer;
   },
@@ -169,7 +170,7 @@ export const QueryCdaRequest = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = reader.string();
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         default:
           reader.skipType(tag & 7);
@@ -182,9 +183,9 @@ export const QueryCdaRequest = {
   fromJSON(object: any): QueryCdaRequest {
     const message = { ...baseQueryCdaRequest } as QueryCdaRequest;
     if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
+      message.id = Number(object.id);
     } else {
-      message.id = "";
+      message.id = 0;
     }
     return message;
   },
@@ -200,21 +201,21 @@ export const QueryCdaRequest = {
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = "";
+      message.id = 0;
     }
     return message;
   },
 };
 
-const baseQueryCdaResponse: object = { creator: "", id: "", cid: "" };
+const baseQueryCdaResponse: object = { creator: "", id: 0, cid: "" };
 
 export const QueryCdaResponse = {
   encode(message: QueryCdaResponse, writer: Writer = Writer.create()): Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.id !== "") {
-      writer.uint32(18).string(message.id);
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
     }
     if (message.cid !== "") {
       writer.uint32(26).string(message.cid);
@@ -233,7 +234,7 @@ export const QueryCdaResponse = {
           message.creator = reader.string();
           break;
         case 2:
-          message.id = reader.string();
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         case 3:
           message.cid = reader.string();
@@ -254,9 +255,9 @@ export const QueryCdaResponse = {
       message.creator = "";
     }
     if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
+      message.id = Number(object.id);
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.cid !== undefined && object.cid !== null) {
       message.cid = String(object.cid);
@@ -284,7 +285,7 @@ export const QueryCdaResponse = {
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.cid !== undefined && object.cid !== null) {
       message.cid = object.cid;
@@ -518,16 +519,18 @@ export const QueryCdasOwnedRequest = {
   },
 };
 
-const baseQueryCdasOwnedResponse: object = { ids: "" };
+const baseQueryCdasOwnedResponse: object = { ids: 0 };
 
 export const QueryCdasOwnedResponse = {
   encode(
     message: QueryCdasOwnedResponse,
     writer: Writer = Writer.create()
   ): Writer {
+    writer.uint32(10).fork();
     for (const v of message.ids) {
-      writer.uint32(10).string(v!);
+      writer.uint64(v);
     }
+    writer.ldelim();
     if (message.pagination !== undefined) {
       PageResponse.encode(
         message.pagination,
@@ -546,7 +549,14 @@ export const QueryCdasOwnedResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.ids.push(reader.string());
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.ids.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.ids.push(longToNumber(reader.uint64() as Long));
+          }
           break;
         case 2:
           message.pagination = PageResponse.decode(reader, reader.uint32());
@@ -564,7 +574,7 @@ export const QueryCdasOwnedResponse = {
     message.ids = [];
     if (object.ids !== undefined && object.ids !== null) {
       for (const e of object.ids) {
-        message.ids.push(String(e));
+        message.ids.push(Number(e));
       }
     }
     if (object.pagination !== undefined && object.pagination !== null) {
@@ -660,6 +670,16 @@ interface Rpc {
   ): Promise<Uint8Array>;
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -670,3 +690,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}
