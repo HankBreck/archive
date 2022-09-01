@@ -177,9 +177,9 @@ var (
 )
 
 var (
-	_ cosmoscmd.App           = (*App)(nil)
-	_ servertypes.Application = (*App)(nil)
-	_ simapp.App              = (*App)(nil)
+	cmdApp cosmoscmd.App           = (*App)(nil)
+	_      servertypes.Application = (*App)(nil)
+	_      simapp.App              = (*App)(nil)
 )
 
 func init() {
@@ -257,7 +257,7 @@ func New(
 	encodingConfig cosmoscmd.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) cosmoscmd.App {
+) *App {
 	appCodec := encodingConfig.Marshaler
 	cdc := encodingConfig.Amino
 	interfaceRegistry := encodingConfig.InterfaceRegistry
