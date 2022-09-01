@@ -3,8 +3,6 @@ package keeper_test
 import (
 	testkeeper "archive/testutil/keeper"
 	"archive/x/cda/types"
-	"fmt"
-	"strconv"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -30,20 +28,10 @@ func TestCdaQuery(t *testing.T) {
 	// Reset err variable
 	err = nil
 
-	// Failure on bad id
-	badIdRequest := types.QueryCdaRequest{Id: "hello"}
-	_, err = keeper.Cda(sdk.WrapSDKContext(ctx), &badIdRequest)
-	require.ErrorIs(t, err, status.Error(codes.InvalidArgument, "id must be an unsigned integer"))
-
-	// Reset err variable
-	err = nil
-
 	// Failure on unset Id
-	unsetIdRequest := types.QueryCdaRequest{
-		Id: fmt.Sprint(0),
-	}
+	unsetIdRequest := types.QueryCdaRequest{Id: 0}
 	_, err = keeper.Cda(sdk.WrapSDKContext(ctx), &unsetIdRequest)
-	require.ErrorIs(t, err, sdkerrors.ErrNotFound) // Switch to require ErrorIs
+	require.ErrorIs(t, err, sdkerrors.ErrNotFound)
 
 	// Set CDA for a given id
 	expected := types.CDA{
@@ -58,15 +46,12 @@ func TestCdaQuery(t *testing.T) {
 	err = nil
 
 	// Call a query with the returned id and asset equality
-	validRequest := types.QueryCdaRequest{
-		Id: strconv.FormatUint(id, 10),
-	}
+	validRequest := types.QueryCdaRequest{Id: id}
 	actual, err := keeper.Cda(sdk.WrapSDKContext(ctx), &validRequest)
 	require.Nil(t, err)
 
 	// Require that actual CDA's fields are the same as expected CDA's fields
-	actualId, err := strconv.ParseUint(actual.Id, 10, 64)
 	require.Equal(t, actual.Creator, expected.Creator)
 	require.Equal(t, actual.Cid, expected.Cid)
-	require.Equal(t, actualId, expected.Id)
+	require.Equal(t, actual.Id, expected.Id)
 }

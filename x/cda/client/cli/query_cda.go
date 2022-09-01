@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"archive/x/cda/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
@@ -26,9 +27,14 @@ func CmdCda() *cobra.Command {
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryCdaRequest{
+			// Parse id from arguments
+			id, err := strconv.ParseUint(reqId, 10, 64)
+			if err != nil {
+				return err
+			}
 
-				Id: reqId,
+			params := &types.QueryCdaRequest{
+				Id: id,
 			}
 
 			res, err := queryClient.Cda(cmd.Context(), params)

@@ -44,12 +44,12 @@ message QueryParamsResponse {
 }
 
 message QueryCdaRequest {
-  string id = 1;
+  uint64 id = 1;
 }
 
 message QueryCdaResponse {
   string creator = 1;
-  string id = 2;
+  uint64 id = 2;
   string cid = 3;
 }
 
@@ -76,7 +76,7 @@ message QueryCdasOwnedRequest {
 
 message QueryCdasOwnedResponse {
   // List of CDA ids belonging to the owner
-  repeated string ids = 1;
+  repeated uint64 ids = 1;
 
   // Pagination to view all CDAs
   cosmos.base.query.v1beta1.PageResponse pagination = 2;

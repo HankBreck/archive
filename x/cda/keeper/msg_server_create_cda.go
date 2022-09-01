@@ -12,9 +12,6 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// var ownership []*types.CDA_Ownership
-	// ownership := msg.Ownership
-
 	// Create the CDA
 	var cda = types.CDA{
 		Creator:    msg.Creator,
