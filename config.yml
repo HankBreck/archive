@@ -13,6 +13,11 @@ client:
     path: "docs/static/openapi.yml"
   vuex:
     path: "vue/src/store"
+  typescript:
+    path: "vue/src/generated"
 faucet:
   name: bob
-  coins: ["5token", "100000stake"]
+  coins: ["5000000000token", "1000000000stake"]
+init:
+  app:
+    minimum-gas-prices: "1token"
