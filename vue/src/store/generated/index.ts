@@ -1,6 +1,5 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
-import ArchiveArchiveArchive from './archive/archive.archive'
 import ArchiveArchiveCda from './archive/archive.cda'
 import CosmosCosmosSdkCosmosAuthV1Beta1 from './cosmos/cosmos-sdk/cosmos.auth.v1beta1'
 import CosmosCosmosSdkCosmosAuthzV1Beta1 from './cosmos/cosmos-sdk/cosmos.authz.v1beta1'
@@ -28,7 +27,6 @@ import TendermintSpnTendermintSpnMonitoringp from './tendermint/spn/tendermint.s
 
 
 export default { 
-  ArchiveArchiveArchive: load(ArchiveArchiveArchive, 'archive.archive'),
   ArchiveArchiveCda: load(ArchiveArchiveCda, 'archive.cda'),
   CosmosCosmosSdkCosmosAuthV1Beta1: load(CosmosCosmosSdkCosmosAuthV1Beta1, 'cosmos.auth.v1beta1'),
   CosmosCosmosSdkCosmosAuthzV1Beta1: load(CosmosCosmosSdkCosmosAuthzV1Beta1, 'cosmos.authz.v1beta1'),
