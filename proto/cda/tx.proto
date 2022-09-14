@@ -9,6 +9,7 @@ option go_package = "archive/x/cda/types";
 // Msg defines the Msg service.
 service Msg {
       rpc CreateCDA(MsgCreateCDA) returns (MsgCreateCDAResponse);
+  rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -21,6 +22,15 @@ message MsgCreateCDA {
 
 message MsgCreateCDAResponse {
   uint64 id = 1;
+}
+
+message MsgApproveCda {
+  string creator = 1;
+  uint64 cdaId = 2;
+  repeated Ownership ownership = 3;
+}
+
+message MsgApproveCdaResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

@@ -8,9 +8,10 @@ import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
 import { MsgCreateCDA } from "./types/cda/tx";
+import { MsgApproveCda } from "./types/cda/tx";
 
 
-export { MsgCreateCDA };
+export { MsgCreateCDA, MsgApproveCda };
 
 type sendMsgCreateCDAParams = {
   value: MsgCreateCDA,
@@ -18,9 +19,19 @@ type sendMsgCreateCDAParams = {
   memo?: string
 };
 
+type sendMsgApproveCdaParams = {
+  value: MsgApproveCda,
+  fee?: StdFee,
+  memo?: string
+};
+
 
 type msgCreateCDAParams = {
   value: MsgCreateCDA,
+};
+
+type msgApproveCdaParams = {
+  value: MsgApproveCda,
 };
 
 
@@ -55,12 +66,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgApproveCda({ value, fee, memo }: sendMsgApproveCdaParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgApproveCda: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgApproveCda({ value: MsgApproveCda.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgApproveCda: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
 		
 		msgCreateCDA({ value }: msgCreateCDAParams): EncodeObject {
 			try {
 				return { typeUrl: "/archive.cda.MsgCreateCDA", value: MsgCreateCDA.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgCreateCDA: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgApproveCda({ value }: msgApproveCdaParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.cda.MsgApproveCda", value: MsgApproveCda.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgApproveCda: Could not create message: ' + e.message)
 			}
 		},
 		

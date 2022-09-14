@@ -9,12 +9,16 @@ import (
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateCDA{}, "cda/CreateCDA", nil)
+	cdc.RegisterConcrete(&MsgApproveCda{}, "cda/ApproveCda", nil)
 	// this line is used by starport scaffolding # 2
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateCDA{},
+	)
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgApproveCda{},
 	)
 	// this line is used by starport scaffolding # 3
 

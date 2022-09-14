@@ -30742,6 +30742,8 @@ definitions:
       expiration:
         type: string
         format: uint64
+  archive.cda.MsgApproveCdaResponse:
+    type: object
   archive.cda.MsgCreateCDAResponse:
     type: object
     properties:
