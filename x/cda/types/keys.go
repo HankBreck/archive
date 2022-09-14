@@ -34,6 +34,9 @@ const (
 	//
 	// e.g. "CDA-owner-count-archive1ps3rtvcqw3p9megamtg8mrq3nn7fvzw2de6e62-" --> 4
 	CDAOwnerCountKey = "CDA-owner-count-"
+
+	//
+	AttributeKeyCdaId = "cda-id"
 )
 
 func KeyPrefix(p string) []byte {

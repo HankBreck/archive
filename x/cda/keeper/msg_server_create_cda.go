@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"archive/x/cda/types"
 
@@ -32,5 +33,12 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 	}
 
 	// Return the id to the user
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		sdk.EventTypeMessage,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(id, 10)),
+	))
+
 	return &types.MsgCreateCDAResponse{Id: id}, nil
 }
