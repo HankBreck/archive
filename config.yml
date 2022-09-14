@@ -5,6 +5,9 @@ accounts:
     coins: ["20000token", "200000000stake"]
   - name: bob
     coins: ["10000token", "100000000stake"]
+  - name: hank
+    coins: ["1000000token", "2000000000stake"]
+    address: archive1xewtex2nz6e2vvuqeg9cfj862mreahpfcmly0p
 validator:
   name: alice
   staked: "100000000stake"
@@ -20,4 +23,4 @@ faucet:
   coins: ["5000000000token", "1000000000stake"]
 init:
   app:
-    minimum-gas-prices: "1token"
+    minimum-gas-prices: "0.000001token"
