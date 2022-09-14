@@ -26,7 +26,6 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 	for i := range cda.Ownership {
 		owner := cda.Ownership[i]
 		err := k.AppendOwnerCDA(ctx, owner.Owner, id)
-		// TODO: check if we need some sort of transaction/rollback option in case this fails
 		if err != nil {
 			return nil, err
 		}
