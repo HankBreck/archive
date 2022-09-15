@@ -19,6 +19,7 @@ func (k msgServer) CreateCDA(goCtx context.Context, msg *types.MsgCreateCDA) (*t
 		Cid:        msg.Cid,
 		Ownership:  msg.Ownership,
 		Expiration: msg.Expiration,
+		Approved:   false,
 	}
 
 	// Store CDA & grab cda id

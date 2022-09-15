@@ -19,6 +19,7 @@ export interface CdaCDA {
 
   /** @format uint64 */
   expiration?: string;
+  approved?: boolean;
 }
 
 export type CdaMsgApproveCdaResponse = object;

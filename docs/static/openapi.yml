@@ -37,6 +37,8 @@ paths:
                   expiration:
                     type: string
                     format: uint64
+                  approved:
+                    type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -98,6 +100,8 @@ paths:
                     expiration:
                       type: string
                       format: uint64
+                    approved:
+                      type: boolean
                 title: List of CDA objects
               pagination:
                 title: Pagination to view all CDAs
@@ -30738,6 +30742,8 @@ definitions:
       expiration:
         type: string
         format: uint64
+      approved:
+        type: boolean
   archive.cda.MsgApproveCdaResponse:
     type: object
   archive.cda.MsgCreateCDAResponse:
@@ -30783,6 +30789,8 @@ definitions:
           expiration:
             type: string
             format: uint64
+          approved:
+            type: boolean
   archive.cda.QueryCdasOwnedResponse:
     type: object
     properties:
@@ -30846,6 +30854,8 @@ definitions:
             expiration:
               type: string
               format: uint64
+            approved:
+              type: boolean
         title: List of CDA objects
       pagination:
         title: Pagination to view all CDAs

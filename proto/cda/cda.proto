@@ -10,6 +10,7 @@ message CDA {
     string cid = 3;
     repeated Ownership ownership = 4;
     uint64 expiration = 5;
+    bool approved = 6;
 }
 
 message Ownership {

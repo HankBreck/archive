@@ -10,6 +10,7 @@ export interface CDA {
   cid: string;
   ownership: Ownership[];
   expiration: number;
+  approved: boolean;
 }
 
 export interface Ownership {
@@ -17,7 +18,13 @@ export interface Ownership {
   ownership: number;
 }
 
-const baseCDA: object = { creator: "", id: 0, cid: "", expiration: 0 };
+const baseCDA: object = {
+  creator: "",
+  id: 0,
+  cid: "",
+  expiration: 0,
+  approved: false,
+};
 
 export const CDA = {
   encode(message: CDA, writer: Writer = Writer.create()): Writer {
@@ -35,6 +42,9 @@ export const CDA = {
     }
     if (message.expiration !== 0) {
       writer.uint32(40).uint64(message.expiration);
+    }
+    if (message.approved === true) {
+      writer.uint32(48).bool(message.approved);
     }
     return writer;
   },
@@ -61,6 +71,9 @@ export const CDA = {
           break;
         case 5:
           message.expiration = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.approved = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -98,6 +111,11 @@ export const CDA = {
     } else {
       message.expiration = 0;
     }
+    if (object.approved !== undefined && object.approved !== null) {
+      message.approved = Boolean(object.approved);
+    } else {
+      message.approved = false;
+    }
     return message;
   },
 
@@ -114,6 +132,7 @@ export const CDA = {
       obj.ownership = [];
     }
     message.expiration !== undefined && (obj.expiration = message.expiration);
+    message.approved !== undefined && (obj.approved = message.approved);
     return obj;
   },
 
@@ -144,6 +163,11 @@ export const CDA = {
       message.expiration = object.expiration;
     } else {
       message.expiration = 0;
+    }
+    if (object.approved !== undefined && object.approved !== null) {
+      message.approved = object.approved;
+    } else {
+      message.approved = false;
     }
     return message;
   },
