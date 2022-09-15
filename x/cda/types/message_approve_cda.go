@@ -44,6 +44,8 @@ func (msg *MsgApproveCda) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
+	// Do we need to check for CdaId
+
 	// Ensure Ownership contains objects
 	if len(msg.Ownership) < 1 {
 		return sdkerrors.Wrapf(ErrInvalidOwnership, "Invalid ownership length")
