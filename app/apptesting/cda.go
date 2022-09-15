@@ -41,10 +41,11 @@ func (s *KeeperTestHelper) PrepareCdasForOwner(owner sdk.AccAddress, count int) 
 func (s *KeeperTestHelper) GetCdas(ids []uint64) []*types.CDA {
 	k := s.App.CdaKeeper
 	result := make([]*types.CDA, len(ids))
+	goCtx := sdk.WrapSDKContext(s.Ctx)
 
 	for i, id := range ids {
 		req := types.QueryCdaRequest{Id: id}
-		res, err := k.Cda(s.Ctx.Context(), &req)
+		res, err := k.Cda(goCtx, &req)
 		if err != nil {
 			panic(err)
 		}

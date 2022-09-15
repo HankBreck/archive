@@ -35,7 +35,13 @@ const (
 	// e.g. "CDA-owner-count-archive1ps3rtvcqw3p9megamtg8mrq3nn7fvzw2de6e62-" --> 4
 	CDAOwnerCountKey = "CDA-owner-count-"
 
+	// CDAApprovalKey defines the prefix for storing the approvals for a specific CDA.
+	// It is intended to be suffixed with the CDA's id
 	//
+	// e.g. "CDA-approval-1"
+	CDAApprovalKey = "CDA-approval-"
+
+	// Key for the CDA attribute in a cosmos event
 	AttributeKeyCdaId = "cda-id"
 )
 
