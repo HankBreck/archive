@@ -9,10 +9,11 @@ const TypeMsgApproveCda = "approve_cda"
 
 var _ sdk.Msg = &MsgApproveCda{}
 
-func NewMsgApproveCda(creator string, cdaId uint64) *MsgApproveCda {
+func NewMsgApproveCda(creator string, cdaId uint64, ownership []*Ownership) *MsgApproveCda {
 	return &MsgApproveCda{
-		Creator: creator,
-		CdaId:   cdaId,
+		Creator:   creator,
+		CdaId:     cdaId,
+		Ownership: ownership,
 	}
 }
 
@@ -42,5 +43,18 @@ func (msg *MsgApproveCda) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+
+	// Ensure Ownership contains objects
+	if len(msg.Ownership) < 1 {
+		return sdkerrors.Wrapf(ErrInvalidOwnership, "Invalid ownership length")
+	}
+	// Ensure Ownership addresses are valid
+	for _, owner := range msg.Ownership {
+		_, err := sdk.AccAddressFromBech32(owner.Owner)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid owner address (%s)", err)
+		}
+	}
+
 	return nil
 }
