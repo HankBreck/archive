@@ -41,11 +41,7 @@ export interface CdaOwnership {
 export type CdaParams = object;
 
 export interface CdaQueryCdaResponse {
-  creator?: string;
-
-  /** @format uint64 */
-  id?: string;
-  cid?: string;
+  cda?: CdaCDA;
 }
 
 export interface CdaQueryCdasOwnedResponse {

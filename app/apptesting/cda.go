@@ -37,3 +37,21 @@ func (s *KeeperTestHelper) PrepareCdasForOwner(owner sdk.AccAddress, count int) 
 	}
 	return ids
 }
+
+func (s *KeeperTestHelper) GetCdas(ids []uint64) []*types.CDA {
+	k := s.App.CdaKeeper
+	result := make([]*types.CDA, len(ids))
+
+	for i, id := range ids {
+		req := types.QueryCdaRequest{Id: id}
+		res, err := k.Cda(s.Ctx.Context(), &req)
+		if err != nil {
+			panic(err)
+		}
+		if res == nil {
+			panic("Could not fetch CDA!")
+		}
+		result[i] = res.Cda
+	}
+	return result
+}

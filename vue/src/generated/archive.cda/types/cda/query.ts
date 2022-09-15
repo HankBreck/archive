@@ -2,11 +2,11 @@
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 import { Params } from "../cda/params";
+import { CDA } from "../cda/cda";
 import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
-import { CDA } from "../cda/cda";
 
 export const protobufPackage = "archive.cda";
 
@@ -24,9 +24,7 @@ export interface QueryCdaRequest {
 }
 
 export interface QueryCdaResponse {
-  creator: string;
-  id: number;
-  cid: string;
+  cda: CDA | undefined;
 }
 
 export interface QueryCdasRequest {
@@ -207,18 +205,12 @@ export const QueryCdaRequest = {
   },
 };
 
-const baseQueryCdaResponse: object = { creator: "", id: 0, cid: "" };
+const baseQueryCdaResponse: object = {};
 
 export const QueryCdaResponse = {
   encode(message: QueryCdaResponse, writer: Writer = Writer.create()): Writer {
-    if (message.creator !== "") {
-      writer.uint32(10).string(message.creator);
-    }
-    if (message.id !== 0) {
-      writer.uint32(16).uint64(message.id);
-    }
-    if (message.cid !== "") {
-      writer.uint32(26).string(message.cid);
+    if (message.cda !== undefined) {
+      CDA.encode(message.cda, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -231,13 +223,7 @@ export const QueryCdaResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.creator = reader.string();
-          break;
-        case 2:
-          message.id = longToNumber(reader.uint64() as Long);
-          break;
-        case 3:
-          message.cid = reader.string();
+          message.cda = CDA.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -249,48 +235,27 @@ export const QueryCdaResponse = {
 
   fromJSON(object: any): QueryCdaResponse {
     const message = { ...baseQueryCdaResponse } as QueryCdaResponse;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = String(object.creator);
+    if (object.cda !== undefined && object.cda !== null) {
+      message.cda = CDA.fromJSON(object.cda);
     } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = Number(object.id);
-    } else {
-      message.id = 0;
-    }
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = String(object.cid);
-    } else {
-      message.cid = "";
+      message.cda = undefined;
     }
     return message;
   },
 
   toJSON(message: QueryCdaResponse): unknown {
     const obj: any = {};
-    message.creator !== undefined && (obj.creator = message.creator);
-    message.id !== undefined && (obj.id = message.id);
-    message.cid !== undefined && (obj.cid = message.cid);
+    message.cda !== undefined &&
+      (obj.cda = message.cda ? CDA.toJSON(message.cda) : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<QueryCdaResponse>): QueryCdaResponse {
     const message = { ...baseQueryCdaResponse } as QueryCdaResponse;
-    if (object.creator !== undefined && object.creator !== null) {
-      message.creator = object.creator;
+    if (object.cda !== undefined && object.cda !== null) {
+      message.cda = CDA.fromPartial(object.cda);
     } else {
-      message.creator = "";
-    }
-    if (object.id !== undefined && object.id !== null) {
-      message.id = object.id;
-    } else {
-      message.id = 0;
-    }
-    if (object.cid !== undefined && object.cid !== null) {
-      message.cid = object.cid;
-    } else {
-      message.cid = "";
+      message.cda = undefined;
     }
     return message;
   },

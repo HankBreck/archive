@@ -17,10 +17,21 @@ func (suite *KeeperTestSuite) TestCdaQuery() {
 
 	response, err := queryClient.Cda(goctx.Background(), &types.QueryCdaRequest{Id: ids[0]})
 
+	ownerships := make([]*types.Ownership, 1)
+	ownerships[0] = &types.Ownership{
+		Owner:     owner.String(),
+		Ownership: uint64(100),
+	}
+	cda := types.CDA{
+		Creator:    owner.String(),
+		Id:         0,
+		Cid:        "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W",
+		Ownership:  ownerships,
+		Expiration: 4123503529000,
+	}
+
 	expected := types.QueryCdaResponse{
-		Creator: owner.String(),
-		Id:      0,
-		Cid:     "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W", // Taken from PrepareCdasForOwner
+		Cda: &cda,
 	}
 	suite.Require().NoError(err)
 	suite.Require().EqualValues(*response, expected)

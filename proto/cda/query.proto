@@ -48,9 +48,7 @@ message QueryCdaRequest {
 }
 
 message QueryCdaResponse {
-  string creator = 1;
-  uint64 id = 2;
-  string cid = 3;
+  CDA cda = 1;
 }
 
 message QueryCdasRequest {

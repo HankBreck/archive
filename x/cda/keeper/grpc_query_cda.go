@@ -45,9 +45,7 @@ func (k Keeper) Cda(goCtx context.Context, req *types.QueryCdaRequest) (*types.Q
 
 	// Return query response with CDA data
 	return &types.QueryCdaResponse{
-		Creator: cda.Creator,
-		Id:      cda.Id,
-		Cid:     cda.Cid,
+		Cda: &cda,
 	}, nil
 }
 

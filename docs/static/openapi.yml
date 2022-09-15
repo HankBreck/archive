@@ -14,13 +14,29 @@ paths:
           schema:
             type: object
             properties:
-              creator:
-                type: string
-              id:
-                type: string
-                format: uint64
-              cid:
-                type: string
+              cda:
+                type: object
+                properties:
+                  creator:
+                    type: string
+                  id:
+                    type: string
+                    format: uint64
+                  cid:
+                    type: string
+                  ownership:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        owner:
+                          type: string
+                        ownership:
+                          type: string
+                          format: uint64
+                  expiration:
+                    type: string
+                    format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -176,16 +192,6 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
   '/archive/cda/cdas_owned/{owner}':
@@ -299,16 +305,6 @@ paths:
             when key
 
             is set.
-          in: query
-          required: false
-          type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -30764,13 +30760,29 @@ definitions:
   archive.cda.QueryCdaResponse:
     type: object
     properties:
-      creator:
-        type: string
-      id:
-        type: string
-        format: uint64
-      cid:
-        type: string
+      cda:
+        type: object
+        properties:
+          creator:
+            type: string
+          id:
+            type: string
+            format: uint64
+          cid:
+            type: string
+          ownership:
+            type: array
+            items:
+              type: object
+              properties:
+                owner:
+                  type: string
+                ownership:
+                  type: string
+                  format: uint64
+          expiration:
+            type: string
+            format: uint64
   archive.cda.QueryCdasOwnedResponse:
     type: object
     properties:
