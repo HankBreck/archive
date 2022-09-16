@@ -13,4 +13,6 @@ var (
 	ErrInvalidExpiration = sdkerrors.Register(ModuleName, 113, "Invalid value for expiration. Must be a valid UTC millisecond timestamp.")
 	ErrExistingApproval  = sdkerrors.Register(ModuleName, 114, "The address has already given approval for this CDA.")
 	ErrNonExistentCdaId  = sdkerrors.Register(ModuleName, 115, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
+	ErrMissingApproval   = sdkerrors.Register(ModuleName, 116, "Missing CDA approvals.")
+	ErrAlreadyFinalized  = sdkerrors.Register(ModuleName, 117, "CDA has already been finalized.")
 )

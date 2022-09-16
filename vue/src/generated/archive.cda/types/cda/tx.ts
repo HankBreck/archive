@@ -24,6 +24,13 @@ export interface MsgApproveCda {
 
 export interface MsgApproveCdaResponse {}
 
+export interface MsgFinalizeCda {
+  creator: string;
+  cdaId: number;
+}
+
+export interface MsgFinalizeCdaResponse {}
+
 const baseMsgCreateCDA: object = { creator: "", cid: "", expiration: 0 };
 
 export const MsgCreateCDA = {
@@ -333,11 +340,122 @@ export const MsgApproveCdaResponse = {
   },
 };
 
+const baseMsgFinalizeCda: object = { creator: "", cdaId: 0 };
+
+export const MsgFinalizeCda = {
+  encode(message: MsgFinalizeCda, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.cdaId !== 0) {
+      writer.uint32(16).uint64(message.cdaId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgFinalizeCda {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgFinalizeCda } as MsgFinalizeCda;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.cdaId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgFinalizeCda {
+    const message = { ...baseMsgFinalizeCda } as MsgFinalizeCda;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.cdaId !== undefined && object.cdaId !== null) {
+      message.cdaId = Number(object.cdaId);
+    } else {
+      message.cdaId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgFinalizeCda): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.cdaId !== undefined && (obj.cdaId = message.cdaId);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgFinalizeCda>): MsgFinalizeCda {
+    const message = { ...baseMsgFinalizeCda } as MsgFinalizeCda;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.cdaId !== undefined && object.cdaId !== null) {
+      message.cdaId = object.cdaId;
+    } else {
+      message.cdaId = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgFinalizeCdaResponse: object = {};
+
+export const MsgFinalizeCdaResponse = {
+  encode(_: MsgFinalizeCdaResponse, writer: Writer = Writer.create()): Writer {
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgFinalizeCdaResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgFinalizeCdaResponse } as MsgFinalizeCdaResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgFinalizeCdaResponse {
+    const message = { ...baseMsgFinalizeCdaResponse } as MsgFinalizeCdaResponse;
+    return message;
+  },
+
+  toJSON(_: MsgFinalizeCdaResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(_: DeepPartial<MsgFinalizeCdaResponse>): MsgFinalizeCdaResponse {
+    const message = { ...baseMsgFinalizeCdaResponse } as MsgFinalizeCdaResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   CreateCDA(request: MsgCreateCDA): Promise<MsgCreateCDAResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   ApproveCda(request: MsgApproveCda): Promise<MsgApproveCdaResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  FinalizeCda(request: MsgFinalizeCda): Promise<MsgFinalizeCdaResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -358,6 +476,14 @@ export class MsgClientImpl implements Msg {
     const promise = this.rpc.request("archive.cda.Msg", "ApproveCda", data);
     return promise.then((data) =>
       MsgApproveCdaResponse.decode(new Reader(data))
+    );
+  }
+
+  FinalizeCda(request: MsgFinalizeCda): Promise<MsgFinalizeCdaResponse> {
+    const data = MsgFinalizeCda.encode(request).finish();
+    const promise = this.rpc.request("archive.cda.Msg", "FinalizeCda", data);
+    return promise.then((data) =>
+      MsgFinalizeCdaResponse.decode(new Reader(data))
     );
   }
 }

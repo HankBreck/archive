@@ -29,6 +29,8 @@ export interface CdaMsgCreateCDAResponse {
   id?: string;
 }
 
+export type CdaMsgFinalizeCdaResponse = object;
+
 export interface CdaOwnership {
   owner?: string;
 

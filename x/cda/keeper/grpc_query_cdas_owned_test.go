@@ -3,14 +3,16 @@ package keeper_test
 import (
 	"archive/x/cda/types"
 	goctx "context"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (suite *KeeperTestSuite) TestQueryCdasOwned() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 5)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 5)
 
-	response, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: owner.String()})
+	response, err := queryClient.CdasOwned(goctx.Background(), &types.QueryCdasOwnedRequest{Owner: owners[0].String()})
 
 	suite.Require().NoError(err)
 	suite.Require().Equal(len(ids), len(response.Ids))

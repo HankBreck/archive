@@ -5,13 +5,14 @@ import (
 	goctx "context"
 	"encoding/binary"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 func (suite *KeeperTestSuite) TestQueryCdas() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 5)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 5)
 
 	response, err := queryClient.Cdas(goctx.Background(), &types.QueryCdasRequest{})
 
@@ -21,16 +22,16 @@ func (suite *KeeperTestSuite) TestQueryCdas() {
 
 	for i := 0; i < len(response.CDAs); i++ {
 		suite.Require().Contains(ids, response.CDAs[i].Id)
-		suite.Require().EqualValues(owner.String(), response.CDAs[i].Creator)
+		suite.Require().EqualValues(owners[0].String(), response.CDAs[i].Creator)
 	}
 }
 
 func (suite *KeeperTestSuite) TestQueryCdas_Paginate() {
 	queryClient := suite.queryClient
-	firstOwner := suite.TestAccs[0]
-	secondOwner := suite.TestAccs[1]
-	firstIds := suite.PrepareCdasForOwner(firstOwner, 5)
-	secondIds := suite.PrepareCdasForOwner(secondOwner, 5)
+	firstOwners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	secondOwners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	firstIds := suite.PrepareCdasForOwner(firstOwners, 5)
+	secondIds := suite.PrepareCdasForOwner(secondOwners, 5)
 
 	// Get the first 5 elements, starting with 0
 	bzKey := make([]byte, 8)
@@ -60,14 +61,14 @@ func (suite *KeeperTestSuite) TestQueryCdas_Paginate() {
 	suite.Require().Len(finalResponse.CDAs, 5)
 	for i := 0; i < 5; i++ {
 		suite.Require().Equal(secondIds[i], finalResponse.CDAs[i].Id)
-		suite.Require().Equal(secondOwner.String(), finalResponse.CDAs[i].Creator)
+		suite.Require().Equal(secondOwners[0].String(), finalResponse.CDAs[i].Creator)
 	}
 }
 
 func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 10)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 10)
 
 	// Get the last 5 elements stored
 	pagination := &query.PageRequest{
@@ -84,7 +85,7 @@ func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 	for i := 0; i < 5; i++ {
 		// Order is reversed so need to index ids with len(ids)-i
 		suite.Require().Equal(ids[9-i], response.CDAs[i].Id)
-		suite.Require().Equal(owner.String(), response.CDAs[i].Creator)
+		suite.Require().Equal(owners[0].String(), response.CDAs[i].Creator)
 	}
 
 	// Fetch the next five using response.Pagination.NextKey
@@ -102,14 +103,14 @@ func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 		// Order is reversed and this is the second batch,
 		// so need to index ids with len(ids)-5-i
 		suite.Require().Equal(ids[4-i], finalResponse.CDAs[i].Id)
-		suite.Require().Equal(owner.String(), finalResponse.CDAs[i].Creator)
+		suite.Require().Equal(owners[0].String(), finalResponse.CDAs[i].Creator)
 	}
 }
 
 func (suite *KeeperTestSuite) TestQueryCdas_InvalidKey() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	suite.PrepareCdasForOwner(owner, 5)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	suite.PrepareCdasForOwner(owners, 5)
 
 	invalidKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(invalidKey, uint64(6))

@@ -7,17 +7,12 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgApproveCda } from "./types/cda/tx";
 import { MsgCreateCDA } from "./types/cda/tx";
+import { MsgApproveCda } from "./types/cda/tx";
+import { MsgFinalizeCda } from "./types/cda/tx";
 
 
-export { MsgApproveCda, MsgCreateCDA };
-
-type sendMsgApproveCdaParams = {
-  value: MsgApproveCda,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgCreateCDA, MsgApproveCda, MsgFinalizeCda };
 
 type sendMsgCreateCDAParams = {
   value: MsgCreateCDA,
@@ -25,13 +20,29 @@ type sendMsgCreateCDAParams = {
   memo?: string
 };
 
+type sendMsgApproveCdaParams = {
+  value: MsgApproveCda,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgFinalizeCdaParams = {
+  value: MsgFinalizeCda,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgCreateCDAParams = {
+  value: MsgCreateCDA,
+};
 
 type msgApproveCdaParams = {
   value: MsgApproveCda,
 };
 
-type msgCreateCDAParams = {
-  value: MsgCreateCDA,
+type msgFinalizeCdaParams = {
+  value: MsgFinalizeCda,
 };
 
 
@@ -52,20 +63,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgApproveCda({ value, fee, memo }: sendMsgApproveCdaParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgApproveCda: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgApproveCda({ value: MsgApproveCda.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgApproveCda: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgCreateCDA({ value, fee, memo }: sendMsgCreateCDAParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgCreateCDA: Unable to sign Tx. Signer is not present.')
@@ -80,6 +77,42 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
+		async sendMsgApproveCda({ value, fee, memo }: sendMsgApproveCdaParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgApproveCda: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgApproveCda({ value: MsgApproveCda.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgApproveCda: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgFinalizeCda({ value, fee, memo }: sendMsgFinalizeCdaParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgFinalizeCda: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgFinalizeCda({ value: MsgFinalizeCda.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgFinalizeCda: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgCreateCDA({ value }: msgCreateCDAParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.cda.MsgCreateCDA", value: MsgCreateCDA.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgCreateCDA: Could not create message: ' + e.message)
+			}
+		},
 		
 		msgApproveCda({ value }: msgApproveCdaParams): EncodeObject {
 			try {
@@ -89,11 +122,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgCreateCDA({ value }: msgCreateCDAParams): EncodeObject {
+		msgFinalizeCda({ value }: msgFinalizeCdaParams): EncodeObject {
 			try {
-				return { typeUrl: "/archive.cda.MsgCreateCDA", value: MsgCreateCDA.fromPartial( value ) }  
+				return { typeUrl: "/archive.cda.MsgFinalizeCda", value: MsgFinalizeCda.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgCreateCDA: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgFinalizeCda: Could not create message: ' + e.message)
 			}
 		},
 		

@@ -235,37 +235,130 @@ func (m *MsgApproveCdaResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgApproveCdaResponse proto.InternalMessageInfo
 
+type MsgFinalizeCda struct {
+	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	CdaId   uint64 `protobuf:"varint,2,opt,name=cdaId,proto3" json:"cdaId,omitempty"`
+}
+
+func (m *MsgFinalizeCda) Reset()         { *m = MsgFinalizeCda{} }
+func (m *MsgFinalizeCda) String() string { return proto.CompactTextString(m) }
+func (*MsgFinalizeCda) ProtoMessage()    {}
+func (*MsgFinalizeCda) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d9a897423dd22295, []int{4}
+}
+func (m *MsgFinalizeCda) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgFinalizeCda) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgFinalizeCda.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgFinalizeCda) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgFinalizeCda.Merge(m, src)
+}
+func (m *MsgFinalizeCda) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgFinalizeCda) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgFinalizeCda.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgFinalizeCda proto.InternalMessageInfo
+
+func (m *MsgFinalizeCda) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgFinalizeCda) GetCdaId() uint64 {
+	if m != nil {
+		return m.CdaId
+	}
+	return 0
+}
+
+type MsgFinalizeCdaResponse struct {
+}
+
+func (m *MsgFinalizeCdaResponse) Reset()         { *m = MsgFinalizeCdaResponse{} }
+func (m *MsgFinalizeCdaResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgFinalizeCdaResponse) ProtoMessage()    {}
+func (*MsgFinalizeCdaResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d9a897423dd22295, []int{5}
+}
+func (m *MsgFinalizeCdaResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgFinalizeCdaResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgFinalizeCdaResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgFinalizeCdaResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgFinalizeCdaResponse.Merge(m, src)
+}
+func (m *MsgFinalizeCdaResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgFinalizeCdaResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgFinalizeCdaResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgFinalizeCdaResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgCreateCDA)(nil), "archive.cda.MsgCreateCDA")
 	proto.RegisterType((*MsgCreateCDAResponse)(nil), "archive.cda.MsgCreateCDAResponse")
 	proto.RegisterType((*MsgApproveCda)(nil), "archive.cda.MsgApproveCda")
 	proto.RegisterType((*MsgApproveCdaResponse)(nil), "archive.cda.MsgApproveCdaResponse")
+	proto.RegisterType((*MsgFinalizeCda)(nil), "archive.cda.MsgFinalizeCda")
+	proto.RegisterType((*MsgFinalizeCdaResponse)(nil), "archive.cda.MsgFinalizeCdaResponse")
 }
 
 func init() { proto.RegisterFile("cda/tx.proto", fileDescriptor_d9a897423dd22295) }
 
 var fileDescriptor_d9a897423dd22295 = []byte{
-	// 319 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xc1, 0x4e, 0xc2, 0x40,
-	0x10, 0x40, 0x59, 0x5a, 0x35, 0x0c, 0x60, 0xcc, 0x8a, 0x5a, 0x7b, 0xd8, 0x60, 0x0f, 0x86, 0x8b,
-	0x25, 0x41, 0x7f, 0x00, 0xf1, 0x42, 0x22, 0x31, 0xd9, 0xa3, 0xb7, 0x75, 0x77, 0x03, 0x7b, 0x61,
-	0x37, 0xbb, 0x15, 0xf1, 0x2f, 0xf8, 0x02, 0xbf, 0xc7, 0x23, 0x47, 0x8f, 0x06, 0x7e, 0xc4, 0xd0,
-	0x5a, 0x5b, 0x4c, 0xf0, 0xe0, 0xad, 0x33, 0xaf, 0x33, 0xf3, 0x66, 0x33, 0xd0, 0xe0, 0x82, 0x75,
-	0x93, 0x79, 0x6c, 0xac, 0x4e, 0x34, 0xae, 0x33, 0xcb, 0x27, 0x6a, 0x26, 0x63, 0x2e, 0x58, 0xd8,
-	0xdc, 0x20, 0x2e, 0x58, 0xc6, 0xa2, 0x05, 0x82, 0xc6, 0xc8, 0x8d, 0x07, 0x56, 0xb2, 0x44, 0x0e,
-	0xee, 0xfa, 0x38, 0x80, 0x03, 0xbe, 0x09, 0xb4, 0x0d, 0x50, 0x1b, 0x75, 0x6a, 0x34, 0x0f, 0xf1,
-	0x11, 0x78, 0x5c, 0x89, 0xa0, 0x9a, 0x66, 0x37, 0x9f, 0xf8, 0x06, 0x6a, 0xfa, 0x65, 0x2a, 0xad,
-	0x9b, 0x28, 0x13, 0x78, 0x6d, 0xaf, 0x53, 0xef, 0x9d, 0xc6, 0xa5, 0x61, 0xf1, 0x43, 0x4e, 0x69,
-	0xf1, 0x23, 0x26, 0x00, 0x72, 0x6e, 0x94, 0x65, 0x89, 0xd2, 0xd3, 0xc0, 0x6f, 0xa3, 0x8e, 0x4f,
-	0x4b, 0x99, 0xe8, 0x12, 0x5a, 0x65, 0x23, 0x2a, 0x9d, 0xd1, 0x53, 0x27, 0xf1, 0x21, 0x54, 0x95,
-	0x48, 0xa5, 0x7c, 0x5a, 0x55, 0x22, 0x7a, 0x86, 0xe6, 0xc8, 0x8d, 0xfb, 0xc6, 0x58, 0x3d, 0x93,
-	0x03, 0xc1, 0xfe, 0x50, 0x6f, 0xc1, 0x1e, 0x17, 0x6c, 0x98, 0xc9, 0xfb, 0x34, 0x0b, 0xfe, 0xa7,
-	0x1f, 0x9d, 0xc1, 0xc9, 0xd6, 0xd8, 0xdc, 0xaf, 0xf7, 0x86, 0xc0, 0x1b, 0xb9, 0x31, 0x1e, 0x42,
-	0xad, 0x78, 0xce, 0xf3, 0xad, 0x86, 0xe5, 0xbd, 0xc2, 0x8b, 0x9d, 0xe8, 0x67, 0xe5, 0x7b, 0x80,
-	0xd2, 0x7e, 0xe1, 0xef, 0x82, 0x82, 0x85, 0xd1, 0x6e, 0x96, 0x77, 0xbb, 0xbd, 0x7a, 0x5f, 0x11,
-	0xb4, 0x5c, 0x11, 0xf4, 0xb9, 0x22, 0x68, 0xb1, 0x26, 0x95, 0xe5, 0x9a, 0x54, 0x3e, 0xd6, 0xa4,
-	0xf2, 0x78, 0xfc, 0x5d, 0xdc, 0x9d, 0x77, 0xd3, 0xcb, 0x79, 0x35, 0xd2, 0x3d, 0xed, 0xa7, 0x17,
-	0x72, 0xfd, 0x15, 0x00, 0x00, 0xff, 0xff, 0x51, 0x63, 0xd2, 0xe2, 0x4d, 0x02, 0x00, 0x00,
+	// 361 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xcf, 0x6a, 0xea, 0x40,
+	0x14, 0x87, 0x1d, 0x93, 0x7b, 0x2f, 0x1e, 0xff, 0x70, 0xc9, 0xf5, 0xda, 0x34, 0x85, 0x60, 0x53,
+	0x28, 0x6e, 0x1a, 0xc1, 0xf6, 0x01, 0x6a, 0x2d, 0x05, 0xa1, 0x41, 0xc8, 0xb2, 0xbb, 0x69, 0x66,
+	0x88, 0x03, 0x25, 0x33, 0xcc, 0xa4, 0xd6, 0xf6, 0x29, 0x7c, 0xac, 0x2e, 0x5d, 0x76, 0x59, 0xf4,
+	0x01, 0xfa, 0x0a, 0xc5, 0xd8, 0xe8, 0x28, 0xe8, 0xc2, 0x5d, 0xce, 0x7c, 0x39, 0xbf, 0xf9, 0x72,
+	0x72, 0xa0, 0x12, 0x11, 0xdc, 0x4e, 0xc7, 0xbe, 0x90, 0x3c, 0xe5, 0x56, 0x19, 0xcb, 0x68, 0xc8,
+	0x46, 0xd4, 0x8f, 0x08, 0x76, 0xaa, 0x0b, 0x14, 0x11, 0xbc, 0x64, 0xde, 0x04, 0x41, 0x25, 0x50,
+	0x71, 0x4f, 0x52, 0x9c, 0xd2, 0xde, 0x6d, 0xd7, 0xb2, 0xe1, 0x4f, 0xb4, 0x28, 0xb8, 0xb4, 0x51,
+	0x13, 0xb5, 0x4a, 0x61, 0x5e, 0x5a, 0x7f, 0xc1, 0x88, 0x18, 0xb1, 0x8b, 0xd9, 0xe9, 0xe2, 0xd1,
+	0xba, 0x82, 0x12, 0x7f, 0x49, 0xa8, 0x54, 0x43, 0x26, 0x6c, 0xa3, 0x69, 0xb4, 0xca, 0x9d, 0x86,
+	0xaf, 0x5d, 0xe6, 0x0f, 0x72, 0x1a, 0xae, 0x5f, 0xb4, 0x5c, 0x00, 0x3a, 0x16, 0x4c, 0xe2, 0x94,
+	0xf1, 0xc4, 0x36, 0x9b, 0xa8, 0x65, 0x86, 0xda, 0x89, 0x77, 0x0e, 0x75, 0xdd, 0x28, 0xa4, 0x4a,
+	0xf0, 0x44, 0x51, 0xab, 0x06, 0x45, 0x46, 0x32, 0x29, 0x33, 0x2c, 0x32, 0xe2, 0x3d, 0x43, 0x35,
+	0x50, 0x71, 0x57, 0x08, 0xc9, 0x47, 0xb4, 0x47, 0xf0, 0x1e, 0xf5, 0x3a, 0xfc, 0x8a, 0x08, 0xee,
+	0x2f, 0xe5, 0xcd, 0x70, 0x59, 0x1c, 0xa6, 0xef, 0x1d, 0xc1, 0xff, 0x8d, 0x6b, 0x73, 0x3f, 0xef,
+	0x1a, 0x6a, 0x81, 0x8a, 0xef, 0x58, 0x82, 0x9f, 0xd8, 0xdb, 0x21, 0x42, 0x9e, 0x0d, 0x8d, 0xcd,
+	0x84, 0x3c, 0xbb, 0xf3, 0x85, 0xc0, 0x08, 0x54, 0x6c, 0xf5, 0xa1, 0xb4, 0xfe, 0x55, 0xc7, 0x1b,
+	0xb2, 0xfa, 0xcc, 0x9c, 0xd3, 0x9d, 0x68, 0x35, 0xce, 0x7b, 0x00, 0x6d, 0x76, 0xce, 0x76, 0xc3,
+	0x9a, 0x39, 0xde, 0x6e, 0xb6, 0x4a, 0x1b, 0x40, 0x59, 0xff, 0xf2, 0x93, 0xed, 0x16, 0x0d, 0x3a,
+	0x67, 0x7b, 0x60, 0x1e, 0x78, 0x73, 0xf1, 0x3e, 0x73, 0xd1, 0x74, 0xe6, 0xa2, 0xcf, 0x99, 0x8b,
+	0x26, 0x73, 0xb7, 0x30, 0x9d, 0xbb, 0x85, 0x8f, 0xb9, 0x5b, 0x78, 0xf8, 0xf7, 0xd3, 0xdd, 0x1e,
+	0xb7, 0xb3, 0x35, 0x7f, 0x15, 0x54, 0x3d, 0xfe, 0xce, 0xd6, 0xf9, 0xf2, 0x3b, 0x00, 0x00, 0xff,
+	0xff, 0x68, 0x57, 0xf9, 0xbf, 0xfa, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -282,6 +375,7 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	CreateCDA(ctx context.Context, in *MsgCreateCDA, opts ...grpc.CallOption) (*MsgCreateCDAResponse, error)
 	ApproveCda(ctx context.Context, in *MsgApproveCda, opts ...grpc.CallOption) (*MsgApproveCdaResponse, error)
+	FinalizeCda(ctx context.Context, in *MsgFinalizeCda, opts ...grpc.CallOption) (*MsgFinalizeCdaResponse, error)
 }
 
 type msgClient struct {
@@ -310,10 +404,20 @@ func (c *msgClient) ApproveCda(ctx context.Context, in *MsgApproveCda, opts ...g
 	return out, nil
 }
 
+func (c *msgClient) FinalizeCda(ctx context.Context, in *MsgFinalizeCda, opts ...grpc.CallOption) (*MsgFinalizeCdaResponse, error) {
+	out := new(MsgFinalizeCdaResponse)
+	err := c.cc.Invoke(ctx, "/archive.cda.Msg/FinalizeCda", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	CreateCDA(context.Context, *MsgCreateCDA) (*MsgCreateCDAResponse, error)
 	ApproveCda(context.Context, *MsgApproveCda) (*MsgApproveCdaResponse, error)
+	FinalizeCda(context.Context, *MsgFinalizeCda) (*MsgFinalizeCdaResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -325,6 +429,9 @@ func (*UnimplementedMsgServer) CreateCDA(ctx context.Context, req *MsgCreateCDA)
 }
 func (*UnimplementedMsgServer) ApproveCda(ctx context.Context, req *MsgApproveCda) (*MsgApproveCdaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApproveCda not implemented")
+}
+func (*UnimplementedMsgServer) FinalizeCda(ctx context.Context, req *MsgFinalizeCda) (*MsgFinalizeCdaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FinalizeCda not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -367,6 +474,24 @@ func _Msg_ApproveCda_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_FinalizeCda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgFinalizeCda)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).FinalizeCda(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/archive.cda.Msg/FinalizeCda",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).FinalizeCda(ctx, req.(*MsgFinalizeCda))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "archive.cda.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -378,6 +503,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ApproveCda",
 			Handler:    _Msg_ApproveCda_Handler,
+		},
+		{
+			MethodName: "FinalizeCda",
+			Handler:    _Msg_FinalizeCda_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -540,6 +669,64 @@ func (m *MsgApproveCdaResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgFinalizeCda) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgFinalizeCda) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgFinalizeCda) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CdaId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.CdaId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgFinalizeCdaResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgFinalizeCdaResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgFinalizeCdaResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -612,6 +799,31 @@ func (m *MsgApproveCda) Size() (n int) {
 }
 
 func (m *MsgApproveCdaResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *MsgFinalizeCda) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.CdaId != 0 {
+		n += 1 + sovTx(uint64(m.CdaId))
+	}
+	return n
+}
+
+func (m *MsgFinalizeCdaResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1024,6 +1236,157 @@ func (m *MsgApproveCdaResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgApproveCdaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgFinalizeCda) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgFinalizeCda: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgFinalizeCda: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CdaId", wireType)
+			}
+			m.CdaId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CdaId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgFinalizeCdaResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgFinalizeCdaResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgFinalizeCdaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		default:

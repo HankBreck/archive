@@ -30,7 +30,7 @@ func (s *KeeperTestHelper) Setup() {
 		Ctx:             s.Ctx,
 	}
 
-	s.TestAccs = CreateRandomAccounts(3)
+	s.TestAccs = CreateRandomAccounts(10)
 }
 
 func CreateRandomAccounts(num int) []sdk.AccAddress {

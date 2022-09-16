@@ -10,6 +10,7 @@ option go_package = "archive/x/cda/types";
 service Msg {
       rpc CreateCDA(MsgCreateCDA) returns (MsgCreateCDAResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
+  rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -31,6 +32,14 @@ message MsgApproveCda {
 }
 
 message MsgApproveCdaResponse {
+}
+
+message MsgFinalizeCda {
+  string creator = 1;
+  uint64 cdaId = 2;
+}
+
+message MsgFinalizeCdaResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

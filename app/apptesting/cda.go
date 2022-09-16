@@ -6,18 +6,20 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (s *KeeperTestHelper) PrepareCdasForOwner(owner sdk.AccAddress, count int) []uint64 {
+func (s *KeeperTestHelper) PrepareCdasForOwner(owners []*sdk.AccAddress, count int) []uint64 {
 	ids := make([]uint64, count)
 	k := s.App.CdaKeeper
-	ownerships := make([]*types.Ownership, 1)
-	ownerships[0] = &types.Ownership{
-		Owner:     owner.String(),
-		Ownership: uint64(100),
+	ownerships := make([]*types.Ownership, len(owners))
+	for i, owner := range owners {
+		ownerships[i] = &types.Ownership{
+			Owner:     owner.String(),
+			Ownership: uint64(100),
+		}
 	}
 
 	for i := 0; i < count; i++ {
 		var cda = types.CDA{
-			Creator:    owner.String(),
+			Creator:    owners[0].String(),
 			Cid:        "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W",
 			Ownership:  ownerships,
 			Expiration: 4123503529000, // Wednesday, September 1, 2100 5:38:49 PM

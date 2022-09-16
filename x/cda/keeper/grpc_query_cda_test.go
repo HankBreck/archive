@@ -3,6 +3,8 @@ package keeper_test
 import (
 	"archive/x/cda/types"
 	goctx "context"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
@@ -12,8 +14,9 @@ const (
 
 func (suite *KeeperTestSuite) TestCdaQuery() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
+	owner := owners[0]
 
 	response, err := queryClient.Cda(goctx.Background(), &types.QueryCdaRequest{Id: ids[0]})
 
@@ -39,8 +42,8 @@ func (suite *KeeperTestSuite) TestCdaQuery() {
 
 func (suite *KeeperTestSuite) TestCdaQuery_UnsetId() {
 	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 
 	suite.Require().NotContains(ids, 1)
 

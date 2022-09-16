@@ -1,17 +1,21 @@
 package keeper_test
 
-import "archive/x/cda/types"
+import (
+	"archive/x/cda/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 // Assert expected behavior when setting approving for the first time
 func (suite *KeeperTestSuite) TestSetApproval() {
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 	cdas := suite.GetCdas(ids)
 
 	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owner.String(),
+		Creator:   owners[0].String(),
 		CdaId:     ids[0],
 		Ownership: ownerships,
 	}
@@ -21,14 +25,14 @@ func (suite *KeeperTestSuite) TestSetApproval() {
 
 // Assert fails with error when attempting to approve twice
 func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 	cdas := suite.GetCdas(ids)
 
 	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owner.String(),
+		Creator:   owners[0].String(),
 		CdaId:     ids[0],
 		Ownership: ownerships,
 	}
@@ -42,14 +46,14 @@ func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
 
 // Assert fails with error on a CdaId that does not exist
 func (suite *KeeperTestSuite) TestSetApproval_NonexistentCdaId() {
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 	cdas := suite.GetCdas(ids)
 
 	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owner.String(),
+		Creator:   owners[0].String(),
 		CdaId:     1, // id of 1 does not exist
 		Ownership: ownerships,
 	}
@@ -59,8 +63,8 @@ func (suite *KeeperTestSuite) TestSetApproval_NonexistentCdaId() {
 
 // Assert fails with error on invalid ownership length
 func (suite *KeeperTestSuite) TestSetApproval_InvalidOwnershipLength() {
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 	cdas := suite.GetCdas(ids)
 
@@ -71,7 +75,7 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidOwnershipLength() {
 	}
 	ownerships = append(ownerships, &extraOwnership)
 	msg := types.MsgApproveCda{
-		Creator:   owner.String(),
+		Creator:   owners[0].String(),
 		CdaId:     ids[0],
 		Ownership: ownerships,
 	}
@@ -82,15 +86,15 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidOwnershipLength() {
 // Assert fails with error on mismatched ownerships
 // Assert fails with error on invalid ownership length
 func (suite *KeeperTestSuite) TestSetApproval_WrongOwnership() {
-	owner := suite.TestAccs[0]
-	ids := suite.PrepareCdasForOwner(owner, 1)
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 	cdas := suite.GetCdas(ids)
 
 	ownerships := (*cdas[0]).Ownership
 	ownerships[0].Ownership += 1 // Edit the real Ownership struct
 	msg := types.MsgApproveCda{
-		Creator:   owner.String(),
+		Creator:   owners[0].String(),
 		CdaId:     ids[0],
 		Ownership: ownerships,
 	}
