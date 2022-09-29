@@ -6,6 +6,30 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func (s *KeeperTestHelper) ApproveCda(cdaId uint64, owner *sdk.AccAddress) error {
+	k := s.App.CdaKeeper
+
+	goCtx := sdk.WrapSDKContext(s.Ctx)
+	res, err := k.Cda(goCtx, &types.QueryCdaRequest{
+		Id: cdaId,
+	})
+	if err != nil {
+		return err
+	}
+
+	msg := types.MsgApproveCda{
+		Creator:   owner.String(),
+		CdaId:     res.Cda.Id,
+		Ownership: res.Cda.Ownership,
+	}
+	err = k.SetApproval(s.Ctx, &msg)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *KeeperTestHelper) PrepareCdasForOwner(owners []*sdk.AccAddress, count int) []uint64 {
 	ids := make([]uint64, count)
 	k := s.App.CdaKeeper

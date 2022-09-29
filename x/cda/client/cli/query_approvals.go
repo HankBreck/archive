@@ -17,7 +17,7 @@ func CmdApproval() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "approval [cda-id] [owner]",
 		Short: "Responds with true if the owner has approved the CDA",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			cdaId, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {

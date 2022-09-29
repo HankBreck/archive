@@ -2,10 +2,14 @@ package keeper
 
 import (
 	"context"
+	"encoding/binary"
+	"strconv"
 
 	"archive/x/cda/types"
 
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -17,8 +21,24 @@ func (k Keeper) Approval(goCtx context.Context, req *types.QueryApprovalRequest)
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	// Ensure owner field is a valid address
+	owner, err := sdk.AccAddressFromBech32(req.Owner)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.QueryApprovalResponse{}, nil
+	// Ensure CdaId is valid
+	cdaStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAKey))
+	bzId := make([]byte, 8)
+	binary.BigEndian.PutUint64(bzId, req.CdaId)
+	valid := cdaStore.Has(bzId)
+	if !valid {
+		return nil, sdkerrors.ErrKeyNotFound.Wrapf("Could not find the cda with an id of %d", req.CdaId)
+	}
+
+	keySuffix := strconv.FormatUint(req.CdaId, 10)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAApprovalKey+keySuffix))
+
+	entry := store.Get(owner.Bytes())
+	return &types.QueryApprovalResponse{Approved: entry != nil}, nil
 }
