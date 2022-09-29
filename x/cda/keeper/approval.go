@@ -7,6 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // Adds the approval for the (CDA, owner) pair
@@ -36,11 +37,11 @@ func (k Keeper) SetApproval(ctx sdk.Context, msg *types.MsgApproveCda) error {
 	// Ensure msg.Ownership matches cda.Ownership
 	if len(msg.Ownership) != len(cda.Ownership) {
 		// TODO: make a more informative error type / message
-		return types.ErrInvalidOwnership
+		return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list length")
 	}
 	for i := range msg.Ownership {
 		if *msg.Ownership[i] != *cda.Ownership[i] {
-			return types.ErrInvalidOwnership
+			return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list order")
 		}
 	}
 
