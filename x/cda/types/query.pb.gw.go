@@ -229,7 +229,7 @@ func request_Query_Approvals_0(ctx context.Context, marshaler runtime.Marshaler,
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cdaId")
 	}
 
-	protoReq.CdaId, err = runtime.String(val)
+	protoReq.CdaId, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cdaId", err)
@@ -256,7 +256,7 @@ func local_request_Query_Approvals_0(ctx context.Context, marshaler runtime.Mars
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "cdaId")
 	}
 
-	protoReq.CdaId, err = runtime.String(val)
+	protoReq.CdaId, err = runtime.Uint64(val)
 
 	if err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "cdaId", err)
