@@ -40,6 +40,7 @@ const getDefaultState = () => {
 				Cda: {},
 				Cdas: {},
 				CdasOwned: {},
+				Approvals: {},
 				
 				_Structure: {
 						CDA: getStructure(CDA.fromPartial({})),
@@ -96,6 +97,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.CdasOwned[JSON.stringify(params)] ?? {}
+		},
+				getApprovals: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Approvals[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -227,6 +234,41 @@ export default {
 		},
 		
 		
+		
+		
+		 		
+		
+		
+		async QueryApprovals({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ArchiveCda.query.queryApprovals( key.cdaId)).data
+				
+					
+				commit('QUERY', { query: 'Approvals', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryApprovals', payload: { options: { all }, params: {...key},query }})
+				return getters['getApprovals']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryApprovals API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		async sendMsgApproveCda({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.ArchiveCda.tx.sendMsgApproveCda({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgApproveCda:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgApproveCda:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgCreateCDA({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -253,20 +295,20 @@ export default {
 				}
 			}
 		},
-		async sendMsgApproveCda({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		async MsgApproveCda({ rootGetters }, { value }) {
 			try {
-				const client=await initClient(rootGetters)
-				const result = await client.ArchiveCda.tx.sendMsgApproveCda({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
+				const client=initClient(rootGetters)
+				const msg = await client.ArchiveCda.tx.msgApproveCda({value})
+				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgApproveCda:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgApproveCda:Send Could not broadcast Tx: '+ e.message)
+				} else{
+					throw new Error('TxClient:MsgApproveCda:Create Could not create message: ' + e.message)
 				}
 			}
 		},
-		
 		async MsgCreateCDA({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -290,19 +332,6 @@ export default {
 					throw new Error('TxClient:MsgFinalizeCda:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgFinalizeCda:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgApproveCda({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ArchiveCda.tx.msgApproveCda({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgApproveCda:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgApproveCda:Create Could not create message: ' + e.message)
 				}
 			}
 		},

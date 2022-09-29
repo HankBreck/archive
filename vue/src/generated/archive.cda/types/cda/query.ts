@@ -53,6 +53,14 @@ export interface QueryCdasOwnedResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryApprovalsRequest {
+  cdaId: string;
+}
+
+export interface QueryApprovalsResponse {
+  approvals: string;
+}
+
 const baseQueryParamsRequest: object = {};
 
 export const QueryParamsRequest = {
@@ -583,6 +591,126 @@ export const QueryCdasOwnedResponse = {
   },
 };
 
+const baseQueryApprovalsRequest: object = { cdaId: "" };
+
+export const QueryApprovalsRequest = {
+  encode(
+    message: QueryApprovalsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.cdaId !== "") {
+      writer.uint32(10).string(message.cdaId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryApprovalsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.cdaId = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryApprovalsRequest {
+    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+    if (object.cdaId !== undefined && object.cdaId !== null) {
+      message.cdaId = String(object.cdaId);
+    } else {
+      message.cdaId = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryApprovalsRequest): unknown {
+    const obj: any = {};
+    message.cdaId !== undefined && (obj.cdaId = message.cdaId);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryApprovalsRequest>
+  ): QueryApprovalsRequest {
+    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+    if (object.cdaId !== undefined && object.cdaId !== null) {
+      message.cdaId = object.cdaId;
+    } else {
+      message.cdaId = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryApprovalsResponse: object = { approvals: "" };
+
+export const QueryApprovalsResponse = {
+  encode(
+    message: QueryApprovalsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.approvals !== "") {
+      writer.uint32(10).string(message.approvals);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryApprovalsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.approvals = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryApprovalsResponse {
+    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
+    if (object.approvals !== undefined && object.approvals !== null) {
+      message.approvals = String(object.approvals);
+    } else {
+      message.approvals = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryApprovalsResponse): unknown {
+    const obj: any = {};
+    message.approvals !== undefined && (obj.approvals = message.approvals);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryApprovalsResponse>
+  ): QueryApprovalsResponse {
+    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
+    if (object.approvals !== undefined && object.approvals !== null) {
+      message.approvals = object.approvals;
+    } else {
+      message.approvals = "";
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -593,6 +721,8 @@ export interface Query {
   Cdas(request: QueryCdasRequest): Promise<QueryCdasResponse>;
   /** Queries a list of CdasOwned items. */
   CdasOwned(request: QueryCdasOwnedRequest): Promise<QueryCdasOwnedResponse>;
+  /** Queries a list of Approvals items. */
+  Approvals(request: QueryApprovalsRequest): Promise<QueryApprovalsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -623,6 +753,14 @@ export class QueryClientImpl implements Query {
     const promise = this.rpc.request("archive.cda.Query", "CdasOwned", data);
     return promise.then((data) =>
       QueryCdasOwnedResponse.decode(new Reader(data))
+    );
+  }
+
+  Approvals(request: QueryApprovalsRequest): Promise<QueryApprovalsResponse> {
+    const data = QueryApprovalsRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.cda.Query", "Approvals", data);
+    return promise.then((data) =>
+      QueryApprovalsResponse.decode(new Reader(data))
     );
   }
 }

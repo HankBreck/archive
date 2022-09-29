@@ -31,6 +31,11 @@ service Query {
 		option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
 	}
 
+// Queries a list of Approvals items.
+	rpc Approvals(QueryApprovalsRequest) returns (QueryApprovalsResponse) {
+		option (google.api.http).get = "/archive/cda/approvals/{cdaId}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -78,6 +83,14 @@ message QueryCdasOwnedResponse {
 
   // Pagination to view all CDAs
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryApprovalsRequest {
+  uint64 cdaId = 1;
+}
+
+message QueryApprovalsResponse {
+  repeated string approvals = 1;
 }
 
 // this line is used by starport scaffolding # 3
