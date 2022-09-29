@@ -43,8 +43,8 @@ export interface CdaOwnership {
  */
 export type CdaParams = object;
 
-export interface CdaQueryApprovalsResponse {
-  approvals?: string;
+export interface CdaQueryApprovalResponse {
+  approved?: boolean;
 }
 
 export interface CdaQueryCdaResponse {
@@ -363,14 +363,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryApprovals
+   * @name QueryApproval
    * @summary Queries a list of Approvals items.
-   * @request GET:/archive/cda/approvals/{cdaId}
+   * @request GET:/archive/cda/approval/{cdaId}
    */
-  queryApprovals = (cdaId: string, params: RequestParams = {}) =>
-    this.request<CdaQueryApprovalsResponse, RpcStatus>({
-      path: `/archive/cda/approvals/${cdaId}`,
+  queryApproval = (cdaId: string, query?: { owner?: string }, params: RequestParams = {}) =>
+    this.request<CdaQueryApprovalResponse, RpcStatus>({
+      path: `/archive/cda/approval/${cdaId}`,
       method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

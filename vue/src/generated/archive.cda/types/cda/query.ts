@@ -53,12 +53,15 @@ export interface QueryCdasOwnedResponse {
   pagination: PageResponse | undefined;
 }
 
-export interface QueryApprovalsRequest {
-  cdaId: string;
+export interface QueryApprovalRequest {
+  /** The id of the CDA to check */
+  cdaId: number;
+  /** The wallet address of the owner to check */
+  owner: string;
 }
 
-export interface QueryApprovalsResponse {
-  approvals: string;
+export interface QueryApprovalResponse {
+  approved: boolean;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -591,28 +594,34 @@ export const QueryCdasOwnedResponse = {
   },
 };
 
-const baseQueryApprovalsRequest: object = { cdaId: "" };
+const baseQueryApprovalRequest: object = { cdaId: 0, owner: "" };
 
-export const QueryApprovalsRequest = {
+export const QueryApprovalRequest = {
   encode(
-    message: QueryApprovalsRequest,
+    message: QueryApprovalRequest,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.cdaId !== "") {
-      writer.uint32(10).string(message.cdaId);
+    if (message.cdaId !== 0) {
+      writer.uint32(8).uint64(message.cdaId);
+    }
+    if (message.owner !== "") {
+      writer.uint32(18).string(message.owner);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryApprovalsRequest {
+  decode(input: Reader | Uint8Array, length?: number): QueryApprovalRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+    const message = { ...baseQueryApprovalRequest } as QueryApprovalRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.cdaId = reader.string();
+          message.cdaId = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.owner = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -622,57 +631,66 @@ export const QueryApprovalsRequest = {
     return message;
   },
 
-  fromJSON(object: any): QueryApprovalsRequest {
-    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+  fromJSON(object: any): QueryApprovalRequest {
+    const message = { ...baseQueryApprovalRequest } as QueryApprovalRequest;
     if (object.cdaId !== undefined && object.cdaId !== null) {
-      message.cdaId = String(object.cdaId);
+      message.cdaId = Number(object.cdaId);
     } else {
-      message.cdaId = "";
+      message.cdaId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = String(object.owner);
+    } else {
+      message.owner = "";
     }
     return message;
   },
 
-  toJSON(message: QueryApprovalsRequest): unknown {
+  toJSON(message: QueryApprovalRequest): unknown {
     const obj: any = {};
     message.cdaId !== undefined && (obj.cdaId = message.cdaId);
+    message.owner !== undefined && (obj.owner = message.owner);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryApprovalsRequest>
-  ): QueryApprovalsRequest {
-    const message = { ...baseQueryApprovalsRequest } as QueryApprovalsRequest;
+  fromPartial(object: DeepPartial<QueryApprovalRequest>): QueryApprovalRequest {
+    const message = { ...baseQueryApprovalRequest } as QueryApprovalRequest;
     if (object.cdaId !== undefined && object.cdaId !== null) {
       message.cdaId = object.cdaId;
     } else {
-      message.cdaId = "";
+      message.cdaId = 0;
+    }
+    if (object.owner !== undefined && object.owner !== null) {
+      message.owner = object.owner;
+    } else {
+      message.owner = "";
     }
     return message;
   },
 };
 
-const baseQueryApprovalsResponse: object = { approvals: "" };
+const baseQueryApprovalResponse: object = { approved: false };
 
-export const QueryApprovalsResponse = {
+export const QueryApprovalResponse = {
   encode(
-    message: QueryApprovalsResponse,
+    message: QueryApprovalResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.approvals !== "") {
-      writer.uint32(10).string(message.approvals);
+    if (message.approved === true) {
+      writer.uint32(8).bool(message.approved);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryApprovalsResponse {
+  decode(input: Reader | Uint8Array, length?: number): QueryApprovalResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
+    const message = { ...baseQueryApprovalResponse } as QueryApprovalResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.approvals = reader.string();
+          message.approved = reader.bool();
           break;
         default:
           reader.skipType(tag & 7);
@@ -682,30 +700,30 @@ export const QueryApprovalsResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryApprovalsResponse {
-    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
-    if (object.approvals !== undefined && object.approvals !== null) {
-      message.approvals = String(object.approvals);
+  fromJSON(object: any): QueryApprovalResponse {
+    const message = { ...baseQueryApprovalResponse } as QueryApprovalResponse;
+    if (object.approved !== undefined && object.approved !== null) {
+      message.approved = Boolean(object.approved);
     } else {
-      message.approvals = "";
+      message.approved = false;
     }
     return message;
   },
 
-  toJSON(message: QueryApprovalsResponse): unknown {
+  toJSON(message: QueryApprovalResponse): unknown {
     const obj: any = {};
-    message.approvals !== undefined && (obj.approvals = message.approvals);
+    message.approved !== undefined && (obj.approved = message.approved);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<QueryApprovalsResponse>
-  ): QueryApprovalsResponse {
-    const message = { ...baseQueryApprovalsResponse } as QueryApprovalsResponse;
-    if (object.approvals !== undefined && object.approvals !== null) {
-      message.approvals = object.approvals;
+    object: DeepPartial<QueryApprovalResponse>
+  ): QueryApprovalResponse {
+    const message = { ...baseQueryApprovalResponse } as QueryApprovalResponse;
+    if (object.approved !== undefined && object.approved !== null) {
+      message.approved = object.approved;
     } else {
-      message.approvals = "";
+      message.approved = false;
     }
     return message;
   },
@@ -722,7 +740,7 @@ export interface Query {
   /** Queries a list of CdasOwned items. */
   CdasOwned(request: QueryCdasOwnedRequest): Promise<QueryCdasOwnedResponse>;
   /** Queries a list of Approvals items. */
-  Approvals(request: QueryApprovalsRequest): Promise<QueryApprovalsResponse>;
+  Approval(request: QueryApprovalRequest): Promise<QueryApprovalResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -756,11 +774,11 @@ export class QueryClientImpl implements Query {
     );
   }
 
-  Approvals(request: QueryApprovalsRequest): Promise<QueryApprovalsResponse> {
-    const data = QueryApprovalsRequest.encode(request).finish();
-    const promise = this.rpc.request("archive.cda.Query", "Approvals", data);
+  Approval(request: QueryApprovalRequest): Promise<QueryApprovalResponse> {
+    const data = QueryApprovalRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.cda.Query", "Approval", data);
     return promise.then((data) =>
-      QueryApprovalsResponse.decode(new Reader(data))
+      QueryApprovalResponse.decode(new Reader(data))
     );
   }
 }
