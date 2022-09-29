@@ -35,14 +35,24 @@ func (k Keeper) SetApproval(ctx sdk.Context, msg *types.MsgApproveCda) error {
 	}
 
 	// Ensure msg.Ownership matches cda.Ownership
+	includesSender := false
 	if len(msg.Ownership) != len(cda.Ownership) {
 		// TODO: make a more informative error type / message
 		return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list length")
 	}
 	for i := range msg.Ownership {
+		// Ensure the sender is an owner
+		if msg.Ownership[i].Owner == signer.String() {
+			includesSender = true
+		}
+
 		if *msg.Ownership[i] != *cda.Ownership[i] {
 			return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list order")
 		}
+	}
+
+	if !includesSender {
+		return sdkerrors.ErrUnauthorized.Wrapf("Signer is not an owner of cda %d", msg.CdaId)
 	}
 
 	// Check if Creator has already approved the CDA

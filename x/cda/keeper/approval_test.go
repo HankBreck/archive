@@ -84,7 +84,6 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidOwnershipLength() {
 }
 
 // Assert fails with error on mismatched ownerships
-// Assert fails with error on invalid ownership length
 func (suite *KeeperTestSuite) TestSetApproval_WrongOwnership() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
@@ -100,4 +99,21 @@ func (suite *KeeperTestSuite) TestSetApproval_WrongOwnership() {
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
 	suite.EqualError(err, "Invalid ownership map")
+}
+
+// Assert fails with error on non-owner Creator
+func (suite *KeeperTestSuite) TestSetApproval_UnauthorizedCreator() {
+	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(owners, 1)
+	k := suite.App.CdaKeeper
+	cdas := suite.GetCdas(ids)
+
+	ownerships := (*cdas[0]).Ownership
+	msg := types.MsgApproveCda{
+		Creator:   suite.TestAccs[1].String(),
+		CdaId:     ids[0],
+		Ownership: ownerships,
+	}
+	err := k.SetApproval(suite.Ctx, &msg)
+	suite.EqualError(err, "Signer is not an owner of cda 0: unauthorized")
 }
