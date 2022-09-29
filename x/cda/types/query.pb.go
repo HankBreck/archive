@@ -408,22 +408,25 @@ func (m *QueryCdasOwnedResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-type QueryApprovalsRequest struct {
+type QueryApprovalRequest struct {
+	// The id of the CDA to check
 	CdaId uint64 `protobuf:"varint,1,opt,name=cdaId,proto3" json:"cdaId,omitempty"`
+	// The wallet address of the owner to check
+	Owner string `protobuf:"bytes,2,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 
-func (m *QueryApprovalsRequest) Reset()         { *m = QueryApprovalsRequest{} }
-func (m *QueryApprovalsRequest) String() string { return proto.CompactTextString(m) }
-func (*QueryApprovalsRequest) ProtoMessage()    {}
-func (*QueryApprovalsRequest) Descriptor() ([]byte, []int) {
+func (m *QueryApprovalRequest) Reset()         { *m = QueryApprovalRequest{} }
+func (m *QueryApprovalRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryApprovalRequest) ProtoMessage()    {}
+func (*QueryApprovalRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6e4aace556501a3a, []int{8}
 }
-func (m *QueryApprovalsRequest) XXX_Unmarshal(b []byte) error {
+func (m *QueryApprovalRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryApprovalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryApprovalRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryApprovalsRequest.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryApprovalRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -433,41 +436,48 @@ func (m *QueryApprovalsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return b[:n], nil
 	}
 }
-func (m *QueryApprovalsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryApprovalsRequest.Merge(m, src)
+func (m *QueryApprovalRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApprovalRequest.Merge(m, src)
 }
-func (m *QueryApprovalsRequest) XXX_Size() int {
+func (m *QueryApprovalRequest) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryApprovalsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryApprovalsRequest.DiscardUnknown(m)
+func (m *QueryApprovalRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApprovalRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryApprovalsRequest proto.InternalMessageInfo
+var xxx_messageInfo_QueryApprovalRequest proto.InternalMessageInfo
 
-func (m *QueryApprovalsRequest) GetCdaId() uint64 {
+func (m *QueryApprovalRequest) GetCdaId() uint64 {
 	if m != nil {
 		return m.CdaId
 	}
 	return 0
 }
 
-type QueryApprovalsResponse struct {
-	Approvals []string `protobuf:"bytes,1,rep,name=approvals,proto3" json:"approvals,omitempty"`
+func (m *QueryApprovalRequest) GetOwner() string {
+	if m != nil {
+		return m.Owner
+	}
+	return ""
 }
 
-func (m *QueryApprovalsResponse) Reset()         { *m = QueryApprovalsResponse{} }
-func (m *QueryApprovalsResponse) String() string { return proto.CompactTextString(m) }
-func (*QueryApprovalsResponse) ProtoMessage()    {}
-func (*QueryApprovalsResponse) Descriptor() ([]byte, []int) {
+type QueryApprovalResponse struct {
+	Approved bool `protobuf:"varint,1,opt,name=approved,proto3" json:"approved,omitempty"`
+}
+
+func (m *QueryApprovalResponse) Reset()         { *m = QueryApprovalResponse{} }
+func (m *QueryApprovalResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryApprovalResponse) ProtoMessage()    {}
+func (*QueryApprovalResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_6e4aace556501a3a, []int{9}
 }
-func (m *QueryApprovalsResponse) XXX_Unmarshal(b []byte) error {
+func (m *QueryApprovalResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *QueryApprovalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *QueryApprovalResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_QueryApprovalsResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_QueryApprovalResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -477,23 +487,23 @@ func (m *QueryApprovalsResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return b[:n], nil
 	}
 }
-func (m *QueryApprovalsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_QueryApprovalsResponse.Merge(m, src)
+func (m *QueryApprovalResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryApprovalResponse.Merge(m, src)
 }
-func (m *QueryApprovalsResponse) XXX_Size() int {
+func (m *QueryApprovalResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *QueryApprovalsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_QueryApprovalsResponse.DiscardUnknown(m)
+func (m *QueryApprovalResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryApprovalResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_QueryApprovalsResponse proto.InternalMessageInfo
+var xxx_messageInfo_QueryApprovalResponse proto.InternalMessageInfo
 
-func (m *QueryApprovalsResponse) GetApprovals() []string {
+func (m *QueryApprovalResponse) GetApproved() bool {
 	if m != nil {
-		return m.Approvals
+		return m.Approved
 	}
-	return nil
+	return false
 }
 
 func init() {
@@ -505,53 +515,53 @@ func init() {
 	proto.RegisterType((*QueryCdasResponse)(nil), "archive.cda.QueryCdasResponse")
 	proto.RegisterType((*QueryCdasOwnedRequest)(nil), "archive.cda.QueryCdasOwnedRequest")
 	proto.RegisterType((*QueryCdasOwnedResponse)(nil), "archive.cda.QueryCdasOwnedResponse")
-	proto.RegisterType((*QueryApprovalsRequest)(nil), "archive.cda.QueryApprovalsRequest")
-	proto.RegisterType((*QueryApprovalsResponse)(nil), "archive.cda.QueryApprovalsResponse")
+	proto.RegisterType((*QueryApprovalRequest)(nil), "archive.cda.QueryApprovalRequest")
+	proto.RegisterType((*QueryApprovalResponse)(nil), "archive.cda.QueryApprovalResponse")
 }
 
 func init() { proto.RegisterFile("cda/query.proto", fileDescriptor_6e4aace556501a3a) }
 
 var fileDescriptor_6e4aace556501a3a = []byte{
-	// 617 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xcd, 0x6e, 0xd3, 0x4c,
-	0x14, 0x8d, 0x13, 0xb7, 0x52, 0x6e, 0xf5, 0x7d, 0x4d, 0x27, 0x09, 0x3f, 0x21, 0x75, 0x52, 0x83,
-	0x5a, 0x84, 0x54, 0x5b, 0x29, 0x52, 0xf7, 0x69, 0x2a, 0x7e, 0x56, 0x14, 0x2f, 0xbb, 0x81, 0x89,
-	0x67, 0xe4, 0x5a, 0x6a, 0x3d, 0xae, 0xed, 0xa4, 0x54, 0x21, 0x9b, 0x3e, 0x01, 0x12, 0x8f, 0xc2,
-	0x4b, 0x74, 0x59, 0x89, 0x0d, 0x2b, 0x84, 0x12, 0x1e, 0x04, 0x79, 0x66, 0x1c, 0xdb, 0xf9, 0x01,
-	0x09, 0xb1, 0x88, 0xe4, 0x99, 0x7b, 0xee, 0x3d, 0xe7, 0xcc, 0x9c, 0x09, 0x6c, 0xda, 0x04, 0x9b,
-	0x97, 0x03, 0x1a, 0x5c, 0x1b, 0x7e, 0xc0, 0x22, 0x86, 0x36, 0x70, 0x60, 0x9f, 0xb9, 0x43, 0x6a,
-	0xd8, 0x04, 0x37, 0x6a, 0x0e, 0x73, 0x18, 0xdf, 0x37, 0xe3, 0x2f, 0x01, 0x69, 0x34, 0x1d, 0xc6,
-	0x9c, 0x73, 0x6a, 0x62, 0xdf, 0x35, 0xb1, 0xe7, 0xb1, 0x08, 0x47, 0x2e, 0xf3, 0x42, 0x59, 0x7d,
-	0x66, 0xb3, 0xf0, 0x82, 0x85, 0x66, 0x1f, 0x87, 0x54, 0x4c, 0x36, 0x87, 0x9d, 0x3e, 0x8d, 0x70,
-	0xc7, 0xf4, 0xb1, 0xe3, 0x7a, 0x1c, 0x2c, 0xb1, 0x95, 0x98, 0xdd, 0xc7, 0x01, 0xbe, 0x48, 0xba,
-	0xff, 0x8b, 0x77, 0x6c, 0x82, 0xc5, 0x52, 0xaf, 0x01, 0x7a, 0x1b, 0x8f, 0x38, 0xe1, 0x18, 0x8b,
-	0x5e, 0x0e, 0x68, 0x18, 0xe9, 0xaf, 0xa0, 0x9a, 0xdb, 0x0d, 0x7d, 0xe6, 0x85, 0x14, 0x75, 0x60,
-	0x5d, 0xcc, 0x7a, 0xa0, 0xb4, 0x95, 0xa7, 0x1b, 0x07, 0x55, 0x23, 0xe3, 0xc5, 0x10, 0xe0, 0x23,
-	0xf5, 0xf6, 0x7b, 0xab, 0x60, 0x49, 0xa0, 0xbe, 0x03, 0x9b, 0x7c, 0x52, 0x8f, 0x60, 0x39, 0x1c,
-	0xfd, 0x0f, 0x45, 0x97, 0xf0, 0x09, 0xaa, 0x55, 0x74, 0x89, 0x7e, 0x08, 0x95, 0x14, 0x22, 0x99,
-	0x74, 0x28, 0xd9, 0x04, 0x4b, 0x9a, 0x4a, 0x8e, 0xa6, 0x77, 0xdc, 0xb5, 0xe2, 0xa2, 0x7e, 0x9a,
-	0xf6, 0x25, 0xc2, 0xd1, 0x0b, 0x80, 0xf4, 0x0c, 0x64, 0xfb, 0xae, 0x21, 0x0e, 0xcc, 0x88, 0x0f,
-	0xcc, 0x10, 0x57, 0x21, 0x0f, 0xcc, 0x38, 0xc1, 0x0e, 0x95, 0xbd, 0x56, 0xa6, 0x53, 0xbf, 0x51,
-	0x60, 0x2b, 0x33, 0x5c, 0xaa, 0x7a, 0x02, 0x6a, 0xef, 0xb8, 0x1b, 0xbb, 0x2f, 0x2d, 0x95, 0xc5,
-	0xab, 0xe8, 0x65, 0x4e, 0x43, 0x91, 0x6b, 0xd8, 0xfb, 0xa3, 0x06, 0x41, 0x91, 0x13, 0x31, 0x80,
-	0xfa, 0x4c, 0xc3, 0x9b, 0x2b, 0x8f, 0x92, 0xc4, 0x65, 0x0d, 0xd6, 0xd8, 0x95, 0x47, 0x03, 0x6e,
-	0xb0, 0x6c, 0x89, 0xc5, 0x9c, 0xf7, 0xe2, 0x5f, 0x7b, 0x0f, 0xe1, 0xde, 0x3c, 0xad, 0xf4, 0x5f,
-	0x81, 0x92, 0x4b, 0x84, 0x7d, 0xd5, 0x8a, 0x3f, 0xff, 0x9d, 0xd7, 0x7d, 0xe9, 0xb5, 0xeb, 0xfb,
-	0x01, 0x1b, 0xe2, 0xf3, 0x30, 0xe3, 0xd5, 0x26, 0xf8, 0x75, 0x12, 0x18, 0xb1, 0xd0, 0x0f, 0xa5,
-	0xc6, 0x0c, 0x5c, 0x6a, 0x6c, 0x42, 0x19, 0x27, 0x9b, 0x5c, 0x69, 0xd9, 0x4a, 0x37, 0x0e, 0xbe,
-	0xa8, 0xb0, 0xc6, 0x1b, 0xd1, 0x19, 0xac, 0x8b, 0xc0, 0xa2, 0x56, 0xee, 0x1e, 0x17, 0x5f, 0x43,
-	0xa3, 0xbd, 0x1a, 0x20, 0x48, 0xf5, 0x47, 0x37, 0x5f, 0x7f, 0x7e, 0x2e, 0xd6, 0x51, 0xd5, 0x94,
-	0x48, 0x33, 0x7d, 0x77, 0x08, 0x43, 0xa9, 0x47, 0x30, 0x6a, 0x2e, 0x4e, 0x49, 0x1f, 0x45, 0x63,
-	0x7b, 0x45, 0x55, 0x12, 0x6c, 0x73, 0x82, 0xfb, 0xa8, 0x9e, 0x23, 0x88, 0x7f, 0x23, 0x97, 0x8c,
-	0xd1, 0x7b, 0x50, 0xe3, 0xdb, 0x42, 0xcb, 0xa7, 0xcc, 0x8c, 0x68, 0xab, 0xca, 0x92, 0xe5, 0x21,
-	0x67, 0xa9, 0xa2, 0xad, 0x79, 0x96, 0x10, 0x8d, 0xa1, 0x3c, 0xcb, 0x03, 0xd2, 0x97, 0xcf, 0xc9,
-	0x66, 0xb4, 0xf1, 0xf8, 0xb7, 0x18, 0x49, 0xb8, 0xc7, 0x09, 0x77, 0x50, 0x6b, 0x81, 0xf0, 0x5d,
-	0x9c, 0x69, 0x62, 0x8e, 0x78, 0xb4, 0xc7, 0xe8, 0x23, 0x94, 0x67, 0x57, 0xbd, 0x8c, 0x7e, 0x3e,
-	0x36, 0xcb, 0xe8, 0x17, 0xb2, 0xa2, 0xef, 0x72, 0xfa, 0x36, 0xd2, 0x72, 0xf4, 0xb3, 0xb4, 0x98,
-	0x23, 0x1e, 0xb6, 0xf1, 0xd1, 0xfe, 0xed, 0x44, 0x53, 0xee, 0x26, 0x9a, 0xf2, 0x63, 0xa2, 0x29,
-	0x9f, 0xa6, 0x5a, 0xe1, 0x6e, 0xaa, 0x15, 0xbe, 0x4d, 0xb5, 0xc2, 0x69, 0x35, 0x69, 0xfc, 0xc0,
-	0x5b, 0xa3, 0x6b, 0x9f, 0x86, 0xfd, 0x75, 0xfe, 0xd7, 0xfa, 0xfc, 0x57, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xa6, 0x18, 0xcb, 0x0e, 0xfb, 0x05, 0x00, 0x00,
+	// 624 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x54, 0xcb, 0x4e, 0xdb, 0x4c,
+	0x14, 0x8e, 0x1d, 0x83, 0xe0, 0xa0, 0xff, 0x27, 0x4c, 0x42, 0x2f, 0x2e, 0x38, 0xe0, 0x5e, 0xa8,
+	0x2a, 0xd5, 0x16, 0x20, 0x75, 0x4f, 0x82, 0x7a, 0x59, 0x95, 0x7a, 0xc9, 0xa6, 0x9d, 0x78, 0x46,
+	0xc6, 0x12, 0x78, 0x8c, 0xed, 0x04, 0x50, 0x94, 0x0d, 0x4f, 0x50, 0xa9, 0x0f, 0xd2, 0xd7, 0x60,
+	0x89, 0xd4, 0x4d, 0x57, 0x55, 0x95, 0xf4, 0x41, 0x2a, 0xcf, 0x8c, 0x63, 0x3b, 0x17, 0x2a, 0x55,
+	0x5d, 0x44, 0xf2, 0xcc, 0xf9, 0xce, 0xf7, 0x9d, 0xef, 0x9c, 0x33, 0x81, 0x55, 0x97, 0x60, 0xfb,
+	0xbc, 0x4b, 0xa3, 0x2b, 0x2b, 0x8c, 0x58, 0xc2, 0xd0, 0x0a, 0x8e, 0xdc, 0x13, 0xbf, 0x47, 0x2d,
+	0x97, 0x60, 0xbd, 0xe1, 0x31, 0x8f, 0xf1, 0x7b, 0x3b, 0xfd, 0x12, 0x10, 0x7d, 0xc3, 0x63, 0xcc,
+	0x3b, 0xa5, 0x36, 0x0e, 0x7d, 0x1b, 0x07, 0x01, 0x4b, 0x70, 0xe2, 0xb3, 0x20, 0x96, 0xd1, 0x17,
+	0x2e, 0x8b, 0xcf, 0x58, 0x6c, 0x77, 0x70, 0x4c, 0x05, 0xb3, 0xdd, 0xdb, 0xed, 0xd0, 0x04, 0xef,
+	0xda, 0x21, 0xf6, 0xfc, 0x80, 0x83, 0x25, 0xb6, 0x96, 0xaa, 0x87, 0x38, 0xc2, 0x67, 0x59, 0xf6,
+	0x7f, 0xe9, 0x8d, 0x4b, 0xb0, 0x38, 0x9a, 0x0d, 0x40, 0x1f, 0x52, 0x8a, 0x23, 0x8e, 0x71, 0xe8,
+	0x79, 0x97, 0xc6, 0x89, 0xf9, 0x16, 0xea, 0xa5, 0xdb, 0x38, 0x64, 0x41, 0x4c, 0xd1, 0x2e, 0x2c,
+	0x0a, 0xae, 0x07, 0xca, 0x96, 0xf2, 0x7c, 0x65, 0xaf, 0x6e, 0x15, 0xbc, 0x58, 0x02, 0xdc, 0xd2,
+	0x6e, 0x7e, 0x34, 0x2b, 0x8e, 0x04, 0x9a, 0xdb, 0xb0, 0xca, 0x99, 0xda, 0x04, 0x4b, 0x72, 0xf4,
+	0x3f, 0xa8, 0x3e, 0xe1, 0x0c, 0x9a, 0xa3, 0xfa, 0xc4, 0x7c, 0x05, 0xb5, 0x1c, 0x22, 0x95, 0x4c,
+	0xa8, 0xba, 0x04, 0x4b, 0x99, 0x5a, 0x49, 0xa6, 0x7d, 0x78, 0xe0, 0xa4, 0x41, 0xf3, 0x38, 0xcf,
+	0xcb, 0x0a, 0x47, 0xaf, 0x01, 0xf2, 0x1e, 0xc8, 0xf4, 0x67, 0x96, 0x68, 0x98, 0x95, 0x36, 0xcc,
+	0x12, 0xa3, 0x90, 0x0d, 0xb3, 0x8e, 0xb0, 0x47, 0x65, 0xae, 0x53, 0xc8, 0x34, 0xaf, 0x15, 0x58,
+	0x2b, 0x90, 0xcb, 0xaa, 0x9e, 0x80, 0xd6, 0x3e, 0x3c, 0x48, 0xdd, 0x57, 0x67, 0x96, 0xc5, 0xa3,
+	0xe8, 0x4d, 0xa9, 0x06, 0x95, 0xd7, 0xb0, 0xf3, 0xc7, 0x1a, 0x84, 0x44, 0xa9, 0x88, 0x2e, 0xac,
+	0x8f, 0x6b, 0x78, 0x7f, 0x11, 0x50, 0x92, 0xb9, 0x6c, 0xc0, 0x02, 0xbb, 0x08, 0x68, 0xc4, 0x0d,
+	0x2e, 0x3b, 0xe2, 0x30, 0xe1, 0x5d, 0xfd, 0x6b, 0xef, 0x31, 0xdc, 0x9b, 0x94, 0x95, 0xfe, 0x6b,
+	0x50, 0xf5, 0x89, 0xb0, 0xaf, 0x39, 0xe9, 0xe7, 0xbf, 0xf3, 0xda, 0x82, 0x06, 0x17, 0x3d, 0x08,
+	0xc3, 0x88, 0xf5, 0xf0, 0x69, 0xc1, 0xaa, 0x4b, 0xf0, 0xbb, 0x6c, 0x5f, 0xc4, 0x21, 0x6f, 0x80,
+	0x5a, 0x68, 0x80, 0xb9, 0x2f, 0xfb, 0x95, 0x73, 0xc8, 0xba, 0x75, 0x58, 0xc2, 0xfc, 0x8e, 0x0a,
+	0x9e, 0x25, 0x67, 0x7c, 0xde, 0xfb, 0xaa, 0xc1, 0x02, 0xcf, 0x42, 0x27, 0xb0, 0x28, 0x56, 0x18,
+	0x35, 0x4b, 0x93, 0x9d, 0x7e, 0x1f, 0xfa, 0xd6, 0x7c, 0x80, 0x90, 0x34, 0x1f, 0x5d, 0x7f, 0xfb,
+	0xf5, 0x45, 0x5d, 0x47, 0x75, 0x5b, 0x22, 0xed, 0xfc, 0x25, 0x22, 0x0c, 0xd5, 0x36, 0xc1, 0x68,
+	0x63, 0x9a, 0x25, 0x7f, 0x26, 0xfa, 0xe6, 0x9c, 0xa8, 0x14, 0xd8, 0xe4, 0x02, 0xf7, 0xd1, 0x7a,
+	0x49, 0x20, 0xfd, 0xf5, 0x7d, 0x32, 0x40, 0x9f, 0x40, 0x4b, 0xe7, 0x87, 0x66, 0xb3, 0x8c, 0x8d,
+	0x18, 0xf3, 0xc2, 0x52, 0xe5, 0x21, 0x57, 0xa9, 0xa3, 0xb5, 0x49, 0x95, 0x18, 0x0d, 0x60, 0x79,
+	0xbc, 0x21, 0xc8, 0x9c, 0xcd, 0x53, 0xdc, 0x5a, 0xfd, 0xf1, 0x9d, 0x18, 0x29, 0xb8, 0xc3, 0x05,
+	0xb7, 0x51, 0x73, 0x4a, 0xf0, 0x63, 0x3a, 0x64, 0x62, 0xf7, 0xf9, 0xac, 0x07, 0xe8, 0x12, 0x96,
+	0xb2, 0x39, 0xa3, 0xed, 0x69, 0xe6, 0x89, 0x3d, 0xd2, 0xcd, 0xbb, 0x20, 0x52, 0xfb, 0x29, 0xd7,
+	0x6e, 0xa2, 0xcd, 0x92, 0x36, 0x96, 0x30, 0xbb, 0xcf, 0x77, 0x6f, 0xd0, 0x7a, 0x79, 0x33, 0x34,
+	0x94, 0xdb, 0xa1, 0xa1, 0xfc, 0x1c, 0x1a, 0xca, 0xe7, 0x91, 0x51, 0xb9, 0x1d, 0x19, 0x95, 0xef,
+	0x23, 0xa3, 0x72, 0x5c, 0xcf, 0xf2, 0x2e, 0x79, 0x66, 0x72, 0x15, 0xd2, 0xb8, 0xb3, 0xc8, 0xff,
+	0x68, 0xf7, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0x50, 0xb8, 0xaa, 0x1a, 0x09, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -575,7 +585,7 @@ type QueryClient interface {
 	// Queries a list of CdasOwned items.
 	CdasOwned(ctx context.Context, in *QueryCdasOwnedRequest, opts ...grpc.CallOption) (*QueryCdasOwnedResponse, error)
 	// Queries a list of Approvals items.
-	Approvals(ctx context.Context, in *QueryApprovalsRequest, opts ...grpc.CallOption) (*QueryApprovalsResponse, error)
+	Approval(ctx context.Context, in *QueryApprovalRequest, opts ...grpc.CallOption) (*QueryApprovalResponse, error)
 }
 
 type queryClient struct {
@@ -622,9 +632,9 @@ func (c *queryClient) CdasOwned(ctx context.Context, in *QueryCdasOwnedRequest, 
 	return out, nil
 }
 
-func (c *queryClient) Approvals(ctx context.Context, in *QueryApprovalsRequest, opts ...grpc.CallOption) (*QueryApprovalsResponse, error) {
-	out := new(QueryApprovalsResponse)
-	err := c.cc.Invoke(ctx, "/archive.cda.Query/Approvals", in, out, opts...)
+func (c *queryClient) Approval(ctx context.Context, in *QueryApprovalRequest, opts ...grpc.CallOption) (*QueryApprovalResponse, error) {
+	out := new(QueryApprovalResponse)
+	err := c.cc.Invoke(ctx, "/archive.cda.Query/Approval", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -642,7 +652,7 @@ type QueryServer interface {
 	// Queries a list of CdasOwned items.
 	CdasOwned(context.Context, *QueryCdasOwnedRequest) (*QueryCdasOwnedResponse, error)
 	// Queries a list of Approvals items.
-	Approvals(context.Context, *QueryApprovalsRequest) (*QueryApprovalsResponse, error)
+	Approval(context.Context, *QueryApprovalRequest) (*QueryApprovalResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -661,8 +671,8 @@ func (*UnimplementedQueryServer) Cdas(ctx context.Context, req *QueryCdasRequest
 func (*UnimplementedQueryServer) CdasOwned(ctx context.Context, req *QueryCdasOwnedRequest) (*QueryCdasOwnedResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CdasOwned not implemented")
 }
-func (*UnimplementedQueryServer) Approvals(ctx context.Context, req *QueryApprovalsRequest) (*QueryApprovalsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Approvals not implemented")
+func (*UnimplementedQueryServer) Approval(ctx context.Context, req *QueryApprovalRequest) (*QueryApprovalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Approval not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -741,20 +751,20 @@ func _Query_CdasOwned_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Query_Approvals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(QueryApprovalsRequest)
+func _Query_Approval_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryApprovalRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(QueryServer).Approvals(ctx, in)
+		return srv.(QueryServer).Approval(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/archive.cda.Query/Approvals",
+		FullMethod: "/archive.cda.Query/Approval",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QueryServer).Approvals(ctx, req.(*QueryApprovalsRequest))
+		return srv.(QueryServer).Approval(ctx, req.(*QueryApprovalRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -780,8 +790,8 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Query_CdasOwned_Handler,
 		},
 		{
-			MethodName: "Approvals",
-			Handler:    _Query_Approvals_Handler,
+			MethodName: "Approval",
+			Handler:    _Query_Approval_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1086,7 +1096,7 @@ func (m *QueryCdasOwnedResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryApprovalsRequest) Marshal() (dAtA []byte, err error) {
+func (m *QueryApprovalRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1096,16 +1106,23 @@ func (m *QueryApprovalsRequest) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryApprovalsRequest) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryApprovalRequest) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryApprovalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryApprovalRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if len(m.Owner) > 0 {
+		i -= len(m.Owner)
+		copy(dAtA[i:], m.Owner)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.Owner)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.CdaId != 0 {
 		i = encodeVarintQuery(dAtA, i, uint64(m.CdaId))
 		i--
@@ -1114,7 +1131,7 @@ func (m *QueryApprovalsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *QueryApprovalsResponse) Marshal() (dAtA []byte, err error) {
+func (m *QueryApprovalResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1124,24 +1141,25 @@ func (m *QueryApprovalsResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *QueryApprovalsResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *QueryApprovalResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *QueryApprovalsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *QueryApprovalResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Approvals) > 0 {
-		for iNdEx := len(m.Approvals) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Approvals[iNdEx])
-			copy(dAtA[i:], m.Approvals[iNdEx])
-			i = encodeVarintQuery(dAtA, i, uint64(len(m.Approvals[iNdEx])))
-			i--
-			dAtA[i] = 0xa
+	if m.Approved {
+		i--
+		if m.Approved {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
 		}
+		i--
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -1271,7 +1289,7 @@ func (m *QueryCdasOwnedResponse) Size() (n int) {
 	return n
 }
 
-func (m *QueryApprovalsRequest) Size() (n int) {
+func (m *QueryApprovalRequest) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1280,20 +1298,21 @@ func (m *QueryApprovalsRequest) Size() (n int) {
 	if m.CdaId != 0 {
 		n += 1 + sovQuery(uint64(m.CdaId))
 	}
+	l = len(m.Owner)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
 	return n
 }
 
-func (m *QueryApprovalsResponse) Size() (n int) {
+func (m *QueryApprovalResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.Approvals) > 0 {
-		for _, s := range m.Approvals {
-			l = len(s)
-			n += 1 + l + sovQuery(uint64(l))
-		}
+	if m.Approved {
+		n += 2
 	}
 	return n
 }
@@ -2078,7 +2097,7 @@ func (m *QueryCdasOwnedResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *QueryApprovalsRequest) Unmarshal(dAtA []byte) error {
+func (m *QueryApprovalRequest) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2101,10 +2120,10 @@ func (m *QueryApprovalsRequest) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: QueryApprovalsRequest: wiretype end group for non-group")
+			return fmt.Errorf("proto: QueryApprovalRequest: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryApprovalsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: QueryApprovalRequest: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2126,59 +2145,9 @@ func (m *QueryApprovalsRequest) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipQuery(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthQuery
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *QueryApprovalsResponse) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowQuery
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: QueryApprovalsResponse: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: QueryApprovalsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Approvals", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Owner", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -2206,8 +2175,78 @@ func (m *QueryApprovalsResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Approvals = append(m.Approvals, string(dAtA[iNdEx:postIndex]))
+			m.Owner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryApprovalResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryApprovalResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryApprovalResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Approved", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Approved = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])

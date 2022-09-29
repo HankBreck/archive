@@ -32,8 +32,8 @@ service Query {
 	}
 
 // Queries a list of Approvals items.
-	rpc Approvals(QueryApprovalsRequest) returns (QueryApprovalsResponse) {
-		option (google.api.http).get = "/archive/cda/approvals/{cdaId}";
+	rpc Approval(QueryApprovalRequest) returns (QueryApprovalResponse) {
+		option (google.api.http).get = "/archive/cda/approval/{cdaId}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -85,12 +85,16 @@ message QueryCdasOwnedResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryApprovalsRequest {
+message QueryApprovalRequest {
+  // The id of the CDA to check
   uint64 cdaId = 1;
+  
+  // The wallet address of the owner to check
+  string owner = 2;
 }
 
-message QueryApprovalsResponse {
-  repeated string approvals = 1;
+message QueryApprovalResponse {
+  bool approved = 1;
 }
 
 // this line is used by starport scaffolding # 3
