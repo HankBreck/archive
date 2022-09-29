@@ -4,18 +4,18 @@ info:
   name: ''
   description: ''
 paths:
-  '/archive/cda/approvals/{cdaId}':
+  '/archive/cda/approval/{cdaId}':
     get:
       summary: Queries a list of Approvals items.
-      operationId: ArchiveCdaApprovals
+      operationId: ArchiveCdaApproval
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              approvals:
-                type: string
+              approved:
+                type: boolean
         default:
           description: An unexpected error response.
           schema:
@@ -36,8 +36,15 @@ paths:
                   additionalProperties: {}
       parameters:
         - name: cdaId
+          description: The id of the CDA to check
           in: path
           required: true
+          type: string
+          format: uint64
+        - name: owner
+          description: The wallet address of the owner to check
+          in: query
+          required: false
           type: string
       tags:
         - Query
@@ -30802,11 +30809,11 @@ definitions:
   archive.cda.Params:
     type: object
     description: Params defines the parameters for the module.
-  archive.cda.QueryApprovalsResponse:
+  archive.cda.QueryApprovalResponse:
     type: object
     properties:
-      approvals:
-        type: string
+      approved:
+        type: boolean
   archive.cda.QueryCdaResponse:
     type: object
     properties:
