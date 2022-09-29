@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (k Keeper) Approvals(goCtx context.Context, req *types.QueryApprovalsRequest) (*types.QueryApprovalsResponse, error) {
+func (k Keeper) Approval(goCtx context.Context, req *types.QueryApprovalRequest) (*types.QueryApprovalResponse, error) {
 	// Respond with an error if the request is nil
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
@@ -20,5 +20,5 @@ func (k Keeper) Approvals(goCtx context.Context, req *types.QueryApprovalsReques
 	// TODO: Process the query
 	_ = ctx
 
-	return &types.QueryApprovalsResponse{}, nil
+	return &types.QueryApprovalResponse{}, nil
 }
