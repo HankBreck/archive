@@ -24,7 +24,7 @@ func approveAll(k keeper.Keeper, ctx sdk.Context, cda *types.CDA, owners []*sdk.
 }
 
 // Assert it works as normal
-func (suite *KeeperTestSuite) TestFinalizeCda() {
+func (suite *KeeperTestSuite) TestFinalize() {
 	k := suite.App.CdaKeeper
 	owners := []*sdk.AccAddress{&suite.TestAccs[0], &suite.TestAccs[1]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda() {
 		Creator: owners[0].String(),
 		CdaId:   cda.Id,
 	}
-	err := k.FinalizeCda(suite.Ctx, &msg)
+	err := k.Finalize(suite.Ctx, &msg)
 	suite.NoError(err)
 
 	queryMsg := types.QueryCdaRequest{
@@ -50,7 +50,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda() {
 }
 
 // Assert that it fails on nonexisting CdaId
-func (suite *KeeperTestSuite) TestFinalizeCda__NonexistentCdaId() {
+func (suite *KeeperTestSuite) TestFinalize__NonexistentCdaId() {
 	k := suite.App.CdaKeeper
 	owners := []*sdk.AccAddress{&suite.TestAccs[0], &suite.TestAccs[1]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
@@ -64,7 +64,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda__NonexistentCdaId() {
 		Creator: owners[0].String(),
 		CdaId:   cda.Id + 1,
 	}
-	err := k.FinalizeCda(suite.Ctx, &msg)
+	err := k.Finalize(suite.Ctx, &msg)
 	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
 
 	// Ensure the real CDA was not finalized
@@ -77,7 +77,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda__NonexistentCdaId() {
 }
 
 // Assert that it fails when missing approvals
-func (suite *KeeperTestSuite) TestFinalizeCda__MissingApproval() {
+func (suite *KeeperTestSuite) TestFinalize__MissingApproval() {
 	k := suite.App.CdaKeeper
 	owners := []*sdk.AccAddress{&suite.TestAccs[0], &suite.TestAccs[1]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda__MissingApproval() {
 		Creator: owners[0].String(),
 		CdaId:   cda.Id,
 	}
-	err := k.FinalizeCda(suite.Ctx, &msg)
+	err := k.Finalize(suite.Ctx, &msg)
 	expectedErr := types.ErrMissingApproval.Wrapf("The CDA with an ID of %d is missing approval from account %s", cda.Id, owners[1].String())
 	suite.EqualError(err, expectedErr.Error())
 
@@ -106,7 +106,7 @@ func (suite *KeeperTestSuite) TestFinalizeCda__MissingApproval() {
 }
 
 // Assert that it fails when already finalized
-func (suite *KeeperTestSuite) TestFinalizeCda_DoubleApproval() {
+func (suite *KeeperTestSuite) TestFinalize_DoubleApproval() {
 	k := suite.App.CdaKeeper
 	owners := []*sdk.AccAddress{&suite.TestAccs[0], &suite.TestAccs[1]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
@@ -120,10 +120,10 @@ func (suite *KeeperTestSuite) TestFinalizeCda_DoubleApproval() {
 		Creator: owners[0].String(),
 		CdaId:   cda.Id,
 	}
-	err := k.FinalizeCda(suite.Ctx, &msg)
+	err := k.Finalize(suite.Ctx, &msg)
 	suite.NoError(err)
 
 	// Assert failure on second finalize message
-	err2 := k.FinalizeCda(suite.Ctx, &msg)
+	err2 := k.Finalize(suite.Ctx, &msg)
 	suite.EqualError(err2, "CDA has already been finalized.")
 }

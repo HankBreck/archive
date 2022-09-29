@@ -16,7 +16,7 @@ import (
 // (1) The CDA does not exist
 // (2) Not all owners have approved the CDA
 // (3) The CDA has already been finalized
-func (k Keeper) FinalizeCda(ctx sdk.Context, msg *types.MsgFinalizeCda) error {
+func (k Keeper) Finalize(ctx sdk.Context, msg *types.MsgFinalizeCda) error {
 	// Load CDA store
 	cdaStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAKey))
 
