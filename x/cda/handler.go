@@ -18,8 +18,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
-		case *types.MsgCreateCDA:
-			res, err := msgServer.CreateCDA(sdk.WrapSDKContext(ctx), msg)
+		case *types.MsgCreateCda:
+			res, err := msgServer.CreateCda(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgApproveCda:
 			res, err := msgServer.ApproveCda(sdk.WrapSDKContext(ctx), msg)

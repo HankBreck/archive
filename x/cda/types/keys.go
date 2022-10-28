@@ -41,6 +41,12 @@ const (
 	// e.g. "CDA-approval-1"
 	CDAApprovalKey = "CDA-approval-"
 
+	// CDAMetadataKey defines the prefix for storing the signing metadata for a specific CDA.
+	// It is intended to be suffixed with the CDA's id
+	//
+	// e.g. "CDA-approval-1"
+	CDAMetadataKey = "CDA-metadata-"
+
 	// Key for the CDA attribute in a cosmos event
 	AttributeKeyCdaId = "cda-id"
 )

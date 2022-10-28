@@ -1,51 +1,73 @@
 package cli
 
 import (
-	"encoding/json"
 	"strconv"
+	"time"
 
 	"archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
+	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdCreateCDA() *cobra.Command {
+const SIGNING_PARTIES = "signing-parties"
+
+func CmdCreateCda() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-cda [cid] [ownership JSON string] [expiration date UNIX timestamp (ms)]",
-		Short: "Broadcast message createCDA",
+		Use:   "create-cda [legal contract ID] [legal metadata URI] [signing data type URI] [signing data stringified]",
+		Short: "Broadcast message CreateCda",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argCid := args[0]
-			argOwnership := args[1]
-			argExpiration := args[2]
-
-			// Unmarshal ownership from JSON string
-			var ownership []*types.Ownership
-			if err := json.Unmarshal([]byte(argOwnership), &ownership); err != nil {
-				return err
-			}
-
-			// Parse uint64 from argument string
-			expiration, err := strconv.ParseUint(argExpiration, 10, 64)
-			if err != nil {
-				return err
-			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreateCDA(
+			// Signing Parties
+			signingParties, err := cmd.Flags().GetStringArray(SIGNING_PARTIES)
+			if err != nil {
+				return err
+			}
+			for _, addr := range signingParties {
+				sdk.MustAccAddressFromBech32(addr)
+			}
+
+			// Contract ID
+			contractId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			// Legal Metadata URI
+			legalMetadataUri := args[1]
+
+			// Signing Data
+			signingData := &sdktypes.Any{
+				TypeUrl: args[2],
+				Value:   []byte(args[3]),
+			}
+
+			// Parse expiration time from argument string
+			// TODO: Figure out how to limit this to UTC times
+			utcExpireTime, err := time.Parse(time.RFC3339, args[3])
+			if err != nil {
+				return err
+			}
+
+			msg := types.NewMsgCreateCda(
 				clientCtx.GetFromAddress().String(),
-				argCid,
-				ownership,
-				expiration,
+				signingParties,
+				contractId,
+				legalMetadataUri,
+				signingData,
+				utcExpireTime,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -53,6 +75,10 @@ func CmdCreateCDA() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	// Signing parties flag
+	cmd.Flags().StringArray(SIGNING_PARTIES, []string{}, "A list of account addresses that are signing parties in the CDA.")
+	cmd.MarkFlagRequired(SIGNING_PARTIES)
 
 	flags.AddTxFlagsToCmd(cmd)
 

@@ -6,20 +6,26 @@ package types
 import (
 	context "context"
 	fmt "fmt"
+	types "github.com/cosmos/cosmos-sdk/codec/types"
+	_ "github.com/gogo/protobuf/gogoproto"
 	grpc1 "github.com/gogo/protobuf/grpc"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -27,25 +33,27 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type MsgCreateCDA struct {
-	Creator    string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	Cid        string       `protobuf:"bytes,2,opt,name=cid,proto3" json:"cid,omitempty"`
-	Ownership  []*Ownership `protobuf:"bytes,3,rep,name=ownership,proto3" json:"ownership,omitempty"`
-	Expiration uint64       `protobuf:"varint,4,opt,name=expiration,proto3" json:"expiration,omitempty"`
+type MsgCreateCda struct {
+	Creator          string     `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	SigningParties   []string   `protobuf:"bytes,2,rep,name=signing_parties,json=signingParties,proto3" json:"signing_parties,omitempty"`
+	ContractId       uint64     `protobuf:"varint,3,opt,name=contract_id,json=contractId,proto3" json:"contract_id,omitempty"`
+	LegalMetadataUri string     `protobuf:"bytes,4,opt,name=legal_metadata_uri,json=legalMetadataUri,proto3" json:"legal_metadata_uri,omitempty"`
+	SigningData      *types.Any `protobuf:"bytes,5,opt,name=signing_data,json=signingData,proto3" json:"signing_data,omitempty"`
+	UtcExpireTime    time.Time  `protobuf:"bytes,6,opt,name=utc_expire_time,json=utcExpireTime,proto3,stdtime" json:"utc_expire_time"`
 }
 
-func (m *MsgCreateCDA) Reset()         { *m = MsgCreateCDA{} }
-func (m *MsgCreateCDA) String() string { return proto.CompactTextString(m) }
-func (*MsgCreateCDA) ProtoMessage()    {}
-func (*MsgCreateCDA) Descriptor() ([]byte, []int) {
+func (m *MsgCreateCda) Reset()         { *m = MsgCreateCda{} }
+func (m *MsgCreateCda) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateCda) ProtoMessage()    {}
+func (*MsgCreateCda) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d9a897423dd22295, []int{0}
 }
-func (m *MsgCreateCDA) XXX_Unmarshal(b []byte) error {
+func (m *MsgCreateCda) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreateCDA) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCreateCda) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreateCDA.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCreateCda.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -55,62 +63,76 @@ func (m *MsgCreateCDA) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return b[:n], nil
 	}
 }
-func (m *MsgCreateCDA) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreateCDA.Merge(m, src)
+func (m *MsgCreateCda) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateCda.Merge(m, src)
 }
-func (m *MsgCreateCDA) XXX_Size() int {
+func (m *MsgCreateCda) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreateCDA) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreateCDA.DiscardUnknown(m)
+func (m *MsgCreateCda) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateCda.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreateCDA proto.InternalMessageInfo
+var xxx_messageInfo_MsgCreateCda proto.InternalMessageInfo
 
-func (m *MsgCreateCDA) GetCreator() string {
+func (m *MsgCreateCda) GetCreator() string {
 	if m != nil {
 		return m.Creator
 	}
 	return ""
 }
 
-func (m *MsgCreateCDA) GetCid() string {
+func (m *MsgCreateCda) GetSigningParties() []string {
 	if m != nil {
-		return m.Cid
-	}
-	return ""
-}
-
-func (m *MsgCreateCDA) GetOwnership() []*Ownership {
-	if m != nil {
-		return m.Ownership
+		return m.SigningParties
 	}
 	return nil
 }
 
-func (m *MsgCreateCDA) GetExpiration() uint64 {
+func (m *MsgCreateCda) GetContractId() uint64 {
 	if m != nil {
-		return m.Expiration
+		return m.ContractId
 	}
 	return 0
 }
 
-type MsgCreateCDAResponse struct {
+func (m *MsgCreateCda) GetLegalMetadataUri() string {
+	if m != nil {
+		return m.LegalMetadataUri
+	}
+	return ""
+}
+
+func (m *MsgCreateCda) GetSigningData() *types.Any {
+	if m != nil {
+		return m.SigningData
+	}
+	return nil
+}
+
+func (m *MsgCreateCda) GetUtcExpireTime() time.Time {
+	if m != nil {
+		return m.UtcExpireTime
+	}
+	return time.Time{}
+}
+
+type MsgCreateCdaResponse struct {
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
-func (m *MsgCreateCDAResponse) Reset()         { *m = MsgCreateCDAResponse{} }
-func (m *MsgCreateCDAResponse) String() string { return proto.CompactTextString(m) }
-func (*MsgCreateCDAResponse) ProtoMessage()    {}
-func (*MsgCreateCDAResponse) Descriptor() ([]byte, []int) {
+func (m *MsgCreateCdaResponse) Reset()         { *m = MsgCreateCdaResponse{} }
+func (m *MsgCreateCdaResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgCreateCdaResponse) ProtoMessage()    {}
+func (*MsgCreateCdaResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_d9a897423dd22295, []int{1}
 }
-func (m *MsgCreateCDAResponse) XXX_Unmarshal(b []byte) error {
+func (m *MsgCreateCdaResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *MsgCreateCDAResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *MsgCreateCdaResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_MsgCreateCDAResponse.Marshal(b, m, deterministic)
+		return xxx_messageInfo_MsgCreateCdaResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -120,19 +142,19 @@ func (m *MsgCreateCDAResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return b[:n], nil
 	}
 }
-func (m *MsgCreateCDAResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgCreateCDAResponse.Merge(m, src)
+func (m *MsgCreateCdaResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgCreateCdaResponse.Merge(m, src)
 }
-func (m *MsgCreateCDAResponse) XXX_Size() int {
+func (m *MsgCreateCdaResponse) XXX_Size() int {
 	return m.Size()
 }
-func (m *MsgCreateCDAResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgCreateCDAResponse.DiscardUnknown(m)
+func (m *MsgCreateCdaResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgCreateCdaResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_MsgCreateCDAResponse proto.InternalMessageInfo
+var xxx_messageInfo_MsgCreateCdaResponse proto.InternalMessageInfo
 
-func (m *MsgCreateCDAResponse) GetId() uint64 {
+func (m *MsgCreateCdaResponse) GetId() uint64 {
 	if m != nil {
 		return m.Id
 	}
@@ -140,9 +162,9 @@ func (m *MsgCreateCDAResponse) GetId() uint64 {
 }
 
 type MsgApproveCda struct {
-	Creator   string       `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	CdaId     uint64       `protobuf:"varint,2,opt,name=cdaId,proto3" json:"cdaId,omitempty"`
-	Ownership []*Ownership `protobuf:"bytes,3,rep,name=ownership,proto3" json:"ownership,omitempty"`
+	Creator     string     `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	CdaId       uint64     `protobuf:"varint,2,opt,name=cda_id,json=cdaId,proto3" json:"cda_id,omitempty"`
+	SigningData *types.Any `protobuf:"bytes,3,opt,name=signing_data,json=signingData,proto3" json:"signing_data,omitempty"`
 }
 
 func (m *MsgApproveCda) Reset()         { *m = MsgApproveCda{} }
@@ -192,9 +214,9 @@ func (m *MsgApproveCda) GetCdaId() uint64 {
 	return 0
 }
 
-func (m *MsgApproveCda) GetOwnership() []*Ownership {
+func (m *MsgApproveCda) GetSigningData() *types.Any {
 	if m != nil {
-		return m.Ownership
+		return m.SigningData
 	}
 	return nil
 }
@@ -237,7 +259,7 @@ var xxx_messageInfo_MsgApproveCdaResponse proto.InternalMessageInfo
 
 type MsgFinalizeCda struct {
 	Creator string `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
-	CdaId   uint64 `protobuf:"varint,2,opt,name=cdaId,proto3" json:"cdaId,omitempty"`
+	CdaId   uint64 `protobuf:"varint,2,opt,name=cda_id,json=cdaId,proto3" json:"cda_id,omitempty"`
 }
 
 func (m *MsgFinalizeCda) Reset()         { *m = MsgFinalizeCda{} }
@@ -324,8 +346,8 @@ func (m *MsgFinalizeCdaResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgFinalizeCdaResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgCreateCDA)(nil), "archive.cda.MsgCreateCDA")
-	proto.RegisterType((*MsgCreateCDAResponse)(nil), "archive.cda.MsgCreateCDAResponse")
+	proto.RegisterType((*MsgCreateCda)(nil), "archive.cda.MsgCreateCda")
+	proto.RegisterType((*MsgCreateCdaResponse)(nil), "archive.cda.MsgCreateCdaResponse")
 	proto.RegisterType((*MsgApproveCda)(nil), "archive.cda.MsgApproveCda")
 	proto.RegisterType((*MsgApproveCdaResponse)(nil), "archive.cda.MsgApproveCdaResponse")
 	proto.RegisterType((*MsgFinalizeCda)(nil), "archive.cda.MsgFinalizeCda")
@@ -335,30 +357,39 @@ func init() {
 func init() { proto.RegisterFile("cda/tx.proto", fileDescriptor_d9a897423dd22295) }
 
 var fileDescriptor_d9a897423dd22295 = []byte{
-	// 361 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x92, 0xcf, 0x6a, 0xea, 0x40,
-	0x14, 0x87, 0x1d, 0x93, 0x7b, 0x2f, 0x1e, 0xff, 0x70, 0xc9, 0xf5, 0xda, 0x34, 0x85, 0x60, 0x53,
-	0x28, 0x6e, 0x1a, 0xc1, 0xf6, 0x01, 0x6a, 0x2d, 0x05, 0xa1, 0x41, 0xc8, 0xb2, 0xbb, 0x69, 0x66,
-	0x88, 0x03, 0x25, 0x33, 0xcc, 0xa4, 0xd6, 0xf6, 0x29, 0x7c, 0xac, 0x2e, 0x5d, 0x76, 0x59, 0xf4,
-	0x01, 0xfa, 0x0a, 0xc5, 0xd8, 0xe8, 0x28, 0xe8, 0xc2, 0x5d, 0xce, 0x7c, 0x39, 0xbf, 0xf9, 0x72,
-	0x72, 0xa0, 0x12, 0x11, 0xdc, 0x4e, 0xc7, 0xbe, 0x90, 0x3c, 0xe5, 0x56, 0x19, 0xcb, 0x68, 0xc8,
-	0x46, 0xd4, 0x8f, 0x08, 0x76, 0xaa, 0x0b, 0x14, 0x11, 0xbc, 0x64, 0xde, 0x04, 0x41, 0x25, 0x50,
-	0x71, 0x4f, 0x52, 0x9c, 0xd2, 0xde, 0x6d, 0xd7, 0xb2, 0xe1, 0x4f, 0xb4, 0x28, 0xb8, 0xb4, 0x51,
-	0x13, 0xb5, 0x4a, 0x61, 0x5e, 0x5a, 0x7f, 0xc1, 0x88, 0x18, 0xb1, 0x8b, 0xd9, 0xe9, 0xe2, 0xd1,
-	0xba, 0x82, 0x12, 0x7f, 0x49, 0xa8, 0x54, 0x43, 0x26, 0x6c, 0xa3, 0x69, 0xb4, 0xca, 0x9d, 0x86,
-	0xaf, 0x5d, 0xe6, 0x0f, 0x72, 0x1a, 0xae, 0x5f, 0xb4, 0x5c, 0x00, 0x3a, 0x16, 0x4c, 0xe2, 0x94,
-	0xf1, 0xc4, 0x36, 0x9b, 0xa8, 0x65, 0x86, 0xda, 0x89, 0x77, 0x0e, 0x75, 0xdd, 0x28, 0xa4, 0x4a,
-	0xf0, 0x44, 0x51, 0xab, 0x06, 0x45, 0x46, 0x32, 0x29, 0x33, 0x2c, 0x32, 0xe2, 0x3d, 0x43, 0x35,
-	0x50, 0x71, 0x57, 0x08, 0xc9, 0x47, 0xb4, 0x47, 0xf0, 0x1e, 0xf5, 0x3a, 0xfc, 0x8a, 0x08, 0xee,
-	0x2f, 0xe5, 0xcd, 0x70, 0x59, 0x1c, 0xa6, 0xef, 0x1d, 0xc1, 0xff, 0x8d, 0x6b, 0x73, 0x3f, 0xef,
-	0x1a, 0x6a, 0x81, 0x8a, 0xef, 0x58, 0x82, 0x9f, 0xd8, 0xdb, 0x21, 0x42, 0x9e, 0x0d, 0x8d, 0xcd,
-	0x84, 0x3c, 0xbb, 0xf3, 0x85, 0xc0, 0x08, 0x54, 0x6c, 0xf5, 0xa1, 0xb4, 0xfe, 0x55, 0xc7, 0x1b,
-	0xb2, 0xfa, 0xcc, 0x9c, 0xd3, 0x9d, 0x68, 0x35, 0xce, 0x7b, 0x00, 0x6d, 0x76, 0xce, 0x76, 0xc3,
-	0x9a, 0x39, 0xde, 0x6e, 0xb6, 0x4a, 0x1b, 0x40, 0x59, 0xff, 0xf2, 0x93, 0xed, 0x16, 0x0d, 0x3a,
-	0x67, 0x7b, 0x60, 0x1e, 0x78, 0x73, 0xf1, 0x3e, 0x73, 0xd1, 0x74, 0xe6, 0xa2, 0xcf, 0x99, 0x8b,
-	0x26, 0x73, 0xb7, 0x30, 0x9d, 0xbb, 0x85, 0x8f, 0xb9, 0x5b, 0x78, 0xf8, 0xf7, 0xd3, 0xdd, 0x1e,
-	0xb7, 0xb3, 0x35, 0x7f, 0x15, 0x54, 0x3d, 0xfe, 0xce, 0xd6, 0xf9, 0xf2, 0x3b, 0x00, 0x00, 0xff,
-	0xff, 0x68, 0x57, 0xf9, 0xbf, 0xfa, 0x02, 0x00, 0x00,
+	// 503 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0xcf, 0x6e, 0xd3, 0x4e,
+	0x10, 0xc7, 0xe3, 0x24, 0xcd, 0xef, 0x97, 0xc9, 0x9f, 0x22, 0x93, 0x82, 0x6b, 0x24, 0x27, 0x18,
+	0x09, 0x72, 0x00, 0x5b, 0x2a, 0x07, 0xce, 0x69, 0x01, 0x29, 0x52, 0x23, 0x90, 0x05, 0x17, 0x2e,
+	0xd6, 0x76, 0x77, 0x59, 0x56, 0x4a, 0xbc, 0xd6, 0xee, 0xa6, 0x4a, 0x78, 0x8a, 0xbe, 0x05, 0xaf,
+	0xd2, 0x63, 0x8f, 0x9c, 0x00, 0x25, 0x0f, 0xc0, 0x2b, 0x20, 0x6f, 0xec, 0xd6, 0x4d, 0x55, 0x40,
+	0xdc, 0x76, 0xe6, 0x33, 0xdf, 0x99, 0x9d, 0xaf, 0xd7, 0xd0, 0xc6, 0x04, 0x85, 0x7a, 0x11, 0xa4,
+	0x52, 0x68, 0x61, 0xb7, 0x90, 0xc4, 0x9f, 0xf8, 0x29, 0x0d, 0x30, 0x41, 0x6e, 0x27, 0x43, 0x98,
+	0xa0, 0x0d, 0x73, 0x7b, 0x4c, 0x30, 0x61, 0x8e, 0x61, 0x76, 0xca, 0xb3, 0x7d, 0x26, 0x04, 0x9b,
+	0xd2, 0xd0, 0x44, 0x27, 0xf3, 0x8f, 0xa1, 0xe6, 0x33, 0xaa, 0x34, 0x9a, 0xa5, 0x79, 0xc1, 0xfe,
+	0x76, 0x01, 0x4a, 0x96, 0x1b, 0xe4, 0x7f, 0xa9, 0x42, 0x7b, 0xa2, 0xd8, 0x91, 0xa4, 0x48, 0xd3,
+	0x23, 0x82, 0x6c, 0x07, 0xfe, 0xc3, 0x59, 0x20, 0xa4, 0x63, 0x0d, 0xac, 0x61, 0x33, 0x2a, 0x42,
+	0xfb, 0x09, 0xec, 0x2a, 0xce, 0x12, 0x9e, 0xb0, 0x38, 0x45, 0x52, 0x73, 0xaa, 0x9c, 0xea, 0xa0,
+	0x36, 0x6c, 0x46, 0xdd, 0x3c, 0xfd, 0x76, 0x93, 0xb5, 0xfb, 0xd0, 0xc2, 0x22, 0xd1, 0x12, 0x61,
+	0x1d, 0x73, 0xe2, 0xd4, 0x06, 0xd6, 0xb0, 0x1e, 0x41, 0x91, 0x1a, 0x13, 0xfb, 0x29, 0xd8, 0x53,
+	0xca, 0xd0, 0x34, 0x9e, 0x51, 0x8d, 0x08, 0xd2, 0x28, 0x9e, 0x4b, 0xee, 0xd4, 0xcd, 0xb8, 0x3b,
+	0x86, 0x4c, 0x72, 0xf0, 0x5e, 0x72, 0xfb, 0x05, 0xb4, 0x8b, 0xb9, 0x59, 0xca, 0xd9, 0x19, 0x58,
+	0xc3, 0xd6, 0x41, 0x2f, 0xd8, 0x2c, 0x15, 0x14, 0x4b, 0x05, 0xa3, 0x64, 0x19, 0xb5, 0xf2, 0xca,
+	0x97, 0x48, 0x23, 0xfb, 0x18, 0x76, 0xe7, 0x1a, 0xc7, 0x74, 0x91, 0x72, 0x49, 0xe3, 0xcc, 0x14,
+	0xa7, 0x61, 0xb4, 0xee, 0x0d, 0xed, 0xbb, 0xc2, 0xb1, 0xc3, 0xff, 0xcf, 0xbf, 0xf5, 0x2b, 0x67,
+	0xdf, 0xfb, 0x56, 0xd4, 0x99, 0x6b, 0xfc, 0xca, 0x68, 0x33, 0xea, 0x3f, 0x86, 0x5e, 0xd9, 0xa8,
+	0x88, 0xaa, 0x54, 0x24, 0x8a, 0xda, 0x5d, 0xa8, 0x72, 0x62, 0xbc, 0xaa, 0x47, 0x55, 0x4e, 0xfc,
+	0x25, 0x74, 0x26, 0x8a, 0x8d, 0xd2, 0x54, 0x8a, 0xd3, 0x3f, 0x38, 0xba, 0x07, 0x0d, 0x4c, 0x50,
+	0xe6, 0x51, 0xd5, 0xc8, 0x77, 0x30, 0x41, 0x63, 0x72, 0x63, 0xe1, 0xda, 0x5f, 0x2e, 0xec, 0xdf,
+	0x87, 0xbd, 0x6b, 0xa3, 0x8b, 0x3b, 0xfa, 0x23, 0xe8, 0x4e, 0x14, 0x7b, 0xcd, 0x13, 0x34, 0xe5,
+	0x9f, 0xff, 0xe9, 0x52, 0xbe, 0x03, 0xf7, 0xae, 0xb7, 0x28, 0x9a, 0x1f, 0xfc, 0xb4, 0xa0, 0x36,
+	0x51, 0xcc, 0x1e, 0x43, 0xf3, 0xea, 0x19, 0xed, 0x07, 0xa5, 0x67, 0x1c, 0x94, 0x8d, 0x73, 0x1f,
+	0xde, 0x8a, 0x2e, 0x3d, 0x3d, 0x06, 0x28, 0x19, 0xe8, 0x6e, 0x0b, 0xae, 0x98, 0xeb, 0xdf, 0xce,
+	0x2e, 0xbb, 0xbd, 0x81, 0x56, 0x79, 0xf5, 0x07, 0xdb, 0x92, 0x12, 0x74, 0x1f, 0xfd, 0x06, 0x16,
+	0x0d, 0x0f, 0x9f, 0x9d, 0xaf, 0x3c, 0xeb, 0x62, 0xe5, 0x59, 0x3f, 0x56, 0x9e, 0x75, 0xb6, 0xf6,
+	0x2a, 0x17, 0x6b, 0xaf, 0xf2, 0x75, 0xed, 0x55, 0x3e, 0xdc, 0xcd, 0xd5, 0xe1, 0x22, 0x34, 0x3f,
+	0xf5, 0x32, 0xa5, 0xea, 0xa4, 0x61, 0xbe, 0xd8, 0xf3, 0x5f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x96,
+	0xd8, 0x62, 0xf9, 0xe8, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -373,7 +404,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	CreateCDA(ctx context.Context, in *MsgCreateCDA, opts ...grpc.CallOption) (*MsgCreateCDAResponse, error)
+	CreateCda(ctx context.Context, in *MsgCreateCda, opts ...grpc.CallOption) (*MsgCreateCdaResponse, error)
 	ApproveCda(ctx context.Context, in *MsgApproveCda, opts ...grpc.CallOption) (*MsgApproveCdaResponse, error)
 	FinalizeCda(ctx context.Context, in *MsgFinalizeCda, opts ...grpc.CallOption) (*MsgFinalizeCdaResponse, error)
 }
@@ -386,9 +417,9 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 	return &msgClient{cc}
 }
 
-func (c *msgClient) CreateCDA(ctx context.Context, in *MsgCreateCDA, opts ...grpc.CallOption) (*MsgCreateCDAResponse, error) {
-	out := new(MsgCreateCDAResponse)
-	err := c.cc.Invoke(ctx, "/archive.cda.Msg/CreateCDA", in, out, opts...)
+func (c *msgClient) CreateCda(ctx context.Context, in *MsgCreateCda, opts ...grpc.CallOption) (*MsgCreateCdaResponse, error) {
+	out := new(MsgCreateCdaResponse)
+	err := c.cc.Invoke(ctx, "/archive.cda.Msg/CreateCda", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -415,7 +446,7 @@ func (c *msgClient) FinalizeCda(ctx context.Context, in *MsgFinalizeCda, opts ..
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	CreateCDA(context.Context, *MsgCreateCDA) (*MsgCreateCDAResponse, error)
+	CreateCda(context.Context, *MsgCreateCda) (*MsgCreateCdaResponse, error)
 	ApproveCda(context.Context, *MsgApproveCda) (*MsgApproveCdaResponse, error)
 	FinalizeCda(context.Context, *MsgFinalizeCda) (*MsgFinalizeCdaResponse, error)
 }
@@ -424,8 +455,8 @@ type MsgServer interface {
 type UnimplementedMsgServer struct {
 }
 
-func (*UnimplementedMsgServer) CreateCDA(ctx context.Context, req *MsgCreateCDA) (*MsgCreateCDAResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCDA not implemented")
+func (*UnimplementedMsgServer) CreateCda(ctx context.Context, req *MsgCreateCda) (*MsgCreateCdaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCda not implemented")
 }
 func (*UnimplementedMsgServer) ApproveCda(ctx context.Context, req *MsgApproveCda) (*MsgApproveCdaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ApproveCda not implemented")
@@ -438,20 +469,20 @@ func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
 	s.RegisterService(&_Msg_serviceDesc, srv)
 }
 
-func _Msg_CreateCDA_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MsgCreateCDA)
+func _Msg_CreateCda_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateCda)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MsgServer).CreateCDA(ctx, in)
+		return srv.(MsgServer).CreateCda(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/archive.cda.Msg/CreateCDA",
+		FullMethod: "/archive.cda.Msg/CreateCda",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MsgServer).CreateCDA(ctx, req.(*MsgCreateCDA))
+		return srv.(MsgServer).CreateCda(ctx, req.(*MsgCreateCda))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -497,8 +528,8 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateCDA",
-			Handler:    _Msg_CreateCDA_Handler,
+			MethodName: "CreateCda",
+			Handler:    _Msg_CreateCda_Handler,
 		},
 		{
 			MethodName: "ApproveCda",
@@ -513,7 +544,7 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	Metadata: "cda/tx.proto",
 }
 
-func (m *MsgCreateCDA) Marshal() (dAtA []byte, err error) {
+func (m *MsgCreateCda) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -523,41 +554,56 @@ func (m *MsgCreateCDA) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreateCDA) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCreateCda) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreateCDA) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCreateCda) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Expiration != 0 {
-		i = encodeVarintTx(dAtA, i, uint64(m.Expiration))
-		i--
-		dAtA[i] = 0x20
+	n1, err1 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.UtcExpireTime, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.UtcExpireTime):])
+	if err1 != nil {
+		return 0, err1
 	}
-	if len(m.Ownership) > 0 {
-		for iNdEx := len(m.Ownership) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Ownership[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTx(dAtA, i, uint64(size))
+	i -= n1
+	i = encodeVarintTx(dAtA, i, uint64(n1))
+	i--
+	dAtA[i] = 0x32
+	if m.SigningData != nil {
+		{
+			size, err := m.SigningData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			i--
-			dAtA[i] = 0x1a
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
 		}
-	}
-	if len(m.Cid) > 0 {
-		i -= len(m.Cid)
-		copy(dAtA[i:], m.Cid)
-		i = encodeVarintTx(dAtA, i, uint64(len(m.Cid)))
 		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x2a
+	}
+	if len(m.LegalMetadataUri) > 0 {
+		i -= len(m.LegalMetadataUri)
+		copy(dAtA[i:], m.LegalMetadataUri)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.LegalMetadataUri)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.ContractId != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.ContractId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.SigningParties) > 0 {
+		for iNdEx := len(m.SigningParties) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.SigningParties[iNdEx])
+			copy(dAtA[i:], m.SigningParties[iNdEx])
+			i = encodeVarintTx(dAtA, i, uint64(len(m.SigningParties[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
 	}
 	if len(m.Creator) > 0 {
 		i -= len(m.Creator)
@@ -569,7 +615,7 @@ func (m *MsgCreateCDA) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *MsgCreateCDAResponse) Marshal() (dAtA []byte, err error) {
+func (m *MsgCreateCdaResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -579,12 +625,12 @@ func (m *MsgCreateCDAResponse) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *MsgCreateCDAResponse) MarshalTo(dAtA []byte) (int, error) {
+func (m *MsgCreateCdaResponse) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *MsgCreateCDAResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *MsgCreateCdaResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -617,19 +663,17 @@ func (m *MsgApproveCda) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Ownership) > 0 {
-		for iNdEx := len(m.Ownership) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Ownership[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTx(dAtA, i, uint64(size))
+	if m.SigningData != nil {
+		{
+			size, err := m.SigningData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			i--
-			dAtA[i] = 0x1a
+			i -= size
+			i = encodeVarintTx(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.CdaId != 0 {
 		i = encodeVarintTx(dAtA, i, uint64(m.CdaId))
@@ -738,7 +782,7 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *MsgCreateCDA) Size() (n int) {
+func (m *MsgCreateCda) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -748,23 +792,29 @@ func (m *MsgCreateCDA) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
-	l = len(m.Cid)
-	if l > 0 {
-		n += 1 + l + sovTx(uint64(l))
-	}
-	if len(m.Ownership) > 0 {
-		for _, e := range m.Ownership {
-			l = e.Size()
+	if len(m.SigningParties) > 0 {
+		for _, s := range m.SigningParties {
+			l = len(s)
 			n += 1 + l + sovTx(uint64(l))
 		}
 	}
-	if m.Expiration != 0 {
-		n += 1 + sovTx(uint64(m.Expiration))
+	if m.ContractId != 0 {
+		n += 1 + sovTx(uint64(m.ContractId))
 	}
+	l = len(m.LegalMetadataUri)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if m.SigningData != nil {
+		l = m.SigningData.Size()
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.UtcExpireTime)
+	n += 1 + l + sovTx(uint64(l))
 	return n
 }
 
-func (m *MsgCreateCDAResponse) Size() (n int) {
+func (m *MsgCreateCdaResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -789,11 +839,9 @@ func (m *MsgApproveCda) Size() (n int) {
 	if m.CdaId != 0 {
 		n += 1 + sovTx(uint64(m.CdaId))
 	}
-	if len(m.Ownership) > 0 {
-		for _, e := range m.Ownership {
-			l = e.Size()
-			n += 1 + l + sovTx(uint64(l))
-		}
+	if m.SigningData != nil {
+		l = m.SigningData.Size()
+		n += 1 + l + sovTx(uint64(l))
 	}
 	return n
 }
@@ -838,7 +886,7 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
+func (m *MsgCreateCda) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -861,10 +909,10 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateCDA: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCreateCda: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateCDA: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCreateCda: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -901,7 +949,7 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SigningParties", wireType)
 			}
 			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
@@ -929,11 +977,62 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Cid = string(dAtA[iNdEx:postIndex])
+			m.SigningParties = append(m.SigningParties, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ContractId", wireType)
+			}
+			m.ContractId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ContractId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ownership", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field LegalMetadataUri", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.LegalMetadataUri = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SigningData", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -960,16 +1059,18 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Ownership = append(m.Ownership, &Ownership{})
-			if err := m.Ownership[len(m.Ownership)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if m.SigningData == nil {
+				m.SigningData = &types.Any{}
+			}
+			if err := m.SigningData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Expiration", wireType)
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UtcExpireTime", wireType)
 			}
-			m.Expiration = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTx
@@ -979,11 +1080,25 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Expiration |= uint64(b&0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.UtcExpireTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1005,7 +1120,7 @@ func (m *MsgCreateCDA) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *MsgCreateCDAResponse) Unmarshal(dAtA []byte) error {
+func (m *MsgCreateCdaResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1028,10 +1143,10 @@ func (m *MsgCreateCDAResponse) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: MsgCreateCDAResponse: wiretype end group for non-group")
+			return fmt.Errorf("proto: MsgCreateCdaResponse: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgCreateCDAResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: MsgCreateCdaResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1156,7 +1271,7 @@ func (m *MsgApproveCda) Unmarshal(dAtA []byte) error {
 			}
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ownership", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SigningData", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1183,8 +1298,10 @@ func (m *MsgApproveCda) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Ownership = append(m.Ownership, &Ownership{})
-			if err := m.Ownership[len(m.Ownership)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if m.SigningData == nil {
+				m.SigningData = &types.Any{}
+			}
+			if err := m.SigningData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

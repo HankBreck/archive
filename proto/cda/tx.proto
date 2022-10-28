@@ -2,44 +2,50 @@ syntax = "proto3";
 package archive.cda;
 
 import "cda/cda.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "archive/x/cda/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc CreateCDA(MsgCreateCDA) returns (MsgCreateCDAResponse);
-  rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
-  rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
+    rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
+    rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
+    rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
-message MsgCreateCDA {
-  string creator = 1;
-  string cid = 2;
-  repeated Ownership ownership = 3;
-  uint64 expiration = 4;
+message MsgCreateCda {
+	string creator = 1;
+	repeated string signing_parties = 2;
+	uint64 contract_id = 3;
+	string legal_metadata_uri = 4;
+    google.protobuf.Any signing_data = 5;
+	google.protobuf.Timestamp utc_expire_time = 6 [
+        (gogoproto.stdtime) = true,
+        (gogoproto.nullable) = false
+    ];
 }
 
-message MsgCreateCDAResponse {
+message MsgCreateCdaResponse {
   uint64 id = 1;
 }
 
 message MsgApproveCda {
   string creator = 1;
-  uint64 cdaId = 2;
-  repeated Ownership ownership = 3;
+  uint64 cda_id = 2;
+  google.protobuf.Any signing_data = 3;
 }
 
-message MsgApproveCdaResponse {
-}
+message MsgApproveCdaResponse {}
 
 message MsgFinalizeCda {
   string creator = 1;
-  uint64 cdaId = 2;
+  uint64 cda_id = 2;
 }
 
-message MsgFinalizeCdaResponse {
-}
+message MsgFinalizeCdaResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

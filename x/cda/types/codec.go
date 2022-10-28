@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgCreateCDA{}, "cda/CreateCDA", nil)
+	cdc.RegisterConcrete(&MsgCreateCda{}, "cda/CreateCda", nil)
 	cdc.RegisterConcrete(&MsgApproveCda{}, "cda/ApproveCda", nil)
 	cdc.RegisterConcrete(&MsgFinalizeCda{}, "cda/FinalizeCda", nil)
 	// this line is used by starport scaffolding # 2
@@ -16,7 +16,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreateCDA{},
+		&MsgCreateCda{},
 	)
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgApproveCda{},

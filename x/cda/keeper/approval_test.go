@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"archive/x/cda/types"
 
+	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -11,13 +12,11 @@ func (suite *KeeperTestSuite) TestSetApproval() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
 
-	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owners[0].String(),
-		CdaId:     ids[0],
-		Ownership: ownerships,
+		Creator:     owners[0].String(),
+		CdaId:       ids[0],
+		SigningData: suite.GetSigningData(),
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
 	suite.NoError(err)
@@ -28,13 +27,10 @@ func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
-
-	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owners[0].String(),
-		CdaId:     ids[0],
-		Ownership: ownerships,
+		Creator:     owners[0].String(),
+		CdaId:       ids[0],
+		SigningData: suite.GetSigningData(),
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
 	suite.NoError(err)
@@ -47,58 +43,34 @@ func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
 // Assert fails with error on a CdaId that does not exist
 func (suite *KeeperTestSuite) TestSetApproval_NonexistentCdaId() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	_ = suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
-
-	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   owners[0].String(),
-		CdaId:     1, // id of 1 does not exist
-		Ownership: ownerships,
+		Creator:     owners[0].String(),
+		CdaId:       uint64(2), // The id 2 is not set in state
+		SigningData: suite.GetSigningData(),
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
 	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
 }
 
-// Assert fails with error on invalid ownership length
-func (suite *KeeperTestSuite) TestSetApproval_InvalidOwnershipLength() {
+// Assert fails with error on invalid signing data
+func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
 
-	ownerships := (*cdas[0]).Ownership
-	extraOwnership := types.Ownership{
-		Owner:     suite.TestAccs[1].String(),
-		Ownership: 10,
+	invalidSigningData := &sdktypes.Any{
+		TypeUrl: "archive/Test prime",
+		Value:   []byte("{\"test prime\": 1}"),
 	}
-	ownerships = append(ownerships, &extraOwnership)
 	msg := types.MsgApproveCda{
-		Creator:   owners[0].String(),
-		CdaId:     ids[0],
-		Ownership: ownerships,
+		Creator:     owners[0].String(),
+		CdaId:       ids[0],
+		SigningData: invalidSigningData,
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
-	suite.EqualError(err, "Invalid ownership map")
-}
-
-// Assert fails with error on mismatched ownerships
-func (suite *KeeperTestSuite) TestSetApproval_WrongOwnership() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
-	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
-
-	ownerships := (*cdas[0]).Ownership
-	ownerships[0].Ownership += 1 // Edit the real Ownership struct
-	msg := types.MsgApproveCda{
-		Creator:   owners[0].String(),
-		CdaId:     ids[0],
-		Ownership: ownerships,
-	}
-	err := k.SetApproval(suite.Ctx, &msg)
-	suite.EqualError(err, "Invalid ownership map")
+	suite.EqualError(err, "Signing data provided does not match the signing data stored in the CDA.")
 }
 
 // Assert fails with error on non-owner Creator
@@ -106,14 +78,26 @@ func (suite *KeeperTestSuite) TestSetApproval_UnauthorizedCreator() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	cdas := suite.GetCdas(ids)
-
-	ownerships := (*cdas[0]).Ownership
 	msg := types.MsgApproveCda{
-		Creator:   suite.TestAccs[1].String(),
-		CdaId:     ids[0],
-		Ownership: ownerships,
+		Creator:     suite.TestAccs[1].String(),
+		CdaId:       ids[0],
+		SigningData: suite.GetSigningData(),
 	}
 	err := k.SetApproval(suite.Ctx, &msg)
 	suite.EqualError(err, "Signer is not an owner of cda 0: unauthorized")
+}
+
+// Assert fails with error on invalid cda.Status
+func (suite *KeeperTestSuite) TestSetApproval_WrongStatus() {
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	id := suite.PrepareVoidedCdaForSigners(signers)
+	k := suite.App.CdaKeeper
+
+	msg := types.MsgApproveCda{
+		Creator:     signers[0].String(),
+		CdaId:       id,
+		SigningData: suite.GetSigningData(),
+	}
+	err := k.SetApproval(suite.Ctx, &msg)
+	suite.EqualError(err, "The CDA must have a status of pending to be approved: The CDA's status did not match the expected status.")
 }

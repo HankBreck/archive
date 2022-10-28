@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"archive/x/cda/types"
-	"encoding/binary"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -15,55 +14,68 @@ import (
 // Returns an error if:
 //
 // (1) The CDA does not exist
-// (2) The message's Ownership object does not match the stored Ownership object
+// (2) The message's SigningData does not match the stored SigningData
 // (3) The Creator has already approved the CDA
 func (k Keeper) SetApproval(ctx sdk.Context, msg *types.MsgApproveCda) error {
 	// Validate Creator address
-	signer := sdk.MustAccAddressFromBech32(msg.Creator)
+	msgSigner := sdk.MustAccAddressFromBech32(msg.Creator)
 
 	// Ensure the CDA exists
-	cdaStore := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAKey))
-	bzCdaId := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzCdaId, msg.CdaId)
-	bzCda := cdaStore.Get(bzCdaId)
-	if bzCda == nil {
-		return types.ErrNonExistentCdaId
-	}
-	var cda types.CDA
-	if err := k.cdc.Unmarshal(bzCda, &cda); err != nil {
+	cda, err := k.GetCDA(ctx, msg.CdaId)
+	if err != nil {
 		return err
 	}
 
-	// Ensure msg.Ownership matches cda.Ownership
-	includesSender := false
-	if len(msg.Ownership) != len(cda.Ownership) {
-		// TODO: make a more informative error type / message
-		return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list length")
+	// Only allow approvals when in the pending state
+	if cda.Status != types.CDA_Pending {
+		return types.ErrInvalidCdaStatus.Wrap("The CDA must have a status of pending to be approved")
 	}
-	for i := range msg.Ownership {
-		// Ensure the sender is an owner
-		if msg.Ownership[i].Owner == signer.String() {
+
+	// Ensure signing data matches
+	metadata, err := k.GetMetadata(ctx, msg.CdaId)
+	if err != nil {
+		return err
+	}
+	if !metadata.Equal(msg.SigningData) {
+		return types.ErrInvalidSigningData
+	}
+
+	// Ensure the sender is a valid signer
+	includesSender := false
+	for _, party := range cda.SigningParties {
+		if msgSigner.String() == party {
 			includesSender = true
 		}
-
-		if *msg.Ownership[i] != *cda.Ownership[i] {
-			return sdkerrors.Wrap(types.ErrInvalidOwnership, "wrong ownership list order")
-		}
 	}
-
 	if !includesSender {
 		return sdkerrors.ErrUnauthorized.Wrapf("Signer is not an owner of cda %d", msg.CdaId)
 	}
 
-	// Check if Creator has already approved the CDA
-	keySuffix := strconv.FormatUint(msg.CdaId, 10)
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAApprovalKey+keySuffix))
-	bzApproval := store.Get(signer.Bytes())
-	if bzApproval != nil {
+	// Check if msgSigner has already approved the CDA
+	if k.HasApproval(ctx, msg.CdaId, msgSigner) {
 		return types.ErrExistingApproval
 	}
 
 	// If not, update the store to include their address
-	store.Set(signer.Bytes(), signer.Bytes())
+	k.uncheckedSetApproval(ctx, msg.CdaId, msgSigner)
 	return nil
+}
+
+// Checks if the store contains an entry for signer.
+// Returns true if an entry is found
+func (k Keeper) HasApproval(ctx sdk.Context, cdaId uint64, signer sdk.AccAddress) bool {
+	store := k.getApprovalStore(ctx, cdaId)
+	bzApproval := store.Get(signer.Bytes())
+	return bzApproval != nil
+}
+
+func (k Keeper) uncheckedSetApproval(ctx sdk.Context, cdaId uint64, signer sdk.AccAddress) {
+	store := k.getApprovalStore(ctx, cdaId)
+	store.Set(signer.Bytes(), []byte("x"))
+}
+
+func (k Keeper) getApprovalStore(ctx sdk.Context, cdaId uint64) prefix.Store {
+	keySuffix := strconv.FormatUint(cdaId, 10)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAApprovalKey+keySuffix))
+	return store
 }

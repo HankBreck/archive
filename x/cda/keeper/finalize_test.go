@@ -7,19 +7,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func approveAll(k keeper.Keeper, ctx sdk.Context, cda *types.CDA, owners []*sdk.AccAddress) {
+func (suite *KeeperTestSuite) approveSigners(k keeper.Keeper, ctx sdk.Context, cda types.CDA, parties []*sdk.AccAddress) {
 	// Send approval for each owner
-	ownerships := (*cda).Ownership
-	for _, owner := range owners {
-		msg := types.MsgApproveCda{
-			Creator:   owner.String(),
-			CdaId:     cda.Id,
-			Ownership: ownerships,
-		}
-		err := k.SetApproval(ctx, &msg)
-		if err != nil {
-			panic(err)
-		}
+	for _, party := range parties {
+		suite.ApproveCda(cda.Id, party)
 	}
 }
 
@@ -31,7 +22,7 @@ func (suite *KeeperTestSuite) TestFinalize() {
 	cdas := suite.GetCdas(ids)
 	cda := cdas[0]
 
-	approveAll(k, suite.Ctx, cda, owners)
+	suite.approveSigners(k, suite.Ctx, *cda, owners)
 
 	// Send finalize message
 	msg := types.MsgFinalizeCda{
@@ -46,7 +37,7 @@ func (suite *KeeperTestSuite) TestFinalize() {
 	}
 	res, err := suite.queryClient.Cda(suite.Ctx.Context(), &queryMsg)
 	suite.NoError(err)
-	suite.True(res.Cda.Approved)
+	suite.Equal(res.Cda.Status, types.CDA_Finalized)
 }
 
 // Assert that it fails on nonexisting CdaId
@@ -57,7 +48,7 @@ func (suite *KeeperTestSuite) TestFinalize__NonexistentCdaId() {
 	cdas := suite.GetCdas(ids)
 	cda := cdas[0]
 
-	approveAll(k, suite.Ctx, cda, owners)
+	suite.approveSigners(k, suite.Ctx, *cda, owners)
 
 	// Send finalize message with a nonexistent CdaId
 	msg := types.MsgFinalizeCda{
@@ -73,7 +64,7 @@ func (suite *KeeperTestSuite) TestFinalize__NonexistentCdaId() {
 	}
 	res, err := suite.queryClient.Cda(suite.Ctx.Context(), &queryMsg)
 	suite.NoError(err)
-	suite.False(res.Cda.Approved)
+	suite.Equal(res.Cda.Status, cda.Status)
 }
 
 // Assert that it fails when missing approvals
@@ -85,7 +76,7 @@ func (suite *KeeperTestSuite) TestFinalize__MissingApproval() {
 	cda := cdas[0]
 
 	// Send approval from owners[0] but not owners[1]
-	approveAll(k, suite.Ctx, cda, owners[:1])
+	suite.approveSigners(k, suite.Ctx, *cda, owners[:1])
 
 	// Send finalize message with a nonexistent CdaId
 	msg := types.MsgFinalizeCda{
@@ -102,7 +93,7 @@ func (suite *KeeperTestSuite) TestFinalize__MissingApproval() {
 	}
 	res, err := suite.queryClient.Cda(suite.Ctx.Context(), &queryMsg)
 	suite.NoError(err)
-	suite.False(res.Cda.Approved)
+	suite.Equal(res.Cda.Status, cda.Status)
 }
 
 // Assert that it fails when already finalized
@@ -113,7 +104,7 @@ func (suite *KeeperTestSuite) TestFinalize_DoubleApproval() {
 	cdas := suite.GetCdas(ids)
 	cda := cdas[0]
 
-	approveAll(k, suite.Ctx, cda, owners)
+	suite.approveSigners(k, suite.Ctx, *cda, owners)
 
 	// Send finalize message
 	msg := types.MsgFinalizeCda{

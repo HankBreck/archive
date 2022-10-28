@@ -1,16 +1,27 @@
 syntax = "proto3";
-
 package archive.cda;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
 
 option go_package = "archive/x/cda/types";
 
 message CDA {
+    enum ContractStatus {
+        Pending = 0;
+        Finalized = 1;
+        Voided = 2;
+    }
     string creator = 1;
     uint64 id = 2;
-    string cid = 3;
-    repeated Ownership ownership = 4;
-    uint64 expiration = 5;
-    bool approved = 6;
+    repeated string signing_parties = 3;
+    uint64 contract_id = 4;
+    string legal_metadata_uri = 5;
+    google.protobuf.Timestamp utc_expire_time = 6 [
+        (gogoproto.stdtime) = true,
+        (gogoproto.nullable) = false
+    ];
+    ContractStatus status = 7;
 }
 
 message Ownership {

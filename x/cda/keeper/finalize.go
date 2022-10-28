@@ -31,8 +31,8 @@ func (k Keeper) Finalize(ctx sdk.Context, msg *types.MsgFinalizeCda) error {
 		return err
 	}
 
-	// Do not allow multiple final approvals
-	if cda.Approved {
+	// Do not allow CDA to by finalized from Void or Finalized states
+	if cda.Status != types.CDA_Pending {
 		return types.ErrAlreadyFinalized
 	}
 
@@ -41,8 +41,8 @@ func (k Keeper) Finalize(ctx sdk.Context, msg *types.MsgFinalizeCda) error {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CDAApprovalKey+keySuffix))
 
 	// Ensure each owner has approved this CDA
-	for _, owner := range cda.Ownership {
-		acc, err := sdk.AccAddressFromBech32(owner.Owner)
+	for _, owner := range cda.SigningParties {
+		acc, err := sdk.AccAddressFromBech32(owner)
 		if err != nil {
 			// All addresses should be pre-verified, halt chain if this is not the case
 			panic(err)
@@ -53,7 +53,7 @@ func (k Keeper) Finalize(ctx sdk.Context, msg *types.MsgFinalizeCda) error {
 	}
 
 	// If so, update CDA with Approved set to true and store
-	cda.Approved = true
+	cda.Status = types.CDA_Finalized
 	newBzCda := k.cdc.MustMarshal(&cda)
 	cdaStore.Set(bzCdaId, newBzCda)
 	return nil
