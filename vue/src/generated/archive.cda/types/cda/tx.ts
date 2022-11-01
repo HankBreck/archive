@@ -11,7 +11,7 @@ export interface MsgCreateCda {
   signingParties: string[];
   contractId: number;
   legalMetadataUri: string;
-  signingData: Any[];
+  signingData: Any | undefined;
   utcExpireTime: Date | undefined;
 }
 
@@ -22,7 +22,7 @@ export interface MsgCreateCdaResponse {
 export interface MsgApproveCda {
   creator: string;
   cdaId: number;
-  signingData: Any[];
+  signingData: Any | undefined;
 }
 
 export interface MsgApproveCdaResponse {}
@@ -55,8 +55,8 @@ export const MsgCreateCda = {
     if (message.legalMetadataUri !== "") {
       writer.uint32(34).string(message.legalMetadataUri);
     }
-    for (const v of message.signingData) {
-      Any.encode(v!, writer.uint32(42).fork()).ldelim();
+    if (message.signingData !== undefined) {
+      Any.encode(message.signingData, writer.uint32(42).fork()).ldelim();
     }
     if (message.utcExpireTime !== undefined) {
       Timestamp.encode(
@@ -72,7 +72,6 @@ export const MsgCreateCda = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgCreateCda } as MsgCreateCda;
     message.signingParties = [];
-    message.signingData = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -89,7 +88,7 @@ export const MsgCreateCda = {
           message.legalMetadataUri = reader.string();
           break;
         case 5:
-          message.signingData.push(Any.decode(reader, reader.uint32()));
+          message.signingData = Any.decode(reader, reader.uint32());
           break;
         case 6:
           message.utcExpireTime = fromTimestamp(
@@ -107,7 +106,6 @@ export const MsgCreateCda = {
   fromJSON(object: any): MsgCreateCda {
     const message = { ...baseMsgCreateCda } as MsgCreateCda;
     message.signingParties = [];
-    message.signingData = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -132,9 +130,9 @@ export const MsgCreateCda = {
       message.legalMetadataUri = "";
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      for (const e of object.signingData) {
-        message.signingData.push(Any.fromJSON(e));
-      }
+      message.signingData = Any.fromJSON(object.signingData);
+    } else {
+      message.signingData = undefined;
     }
     if (object.utcExpireTime !== undefined && object.utcExpireTime !== null) {
       message.utcExpireTime = fromJsonTimestamp(object.utcExpireTime);
@@ -155,13 +153,10 @@ export const MsgCreateCda = {
     message.contractId !== undefined && (obj.contractId = message.contractId);
     message.legalMetadataUri !== undefined &&
       (obj.legalMetadataUri = message.legalMetadataUri);
-    if (message.signingData) {
-      obj.signingData = message.signingData.map((e) =>
-        e ? Any.toJSON(e) : undefined
-      );
-    } else {
-      obj.signingData = [];
-    }
+    message.signingData !== undefined &&
+      (obj.signingData = message.signingData
+        ? Any.toJSON(message.signingData)
+        : undefined);
     message.utcExpireTime !== undefined &&
       (obj.utcExpireTime =
         message.utcExpireTime !== undefined
@@ -173,7 +168,6 @@ export const MsgCreateCda = {
   fromPartial(object: DeepPartial<MsgCreateCda>): MsgCreateCda {
     const message = { ...baseMsgCreateCda } as MsgCreateCda;
     message.signingParties = [];
-    message.signingData = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -198,9 +192,9 @@ export const MsgCreateCda = {
       message.legalMetadataUri = "";
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      for (const e of object.signingData) {
-        message.signingData.push(Any.fromPartial(e));
-      }
+      message.signingData = Any.fromPartial(object.signingData);
+    } else {
+      message.signingData = undefined;
     }
     if (object.utcExpireTime !== undefined && object.utcExpireTime !== null) {
       message.utcExpireTime = object.utcExpireTime;
@@ -279,8 +273,8 @@ export const MsgApproveCda = {
     if (message.cdaId !== 0) {
       writer.uint32(16).uint64(message.cdaId);
     }
-    for (const v of message.signingData) {
-      Any.encode(v!, writer.uint32(26).fork()).ldelim();
+    if (message.signingData !== undefined) {
+      Any.encode(message.signingData, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -289,7 +283,6 @@ export const MsgApproveCda = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgApproveCda } as MsgApproveCda;
-    message.signingData = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -300,7 +293,7 @@ export const MsgApproveCda = {
           message.cdaId = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.signingData.push(Any.decode(reader, reader.uint32()));
+          message.signingData = Any.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -312,7 +305,6 @@ export const MsgApproveCda = {
 
   fromJSON(object: any): MsgApproveCda {
     const message = { ...baseMsgApproveCda } as MsgApproveCda;
-    message.signingData = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = String(object.creator);
     } else {
@@ -324,9 +316,9 @@ export const MsgApproveCda = {
       message.cdaId = 0;
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      for (const e of object.signingData) {
-        message.signingData.push(Any.fromJSON(e));
-      }
+      message.signingData = Any.fromJSON(object.signingData);
+    } else {
+      message.signingData = undefined;
     }
     return message;
   },
@@ -335,19 +327,15 @@ export const MsgApproveCda = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.cdaId !== undefined && (obj.cdaId = message.cdaId);
-    if (message.signingData) {
-      obj.signingData = message.signingData.map((e) =>
-        e ? Any.toJSON(e) : undefined
-      );
-    } else {
-      obj.signingData = [];
-    }
+    message.signingData !== undefined &&
+      (obj.signingData = message.signingData
+        ? Any.toJSON(message.signingData)
+        : undefined);
     return obj;
   },
 
   fromPartial(object: DeepPartial<MsgApproveCda>): MsgApproveCda {
     const message = { ...baseMsgApproveCda } as MsgApproveCda;
-    message.signingData = [];
     if (object.creator !== undefined && object.creator !== null) {
       message.creator = object.creator;
     } else {
@@ -359,9 +347,9 @@ export const MsgApproveCda = {
       message.cdaId = 0;
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      for (const e of object.signingData) {
-        message.signingData.push(Any.fromPartial(e));
-      }
+      message.signingData = Any.fromPartial(object.signingData);
+    } else {
+      message.signingData = undefined;
     }
     return message;
   },
