@@ -1251,6 +1251,42 @@ paths:
                         }
       tags:
         - Query
+  /archive/contractregistry/params:
+    get:
+      summary: Parameters queries the parameters of the module.
+      operationId: ArchiveContractregistryParams
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              params:
+                type: object
+                description: Params defines the parameters for the module.
+            description: >-
+              QueryParamsResponse is response type for the Query/Params RPC
+              method.
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /cosmos/auth/v1beta1/accounts:
     get:
       summary: Accounts returns all the existing accounts
@@ -32200,6 +32236,16 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  archive.contractregistry.Params:
+    type: object
+    description: Params defines the parameters for the module.
+  archive.contractregistry.QueryParamsResponse:
+    type: object
+    properties:
+      params:
+        type: object
+        description: Params defines the parameters for the module.
+    description: QueryParamsResponse is response type for the Query/Params RPC method.
   cosmos.auth.v1beta1.Params:
     type: object
     properties:

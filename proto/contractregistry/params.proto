@@ -1,0 +1,12 @@
+syntax = "proto3";
+package archive.contractregistry;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "archive/x/contractregistry/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}
