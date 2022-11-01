@@ -107,6 +107,7 @@ import (
 	contractregistrymodule "archive/x/contractregistry"
 	contractregistrymodulekeeper "archive/x/contractregistry/keeper"
 	contractregistrymoduletypes "archive/x/contractregistry/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "archive/app/params"
@@ -415,7 +416,7 @@ func New(
 		keys[contractregistrymoduletypes.MemStoreKey],
 		app.GetSubspace(contractregistrymoduletypes.ModuleName),
 	)
-	contractregistryModule := contractregistrymodule.NewAppModule(appCodec, app.ContractregistryKeeper, app.AccountKeeper, app.BankKeeper)
+	contractregistryModule := contractregistrymodule.NewAppModule(appCodec, app.ContractregistryKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
