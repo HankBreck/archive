@@ -18,7 +18,7 @@ export type ContractregistryParams = object;
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
 export interface ContractregistryQueryParamsResponse {
-  /** Params defines the parameters for the module. */
+  /** params holds all the parameters of this module. */
   params?: ContractregistryParams;
 }
 
@@ -225,7 +225,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title contractregistry/genesis.proto
+ * @title contractregistry/contract.proto
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {

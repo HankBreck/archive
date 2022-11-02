@@ -1,9 +1,11 @@
 import { Client, registry, MissingWalletError } from 'archive-client-ts'
 
+import { Contract } from "archive-client-ts/archive.contractregistry/types"
+import { ContactInfo } from "archive-client-ts/archive.contractregistry/types"
 import { Params } from "archive-client-ts/archive.contractregistry/types"
 
 
-export { Params };
+export { Contract, ContactInfo, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -37,6 +39,8 @@ const getDefaultState = () => {
 				Params: {},
 				
 				_Structure: {
+						Contract: getStructure(Contract.fromPartial({})),
+						ContactInfo: getStructure(ContactInfo.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
 		},

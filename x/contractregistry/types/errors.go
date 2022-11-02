@@ -8,5 +8,6 @@ import (
 
 // x/contractregistry module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrEmpty   = sdkerrors.Register(ModuleName, 2, "empty")
+	ErrInvalid = sdkerrors.Register(ModuleName, 3, "invalid")
 )
