@@ -8,7 +8,7 @@ option go_package = "archive/x/contractregistry/types";
 message Contract {
 	uint64 id = 1;
 	string description = 2;
-	string authors = 3;
+	repeated string authors = 3;
 	ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo"];
 	string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
 	string template_uri = 6 [ 
