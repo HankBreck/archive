@@ -32,6 +32,6 @@ message ContactInfo {
 }
 
 enum ContactMethod {
-	Phone = 1; // People won't want to publish their phone number on here
-	Email = 2;
+	Phone = 0; // People won't want to publish their phone number on here
+	Email = 1;
 }
