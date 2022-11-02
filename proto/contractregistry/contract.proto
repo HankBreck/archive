@@ -11,19 +11,13 @@ message Contract {
 	string authors = 3;
 	ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo"];
 	string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
-	
-	// Almost certainly want this stored separate from the contract
-	bytes signing_data_schema = 6 [ 
-		(gogoproto.customname) = "SigningDataSchema",
-		(gogoproto.casttype) = "RawSigningData"
-	];
-	string template_uri = 7 [ 
+	string template_uri = 6 [ 
 		(gogoproto.customname) = "TemplateUri"
 	];
-	string template_schema_uri = 8 [
+	string template_schema_uri = 7 [
 		(gogoproto.customname) = "TemplateSchemaUri"
 	];
-	string version = 9;
+	string version = 8;
 }
 
 message ContactInfo {
