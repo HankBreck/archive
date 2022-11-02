@@ -9,7 +9,8 @@ import (
 	"archive/x/contractregistry/types"
 )
 
-// AppendContract stores the contract in prefixed storage using contract.Id as the key
+// AppendContract stores the contract in prefixed storage using contract.Id as the key.
+// Expects contract.Id to be unset, so an existing value will be overwritten by this function.
 //
 // Returns the uint64 id of the contract
 func (k Keeper) AppendContract(ctx sdk.Context, contract types.Contract) uint64 {

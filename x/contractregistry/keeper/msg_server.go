@@ -23,9 +23,20 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
-	_ = ctx
+
+	// Build the contract
+	contract := types.Contract{
+		// Id is set in AppendContract
+		Description:       msg.Description,
+		Authors:           msg.Authors,
+		ContactInfo:       msg.ContactInfo,
+		MoreInfoUri:       msg.MoreInfoUri,
+		TemplateUri:       msg.TemplateUri,
+		TemplateSchemaUri: msg.TemplateSchemaUri,
+	}
 
 	// Store the Contract in state
+	m.AppendContract(ctx, contract)
 
 	// Store the schema in state
 
