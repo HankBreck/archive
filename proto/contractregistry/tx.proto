@@ -2,6 +2,7 @@ syntax = "proto3";
 package archive.contractregistry;
 
 import "contractregistry/contract.proto";
+import "gogoproto/gogo.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "archive/x/contractregistry/types";
