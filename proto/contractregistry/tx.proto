@@ -16,7 +16,7 @@ service Msg {
 message MsgRegisterContract {
 	string creator = 1;
 	string description = 2;
-	string authors = 3; // the names of the authors
+	repeated string authors = 3;
 	ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
 	string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ]; 
 	bytes signing_data_schema = 6 [ 
