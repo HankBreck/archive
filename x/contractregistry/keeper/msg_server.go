@@ -3,6 +3,7 @@ package keeper
 import (
 	"archive/x/contractregistry/types"
 	"context"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -21,6 +22,10 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 
 func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
 
+	// Validate Basic checks:
+	//		signingDataSchema != nil
+	//		signingDataSchema is valid JSON
+
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
@@ -36,11 +41,22 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	// Store the Contract in state
-	m.AppendContract(ctx, contract)
+	id := m.AppendContract(ctx, contract)
 
 	// Store the schema in state
+	err := m.SetSigningData(ctx, msg.SigningDataSchema, id)
+	if err != nil {
+		return nil, err
+	}
 
-	// Emit Events
+	// Emit Event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		sdk.EventTypeMessage, // Likely change this
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterContract"),
+		sdk.NewAttribute("contract_id", strconv.FormatUint(id, 10)),
+	))
 
-	return &types.MsgRegisterContractResponse{Id: uint64(1)}, nil
+	return &types.MsgRegisterContractResponse{Id: id}, nil
 }
