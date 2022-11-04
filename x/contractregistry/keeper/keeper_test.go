@@ -26,3 +26,20 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.queryClient = types.NewQueryClient(suite.QueryHelper)
 	suite.msgServer = keeper.NewMsgServerImpl(suite.App.ContractregistryKeeper)
 }
+
+func (suite *KeeperTestSuite) PrepareContracts(count int) []uint64 {
+	result := []uint64{}
+	for i := 0; i < count; i++ {
+		defaultContract := types.Contract{
+			Description:       "dummy contract",
+			Authors:           []string{"hank", "david"},
+			ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
+			MoreInfoUri:       "google.com",
+			TemplateUri:       "google.com/template",
+			TemplateSchemaUri: "google.com/template-schema",
+		}
+		id := suite.App.ContractregistryKeeper.AppendContract(suite.Ctx, defaultContract)
+		result = append(result, id)
+	}
+	return result
+}

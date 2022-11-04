@@ -3,7 +3,6 @@ package keeper
 import (
 	"archive/x/contractregistry/types"
 	"encoding/binary"
-	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -16,9 +15,9 @@ import (
 //
 // Returns an error if the signingData is nil.
 func (k Keeper) SetSigningData(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
-	// Ensure we are setting the metadata for the most recent Contract ID
-	if count := k.getContractCount(ctx); count != id+1 {
-		panic(fmt.Sprintf("Unexpected value for contract ID in uncheckedSetSigningData! Expected %d but got %d", id+1, count))
+	// Ensure the signing data references a valid contract
+	if !k.HasContract(ctx, id) {
+		return types.ErrNonExistentContract.Wrapf("Could not find a contract with an id of %d", id)
 	}
 
 	// Ensure there is not a repeat ID
