@@ -1,5 +1,6 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "archive.contractregistry";
 
@@ -37,16 +38,13 @@ export function contactMethodToJSON(object: ContactMethod): string {
 }
 
 export interface Contract {
-  id: string;
+  id: number;
   description: string;
-  authors: string;
+  authors: string[];
   contactInfo: ContactInfo | undefined;
   moreInfoUri: string;
-  /** Almost certainly want this stored separate from the contract */
-  signingDataSchema: Uint8Array;
   templateUri: string;
   templateSchemaUri: string;
-  version: string;
 }
 
 export interface ContactInfo {
@@ -55,25 +53,24 @@ export interface ContactInfo {
 }
 
 const baseContract: object = {
-  id: "",
+  id: 0,
   description: "",
   authors: "",
   moreInfoUri: "",
   templateUri: "",
   templateSchemaUri: "",
-  version: "",
 };
 
 export const Contract = {
   encode(message: Contract, writer: Writer = Writer.create()): Writer {
-    if (message.id !== "") {
-      writer.uint32(10).string(message.id);
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
     }
     if (message.description !== "") {
       writer.uint32(18).string(message.description);
     }
-    if (message.authors !== "") {
-      writer.uint32(26).string(message.authors);
+    for (const v of message.authors) {
+      writer.uint32(26).string(v!);
     }
     if (message.contactInfo !== undefined) {
       ContactInfo.encode(
@@ -84,17 +81,11 @@ export const Contract = {
     if (message.moreInfoUri !== "") {
       writer.uint32(42).string(message.moreInfoUri);
     }
-    if (message.signingDataSchema.length !== 0) {
-      writer.uint32(50).bytes(message.signingDataSchema);
-    }
     if (message.templateUri !== "") {
-      writer.uint32(58).string(message.templateUri);
+      writer.uint32(50).string(message.templateUri);
     }
     if (message.templateSchemaUri !== "") {
-      writer.uint32(66).string(message.templateSchemaUri);
-    }
-    if (message.version !== "") {
-      writer.uint32(74).string(message.version);
+      writer.uint32(58).string(message.templateSchemaUri);
     }
     return writer;
   },
@@ -103,17 +94,18 @@ export const Contract = {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseContract } as Contract;
+    message.authors = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.id = reader.string();
+          message.id = longToNumber(reader.uint64() as Long);
           break;
         case 2:
           message.description = reader.string();
           break;
         case 3:
-          message.authors = reader.string();
+          message.authors.push(reader.string());
           break;
         case 4:
           message.contactInfo = ContactInfo.decode(reader, reader.uint32());
@@ -122,16 +114,10 @@ export const Contract = {
           message.moreInfoUri = reader.string();
           break;
         case 6:
-          message.signingDataSchema = reader.bytes();
-          break;
-        case 7:
           message.templateUri = reader.string();
           break;
-        case 8:
+        case 7:
           message.templateSchemaUri = reader.string();
-          break;
-        case 9:
-          message.version = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -143,10 +129,11 @@ export const Contract = {
 
   fromJSON(object: any): Contract {
     const message = { ...baseContract } as Contract;
+    message.authors = [];
     if (object.id !== undefined && object.id !== null) {
-      message.id = String(object.id);
+      message.id = Number(object.id);
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
@@ -154,9 +141,9 @@ export const Contract = {
       message.description = "";
     }
     if (object.authors !== undefined && object.authors !== null) {
-      message.authors = String(object.authors);
-    } else {
-      message.authors = "";
+      for (const e of object.authors) {
+        message.authors.push(String(e));
+      }
     }
     if (object.contactInfo !== undefined && object.contactInfo !== null) {
       message.contactInfo = ContactInfo.fromJSON(object.contactInfo);
@@ -167,12 +154,6 @@ export const Contract = {
       message.moreInfoUri = String(object.moreInfoUri);
     } else {
       message.moreInfoUri = "";
-    }
-    if (
-      object.signingDataSchema !== undefined &&
-      object.signingDataSchema !== null
-    ) {
-      message.signingDataSchema = bytesFromBase64(object.signingDataSchema);
     }
     if (object.templateUri !== undefined && object.templateUri !== null) {
       message.templateUri = String(object.templateUri);
@@ -187,11 +168,6 @@ export const Contract = {
     } else {
       message.templateSchemaUri = "";
     }
-    if (object.version !== undefined && object.version !== null) {
-      message.version = String(object.version);
-    } else {
-      message.version = "";
-    }
     return message;
   },
 
@@ -200,33 +176,31 @@ export const Contract = {
     message.id !== undefined && (obj.id = message.id);
     message.description !== undefined &&
       (obj.description = message.description);
-    message.authors !== undefined && (obj.authors = message.authors);
+    if (message.authors) {
+      obj.authors = message.authors.map((e) => e);
+    } else {
+      obj.authors = [];
+    }
     message.contactInfo !== undefined &&
       (obj.contactInfo = message.contactInfo
         ? ContactInfo.toJSON(message.contactInfo)
         : undefined);
     message.moreInfoUri !== undefined &&
       (obj.moreInfoUri = message.moreInfoUri);
-    message.signingDataSchema !== undefined &&
-      (obj.signingDataSchema = base64FromBytes(
-        message.signingDataSchema !== undefined
-          ? message.signingDataSchema
-          : new Uint8Array()
-      ));
     message.templateUri !== undefined &&
       (obj.templateUri = message.templateUri);
     message.templateSchemaUri !== undefined &&
       (obj.templateSchemaUri = message.templateSchemaUri);
-    message.version !== undefined && (obj.version = message.version);
     return obj;
   },
 
   fromPartial(object: DeepPartial<Contract>): Contract {
     const message = { ...baseContract } as Contract;
+    message.authors = [];
     if (object.id !== undefined && object.id !== null) {
       message.id = object.id;
     } else {
-      message.id = "";
+      message.id = 0;
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
@@ -234,9 +208,9 @@ export const Contract = {
       message.description = "";
     }
     if (object.authors !== undefined && object.authors !== null) {
-      message.authors = object.authors;
-    } else {
-      message.authors = "";
+      for (const e of object.authors) {
+        message.authors.push(e);
+      }
     }
     if (object.contactInfo !== undefined && object.contactInfo !== null) {
       message.contactInfo = ContactInfo.fromPartial(object.contactInfo);
@@ -247,14 +221,6 @@ export const Contract = {
       message.moreInfoUri = object.moreInfoUri;
     } else {
       message.moreInfoUri = "";
-    }
-    if (
-      object.signingDataSchema !== undefined &&
-      object.signingDataSchema !== null
-    ) {
-      message.signingDataSchema = object.signingDataSchema;
-    } else {
-      message.signingDataSchema = new Uint8Array();
     }
     if (object.templateUri !== undefined && object.templateUri !== null) {
       message.templateUri = object.templateUri;
@@ -268,11 +234,6 @@ export const Contract = {
       message.templateSchemaUri = object.templateSchemaUri;
     } else {
       message.templateSchemaUri = "";
-    }
-    if (object.version !== undefined && object.version !== null) {
-      message.version = object.version;
-    } else {
-      message.version = "";
     }
     return message;
   },
@@ -361,29 +322,6 @@ var globalThis: any = (() => {
   throw "Unable to locate global object";
 })();
 
-const atob: (b64: string) => string =
-  globalThis.atob ||
-  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
-function bytesFromBase64(b64: string): Uint8Array {
-  const bin = atob(b64);
-  const arr = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; ++i) {
-    arr[i] = bin.charCodeAt(i);
-  }
-  return arr;
-}
-
-const btoa: (bin: string) => string =
-  globalThis.btoa ||
-  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
-function base64FromBytes(arr: Uint8Array): string {
-  const bin: string[] = [];
-  for (let i = 0; i < arr.byteLength; ++i) {
-    bin.push(String.fromCharCode(arr[i]));
-  }
-  return btoa(bin.join(""));
-}
-
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -394,3 +332,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

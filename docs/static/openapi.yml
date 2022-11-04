@@ -32236,6 +32236,31 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
+  archive.contractregistry.ContactInfo:
+    type: object
+    properties:
+      method:
+        type: string
+        enum:
+          - Phone
+          - Email
+        default: Phone
+        title: '- Phone: People won''t want to publish their phone number on here'
+      value:
+        type: string
+  archive.contractregistry.ContactMethod:
+    type: string
+    enum:
+      - Phone
+      - Email
+    default: Phone
+    title: '- Phone: People won''t want to publish their phone number on here'
+  archive.contractregistry.MsgRegisterContractResponse:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uint64
   archive.contractregistry.Params:
     type: object
     description: Params defines the parameters for the module.

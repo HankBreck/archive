@@ -9,6 +9,21 @@
  * ---------------------------------------------------------------
  */
 
+export interface ContractregistryContactInfo {
+  method?: ContractregistryContactMethod;
+  value?: string;
+}
+
+export enum ContractregistryContactMethod {
+  Phone = "Phone",
+  Email = "Email",
+}
+
+export interface ContractregistryMsgRegisterContractResponse {
+  /** @format uint64 */
+  id?: string;
+}
+
 /**
  * Params defines the parameters for the module.
  */
