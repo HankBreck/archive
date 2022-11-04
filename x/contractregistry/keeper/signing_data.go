@@ -20,6 +20,12 @@ func (k Keeper) SetSigningData(ctx sdk.Context, signingData types.RawSigningData
 	if count := k.getContractCount(ctx); count != id+1 {
 		panic(fmt.Sprintf("Unexpected value for contract ID in uncheckedSetSigningData! Expected %d but got %d", id+1, count))
 	}
+
+	// Ensure there is not a repeat ID
+	if k.HasSigningData(ctx, id) {
+		return types.ErrExistingEntry.Wrapf("Signing data already stored for id %d", id)
+	}
+
 	err := k.uncheckedSetSigningData(ctx, signingData, id)
 	if err != nil {
 		return err
