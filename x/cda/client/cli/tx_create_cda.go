@@ -22,7 +22,7 @@ func CmdCreateCda() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create-cda [legal contract ID] [legal metadata URI] [signing data type URI] [signing data stringified]",
 		Short: "Broadcast message CreateCda",
-		Args:  cobra.ExactArgs(3),
+		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -56,7 +56,7 @@ func CmdCreateCda() *cobra.Command {
 
 			// Parse expiration time from argument string
 			// TODO: Figure out how to limit this to UTC times
-			utcExpireTime, err := time.Parse(time.RFC3339, args[3])
+			utcExpireTime, err := time.Parse(time.RFC3339, args[4])
 			if err != nil {
 				return err
 			}
