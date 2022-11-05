@@ -67,7 +67,7 @@ func (suite *KeeperTestSuite) TestSetSigningData() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestDuplicateAppendSigningData() {
+func (suite *KeeperTestSuite) TestDuplicateSetSigningData() {
 	k := suite.App.ContractregistryKeeper
 
 	suite.PrepareContracts(1)

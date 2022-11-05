@@ -61,12 +61,12 @@ func (k Keeper) uncheckedSetContract(ctx sdk.Context, contract types.Contract) {
 }
 
 func (k Keeper) getContractStore(ctx sdk.Context) prefix.Store {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.ContractKey))
 	return store
 }
 
 func (k Keeper) getContractCount(ctx sdk.Context) uint64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractCountKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.ContractCountKey))
 	bzCount := store.Get([]byte{0})
 	if bzCount == nil {
 		return 0
@@ -75,7 +75,7 @@ func (k Keeper) getContractCount(ctx sdk.Context) uint64 {
 }
 
 func (k Keeper) setContractCount(ctx sdk.Context, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.ContractCountKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.ContractCountKey))
 	bzCount := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzCount, count)
 	store.Set([]byte{0}, bzCount)
