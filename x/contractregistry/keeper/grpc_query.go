@@ -19,3 +19,16 @@ func (k Keeper) Params(goCtx context.Context, req *types.QueryParamsRequest) (*t
 
 	return &types.QueryParamsResponse{Params: k.GetParams(ctx)}, nil
 }
+
+func (k Keeper) Contract(goCtx context.Context, req *types.QueryContractRequest) (*types.QueryContractResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	contract, err := k.GetContract(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryContractResponse{Contract: *contract}, nil
+}

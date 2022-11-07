@@ -16,6 +16,9 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/archive/contractregistry/params";
   }
+  rpc Contract(QueryContractRequest) returns (QueryContractResponse) {
+    option (google.api.http).get = "/archive/contractregistry/contract";
+  }
   // this line is used by starport scaffolding # 2
 }
 
