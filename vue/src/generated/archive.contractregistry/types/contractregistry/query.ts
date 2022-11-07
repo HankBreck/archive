@@ -1,6 +1,8 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
+import { Reader, util, configure, Writer } from "protobufjs/minimal";
+import * as Long from "long";
 import { Params } from "../contractregistry/params";
+import { Contract } from "../contractregistry/contract";
 
 export const protobufPackage = "archive.contractregistry";
 
@@ -11,6 +13,16 @@ export interface QueryParamsRequest {}
 export interface QueryParamsResponse {
   /** params holds all the parameters of this module. */
   params: Params | undefined;
+}
+
+/** QueryContractRequest is the request type for the Query/Contract RPC method. */
+export interface QueryContractRequest {
+  id: number;
+}
+
+/** QueryContractResponse is the response type for the Query/Contract RPC method. */
+export interface QueryContractResponse {
+  contract: Contract | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -110,6 +122,127 @@ export const QueryParamsResponse = {
   },
 };
 
+const baseQueryContractRequest: object = { id: 0 };
+
+export const QueryContractRequest = {
+  encode(
+    message: QueryContractRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryContractRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryContractRequest } as QueryContractRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryContractRequest {
+    const message = { ...baseQueryContractRequest } as QueryContractRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryContractRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<QueryContractRequest>): QueryContractRequest {
+    const message = { ...baseQueryContractRequest } as QueryContractRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQueryContractResponse: object = {};
+
+export const QueryContractResponse = {
+  encode(
+    message: QueryContractResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.contract !== undefined) {
+      Contract.encode(message.contract, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryContractResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryContractResponse } as QueryContractResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.contract = Contract.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryContractResponse {
+    const message = { ...baseQueryContractResponse } as QueryContractResponse;
+    if (object.contract !== undefined && object.contract !== null) {
+      message.contract = Contract.fromJSON(object.contract);
+    } else {
+      message.contract = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryContractResponse): unknown {
+    const obj: any = {};
+    message.contract !== undefined &&
+      (obj.contract = message.contract
+        ? Contract.toJSON(message.contract)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryContractResponse>
+  ): QueryContractResponse {
+    const message = { ...baseQueryContractResponse } as QueryContractResponse;
+    if (object.contract !== undefined && object.contract !== null) {
+      message.contract = Contract.fromPartial(object.contract);
+    } else {
+      message.contract = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -140,6 +273,16 @@ interface Rpc {
   ): Promise<Uint8Array>;
 }
 
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
+
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
   ? T
@@ -150,3 +293,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

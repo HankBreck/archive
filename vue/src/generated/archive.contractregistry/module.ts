@@ -7,10 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgRegisterContract } from "./types/contractregistry/tx";
 
 
-export {  };
+export { MsgRegisterContract };
 
+type sendMsgRegisterContractParams = {
+  value: MsgRegisterContract,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgRegisterContractParams = {
+  value: MsgRegisterContract,
+};
 
 
 export const registry = new Registry(msgTypes);
@@ -30,6 +41,28 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgRegisterContract({ value, fee, memo }: sendMsgRegisterContractParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRegisterContract: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRegisterContract({ value: MsgRegisterContract.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRegisterContract: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgRegisterContract({ value }: msgRegisterContractParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.contractregistry.MsgRegisterContract", value: MsgRegisterContract.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRegisterContract: Could not create message: ' + e.message)
+			}
+		},
 		
 	}
 };
