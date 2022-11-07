@@ -17,3 +17,5 @@ func (suite *KeeperTestSuite) TestParamsQuery() {
 }
 
 // TODO: add test for Query/Contract
+// TODO: add test for Query/Contracts
+// TODO: add test for Query/SigningData

@@ -47,3 +47,15 @@ func (k Keeper) Contracts(goCtx context.Context, req *types.QueryContractsReques
 		Pagination: pageRes,
 	}, nil
 }
+
+func (k Keeper) SigningData(goCtx context.Context, req *types.QuerySigningDataRequest) (*types.QuerySigningDataResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	data, err := k.GetSigningData(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &types.QuerySigningDataResponse{SigningData: data}, nil
+}
