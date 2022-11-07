@@ -12,7 +12,7 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdContract() *cobra.Command {
+func CmdQueryContract() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "contract [id]",
 		Short: "Query contract",
