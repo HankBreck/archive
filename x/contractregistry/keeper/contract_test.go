@@ -4,13 +4,6 @@ import (
 	"archive/x/contractregistry/types"
 )
 
-// AppendContract test cases
-//		Success on implementation case
-//		Overwrites a pre-set ID
-// 		Failure on id that is greater than or equal to k.getContractCount(ctx)
-// 		Failure on id that is less than k.getContractCount(ctx)
-// 		Failure on duplicate ID
-
 func (suite *KeeperTestSuite) TestAppendContract() {
 	k := suite.App.ContractregistryKeeper
 	defaultContract := &types.Contract{
