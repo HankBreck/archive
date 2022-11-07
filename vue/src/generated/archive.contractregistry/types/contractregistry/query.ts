@@ -3,6 +3,10 @@ import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import * as Long from "long";
 import { Params } from "../contractregistry/params";
 import { Contract } from "../contractregistry/contract";
+import {
+  PageRequest,
+  PageResponse,
+} from "../cosmos/base/query/v1beta1/pagination";
 
 export const protobufPackage = "archive.contractregistry";
 
@@ -23,6 +27,19 @@ export interface QueryContractRequest {
 /** QueryContractResponse is the response type for the Query/Contract RPC method. */
 export interface QueryContractResponse {
   contract: Contract | undefined;
+}
+
+export interface QueryContractsRequest {
+  /** pagination defines an optional pagination for the request. */
+  pagination: PageRequest | undefined;
+}
+
+/** QueryContractResponse is the response type for the Query/Contract RPC method. */
+export interface QueryContractsResponse {
+  /** the ids of the contracts registered */
+  contracts: Contract[];
+  /** pagination defines the pagination in the response. */
+  pagination: PageResponse | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -243,11 +260,167 @@ export const QueryContractResponse = {
   },
 };
 
+const baseQueryContractsRequest: object = {};
+
+export const QueryContractsRequest = {
+  encode(
+    message: QueryContractsRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryContractsRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryContractsRequest } as QueryContractsRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryContractsRequest {
+    const message = { ...baseQueryContractsRequest } as QueryContractsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryContractsRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryContractsRequest>
+  ): QueryContractsRequest {
+    const message = { ...baseQueryContractsRequest } as QueryContractsRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryContractsResponse: object = {};
+
+export const QueryContractsResponse = {
+  encode(
+    message: QueryContractsResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.contracts) {
+      Contract.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryContractsResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryContractsResponse } as QueryContractsResponse;
+    message.contracts = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.contracts.push(Contract.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryContractsResponse {
+    const message = { ...baseQueryContractsResponse } as QueryContractsResponse;
+    message.contracts = [];
+    if (object.contracts !== undefined && object.contracts !== null) {
+      for (const e of object.contracts) {
+        message.contracts.push(Contract.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryContractsResponse): unknown {
+    const obj: any = {};
+    if (message.contracts) {
+      obj.contracts = message.contracts.map((e) =>
+        e ? Contract.toJSON(e) : undefined
+      );
+    } else {
+      obj.contracts = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryContractsResponse>
+  ): QueryContractsResponse {
+    const message = { ...baseQueryContractsResponse } as QueryContractsResponse;
+    message.contracts = [];
+    if (object.contracts !== undefined && object.contracts !== null) {
+      for (const e of object.contracts) {
+        message.contracts.push(Contract.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   Contract(request: QueryContractRequest): Promise<QueryContractResponse>;
+  Contracts(request: QueryContractsRequest): Promise<QueryContractsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -274,6 +447,18 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryContractResponse.decode(new Reader(data))
+    );
+  }
+
+  Contracts(request: QueryContractsRequest): Promise<QueryContractsResponse> {
+    const data = QueryContractsRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "archive.contractregistry.Query",
+      "Contracts",
+      data
+    );
+    return promise.then((data) =>
+      QueryContractsResponse.decode(new Reader(data))
     );
   }
 }

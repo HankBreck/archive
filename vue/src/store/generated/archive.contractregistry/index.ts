@@ -38,6 +38,7 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				Contract: {},
+				Contracts: {},
 				
 				_Structure: {
 						Contract: getStructure(Contract.fromPartial({})),
@@ -82,6 +83,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Contract[JSON.stringify(params)] ?? {}
+		},
+				getContracts: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Contracts[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -160,6 +167,32 @@ export default {
 				return getters['getContract']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryContract API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryContracts({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ArchiveContractregistry.query.queryContracts(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ArchiveContractregistry.query.queryContracts({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'Contracts', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryContracts', payload: { options: { all }, params: {...key},query }})
+				return getters['getContracts']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryContracts API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},
