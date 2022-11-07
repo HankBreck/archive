@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -19,9 +18,9 @@ const AUTHORS = "authors"
 
 func CmdRegisterContract() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-contract [description] [contact method (phone=0, email=1)] [contact value] [more info URI] [signing data schema stringified] [contract template URI] [contract template schema URI] --authors [author 1],[author 2]",
+		Use:   "register-contract [description] [contact method (phone=0, email=1)] [contact value] [more info URI] [signing data schema stringified] [contract template URI] [contract template schema URI] [author 1] [author 2]...",
 		Short: "Broadcast message RegisterContract",
-		Args:  cobra.ExactArgs(7),
+		Args:  cobra.MinimumNArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 
 			clientCtx, err := client.GetClientTxContext(cmd)
@@ -31,12 +30,6 @@ func CmdRegisterContract() *cobra.Command {
 
 			// Description
 			description := args[0]
-
-			// Authors
-			authors, err := cmd.Flags().GetStringArray(AUTHORS)
-			if err != nil {
-				return err
-			}
 
 			// Contact Info
 			method, err := strconv.ParseInt(args[1], 10, 32)
@@ -53,7 +46,6 @@ func CmdRegisterContract() *cobra.Command {
 
 			// Signing Data Schema
 			bzSchema := []byte(args[4])
-			fmt.Println("Valid JSON?", json.Valid(bzSchema))
 			if err != nil {
 				panic(err)
 			}
@@ -63,6 +55,12 @@ func CmdRegisterContract() *cobra.Command {
 
 			// Temlate Schema URI
 			templateSchemaUri := args[6]
+
+			// Authors
+			authors := args[7:]
+			for i, author := range authors {
+				fmt.Println("Author", i, ":", author)
+			}
 
 			msg := types.NewMsgRegisterContract(
 				clientCtx.GetFromAddress().String(),
@@ -80,10 +78,6 @@ func CmdRegisterContract() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
-
-	// Signing parties flag
-	cmd.Flags().StringArray(AUTHORS, []string{}, "A list the contract authors.")
-	cmd.MarkFlagRequired(AUTHORS)
 
 	flags.AddTxFlagsToCmd(cmd)
 
