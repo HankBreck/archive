@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"archive/x/contractregistry/types"
 )
@@ -48,6 +49,29 @@ func (k Keeper) HasContract(ctx sdk.Context, id uint64) bool {
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, id)
 	return store.Has(bzKey)
+}
+
+// GetContracts uses pagination to find the next N contracts
+//
+// Returns a tuple of: the contracts found, the page response, and an error.
+func (k Keeper) GetContracts(ctx sdk.Context, pageReq *query.PageRequest) ([]types.Contract, *query.PageResponse, error) {
+	store := k.getContractStore(ctx)
+	contracts := []types.Contract{}
+
+	pageRes, err := query.Paginate(store, pageReq, func(_, value []byte) error {
+		var contract *types.Contract
+		err := k.cdc.Unmarshal(value, contract)
+		if err != nil {
+			return err
+		}
+		contracts = append(contracts, *contract)
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return contracts, pageRes, nil
 }
 
 // Stores the contract with a key of contract.Id. The contract.Id field must be set by a calling function.

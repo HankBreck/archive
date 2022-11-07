@@ -32,3 +32,18 @@ func (k Keeper) Contract(goCtx context.Context, req *types.QueryContractRequest)
 
 	return &types.QueryContractResponse{Contract: *contract}, nil
 }
+
+func (k Keeper) Contracts(goCtx context.Context, req *types.QueryContractsRequest) (*types.QueryContractsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	contracts, pageRes, err := k.GetContracts(ctx, req.Pagination)
+	if err != nil {
+		return nil, err
+	}
+	return &types.QueryContractsResponse{
+		Contracts:  contracts,
+		Pagination: pageRes,
+	}, nil
+}
