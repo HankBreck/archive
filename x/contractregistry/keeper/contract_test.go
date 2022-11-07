@@ -68,7 +68,7 @@ func (suite *KeeperTestSuite) TestAppendContract() {
 			if !test.expPanic {
 				id := k.AppendContract(suite.Ctx, *test.inputContract)
 				actual, _ := k.GetContract(suite.Ctx, id)
-				suite.Equal(test.expContract, *actual)
+				suite.Equal(*test.expContract, *actual)
 			} else {
 				suite.Panics(func() {
 					k.AppendContract(suite.Ctx, *test.inputContract)
@@ -78,47 +78,47 @@ func (suite *KeeperTestSuite) TestAppendContract() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestDuplicateAppendSigningData() {
+func (suite *KeeperTestSuite) TestAppendContract_SequentialIds() {
 	k := suite.App.ContractregistryKeeper
+	contract := types.Contract{
+		Description:       "dummy contract",
+		Authors:           []string{"hank", "david"},
+		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
+		MoreInfoUri:       "google.com",
+		TemplateUri:       "google.com/template",
+		TemplateSchemaUri: "google.com/template-schema",
+	}
 
-	suite.PrepareContracts(1)
+	// Append two contracts
+	firstId := k.AppendContract(suite.Ctx, contract)
+	secondId := k.AppendContract(suite.Ctx, contract)
 
-	var firstData types.RawSigningData
-	firstData.UnmarshalJSON([]byte("test 1"))
-	var secondData types.RawSigningData
-	secondData.UnmarshalJSON([]byte("test 2"))
-
-	// Set the first signing data for id 0
-	err := k.SetSigningData(suite.Ctx, firstData, 0)
-	suite.NoError(err)
-
-	// Try to set the second signing data for the same id
-	err = k.SetSigningData(suite.Ctx, secondData, 0)
-	suite.Error(err)
-
-	actualData, err := k.GetSigningData(suite.Ctx, 0)
-	suite.NoError(err)
-	suite.Equal(firstData, actualData)
+	// Ensure secondId is one greater than firstId
+	suite.Equal(secondId, firstId+1)
 }
 
 func (suite *KeeperTestSuite) TestGetContract() {
 	k := suite.App.ContractregistryKeeper
-	var expected types.RawSigningData
-	expected.UnmarshalJSON([]byte("test"))
-
 	ids := suite.PrepareContracts(1)
-	k.SetSigningData(suite.Ctx, expected, ids[0])
+	// Take from PrepareContracts
+	expected := types.Contract{
+		Description:       "dummy contract",
+		Authors:           []string{"hank", "david"},
+		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
+		MoreInfoUri:       "google.com",
+		TemplateUri:       "google.com/template",
+		TemplateSchemaUri: "google.com/template-schema",
+	}
 
-	actual, err := k.GetSigningData(suite.Ctx, ids[0])
+	actual, err := k.GetContract(suite.Ctx, ids[0])
 	suite.NoError(err)
-	suite.Equal(expected, actual)
+	suite.Equal(expected, *actual)
 }
 
 func (suite *KeeperTestSuite) TestHasContract() {
 	k := suite.App.ContractregistryKeeper
 	ids := suite.PrepareContracts(1)
-	k.SetSigningData(suite.Ctx, []byte("test"), ids[0])
 
-	hasData := k.HasSigningData(suite.Ctx, ids[0])
+	hasData := k.HasContract(suite.Ctx, ids[0])
 	suite.True(hasData)
 }
