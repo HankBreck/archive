@@ -25,6 +25,9 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 	// Validate Basic checks:
 	//		signingDataSchema != nil
 	//		signingDataSchema is valid JSON
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
+	}
 
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
@@ -51,7 +54,7 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 
 	// Emit Event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		sdk.EventTypeMessage, // Likely change this
+		types.TypeMsgRegisterContract,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterContract"),
