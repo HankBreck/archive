@@ -3,11 +3,9 @@ import { Client, registry, MissingWalletError } from 'archive-client-ts'
 import { Contract } from "archive-client-ts/archive.contractregistry/types"
 import { ContactInfo } from "archive-client-ts/archive.contractregistry/types"
 import { Params } from "archive-client-ts/archive.contractregistry/types"
-import { QueryContractRequest } from "archive-client-ts/archive.contractregistry/types"
-import { QueryContractResponse } from "archive-client-ts/archive.contractregistry/types"
 
 
-export { Contract, ContactInfo, Params, QueryContractRequest, QueryContractResponse };
+export { Contract, ContactInfo, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -39,13 +37,12 @@ function getStructure(template) {
 const getDefaultState = () => {
 	return {
 				Params: {},
+				Contract: {},
 				
 				_Structure: {
 						Contract: getStructure(Contract.fromPartial({})),
 						ContactInfo: getStructure(ContactInfo.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
-						QueryContractRequest: getStructure(QueryContractRequest.fromPartial({})),
-						QueryContractResponse: getStructure(QueryContractResponse.fromPartial({})),
 						
 		},
 		_Registry: registry,
@@ -79,6 +76,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Params[JSON.stringify(params)] ?? {}
+		},
+				getContract: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Contract[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -131,6 +134,32 @@ export default {
 				return getters['getParams']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryContract({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ArchiveContractregistry.query.queryContract(query ?? undefined)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ArchiveContractregistry.query.queryContract({...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'Contract', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryContract', payload: { options: { all }, params: {...key},query }})
+				return getters['getContract']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryContract API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

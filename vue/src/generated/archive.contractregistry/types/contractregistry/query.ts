@@ -247,6 +247,7 @@ export const QueryContractResponse = {
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  Contract(request: QueryContractRequest): Promise<QueryContractResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -262,6 +263,18 @@ export class QueryClientImpl implements Query {
       data
     );
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+  }
+
+  Contract(request: QueryContractRequest): Promise<QueryContractResponse> {
+    const data = QueryContractRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "archive.contractregistry.Query",
+      "Contract",
+      data
+    );
+    return promise.then((data) =>
+      QueryContractResponse.decode(new Reader(data))
+    );
   }
 }
 

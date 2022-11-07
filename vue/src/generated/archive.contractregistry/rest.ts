@@ -19,6 +19,17 @@ export enum ContractregistryContactMethod {
   Email = "Email",
 }
 
+export interface ContractregistryContract {
+  /** @format uint64 */
+  id?: string;
+  description?: string;
+  authors?: string[];
+  contact_info?: ContractregistryContactInfo;
+  more_info_uri?: string;
+  template_uri?: string;
+  template_schema_uri?: string;
+}
+
 export interface ContractregistryMsgRegisterContractResponse {
   /** @format uint64 */
   id?: string;
@@ -28,6 +39,13 @@ export interface ContractregistryMsgRegisterContractResponse {
  * Params defines the parameters for the module.
  */
 export type ContractregistryParams = object;
+
+/**
+ * QueryContractResponse is the response type for the Query/Contract RPC method.
+ */
+export interface ContractregistryQueryContractResponse {
+  contract?: ContractregistryContract;
+}
 
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
@@ -244,6 +262,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryContract
+   * @request GET:/archive/contractregistry/contract
+   */
+  queryContract = (query?: { id?: string }, params: RequestParams = {}) =>
+    this.request<ContractregistryQueryContractResponse, RpcStatus>({
+      path: `/archive/contractregistry/contract`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
