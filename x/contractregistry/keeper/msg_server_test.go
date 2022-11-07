@@ -47,3 +47,46 @@ func (suite *KeeperTestSuite) TestRegisterContractMsg() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestRegisterContract() {
+	k := suite.App.ContractregistryKeeper
+
+	// Register a contract via msgServer
+	defaultMsg := &types.MsgRegisterContract{
+		Creator:     suite.TestAccs[0].String(),
+		Description: "test description",
+		Authors:     []string{"hank", "david"},
+		ContactInfo: &types.ContactInfo{
+			Method: types.ContactMethod_Email,
+			Value:  "hank@archive.com",
+		},
+		MoreInfoUri:       "google.com/more-info",
+		SigningDataSchema: []byte("{test: 1}"),
+		TemplateUri:       "google.com/template",
+		TemplateSchemaUri: "google.com/template-schema",
+	}
+	res, err := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), defaultMsg)
+	suite.NoError(err)
+	suite.Equal(uint64(0), res.Id)
+
+	// Ensure actual and expected contracts match
+	actualContract, _ := k.GetContract(suite.Ctx, res.Id)
+	expectedContract := types.Contract{
+		Id:          uint64(0),
+		Description: "test description",
+		Authors:     []string{"hank", "david"},
+		ContactInfo: &types.ContactInfo{
+			Method: types.ContactMethod_Email,
+			Value:  "hank@archive.com",
+		},
+		MoreInfoUri:       "google.com/more-info",
+		TemplateUri:       "google.com/template",
+		TemplateSchemaUri: "google.com/template-schema",
+	}
+	suite.Equal(expectedContract, *actualContract)
+
+	// Ensure actual and expected signing data match
+	actualSigningData, _ := k.GetSigningData(suite.Ctx, res.Id)
+	expectedSigningData := []byte("{test: 1}")
+	suite.Equal(expectedSigningData, actualSigningData.Bytes())
+}
