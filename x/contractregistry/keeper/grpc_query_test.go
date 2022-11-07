@@ -15,3 +15,5 @@ func (suite *KeeperTestSuite) TestParamsQuery() {
 	suite.NoError(err)
 	suite.Equal(&types.QueryParamsResponse{Params: params}, response)
 }
+
+// TODO: add test for Query/Contract
