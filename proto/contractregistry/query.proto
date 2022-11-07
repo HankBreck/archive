@@ -52,7 +52,7 @@ message QueryContractsRequest {
 // QueryContractResponse is the response type for the Query/Contract RPC method.
 message QueryContractsResponse {
     // the ids of the contracts registered
-    repeated uint64 ids = 1 [(gogoproto.nullable) = false];
+    repeated Contract contracts = 1 [(gogoproto.nullable) = false];
     
     // pagination defines the pagination in the response.
     cosmos.base.query.v1beta1.PageResponse pagination = 2;
