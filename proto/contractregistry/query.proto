@@ -5,6 +5,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "contractregistry/params.proto";
+import "contractregistry/contract.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "archive/x/contractregistry/types";
@@ -25,6 +26,16 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryContractRequest is the request type for the Query/Contract RPC method.
+message QueryContractRequest {
+    uint64 id = 1;
+}
+
+// QueryContractResponse is the response type for the Query/Contract RPC method.
+message QueryContractResponse {
+    Contract contract = 1 [(gogoproto.nullable) = false];
 }
 
 // this line is used by starport scaffolding # 3
