@@ -24,22 +24,33 @@ export interface QueryContractRequest {
   id: number;
 }
 
-/** QueryContractResponse is the response type for the Query/Contract RPC method. */
+/** QueryContractResponse is the response type for the Query/Contracts RPC method. */
 export interface QueryContractResponse {
   contract: Contract | undefined;
 }
 
+/** QueryContractsRequest is the request type for the Query/Contracts RPC method. */
 export interface QueryContractsRequest {
   /** pagination defines an optional pagination for the request. */
   pagination: PageRequest | undefined;
 }
 
-/** QueryContractResponse is the response type for the Query/Contract RPC method. */
+/** QueryContractsResponse is the response type for the Query/Contracts RPC method. */
 export interface QueryContractsResponse {
   /** the ids of the contracts registered */
   contracts: Contract[];
   /** pagination defines the pagination in the response. */
   pagination: PageResponse | undefined;
+}
+
+/** QuerySigningDataRequest is the request type for the Query/SigningData RPC method */
+export interface QuerySigningDataRequest {
+  id: number;
+}
+
+/** QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC method */
+export interface QuerySigningDataResponse {
+  signingData: Uint8Array;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -415,12 +426,153 @@ export const QueryContractsResponse = {
   },
 };
 
+const baseQuerySigningDataRequest: object = { id: 0 };
+
+export const QuerySigningDataRequest = {
+  encode(
+    message: QuerySigningDataRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QuerySigningDataRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQuerySigningDataRequest,
+    } as QuerySigningDataRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QuerySigningDataRequest {
+    const message = {
+      ...baseQuerySigningDataRequest,
+    } as QuerySigningDataRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: QuerySigningDataRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QuerySigningDataRequest>
+  ): QuerySigningDataRequest {
+    const message = {
+      ...baseQuerySigningDataRequest,
+    } as QuerySigningDataRequest;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    return message;
+  },
+};
+
+const baseQuerySigningDataResponse: object = {};
+
+export const QuerySigningDataResponse = {
+  encode(
+    message: QuerySigningDataResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.signingData.length !== 0) {
+      writer.uint32(10).bytes(message.signingData);
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QuerySigningDataResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQuerySigningDataResponse,
+    } as QuerySigningDataResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.signingData = reader.bytes();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QuerySigningDataResponse {
+    const message = {
+      ...baseQuerySigningDataResponse,
+    } as QuerySigningDataResponse;
+    if (object.signingData !== undefined && object.signingData !== null) {
+      message.signingData = bytesFromBase64(object.signingData);
+    }
+    return message;
+  },
+
+  toJSON(message: QuerySigningDataResponse): unknown {
+    const obj: any = {};
+    message.signingData !== undefined &&
+      (obj.signingData = base64FromBytes(
+        message.signingData !== undefined
+          ? message.signingData
+          : new Uint8Array()
+      ));
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QuerySigningDataResponse>
+  ): QuerySigningDataResponse {
+    const message = {
+      ...baseQuerySigningDataResponse,
+    } as QuerySigningDataResponse;
+    if (object.signingData !== undefined && object.signingData !== null) {
+      message.signingData = object.signingData;
+    } else {
+      message.signingData = new Uint8Array();
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
   Contract(request: QueryContractRequest): Promise<QueryContractResponse>;
   Contracts(request: QueryContractsRequest): Promise<QueryContractsResponse>;
+  SigningData(
+    request: QuerySigningDataRequest
+  ): Promise<QuerySigningDataResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -461,6 +613,20 @@ export class QueryClientImpl implements Query {
       QueryContractsResponse.decode(new Reader(data))
     );
   }
+
+  SigningData(
+    request: QuerySigningDataRequest
+  ): Promise<QuerySigningDataResponse> {
+    const data = QuerySigningDataRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "archive.contractregistry.Query",
+      "SigningData",
+      data
+    );
+    return promise.then((data) =>
+      QuerySigningDataResponse.decode(new Reader(data))
+    );
+  }
 }
 
 interface Rpc {
@@ -480,6 +646,29 @@ var globalThis: any = (() => {
   if (typeof global !== "undefined") return global;
   throw "Unable to locate global object";
 })();
+
+const atob: (b64: string) => string =
+  globalThis.atob ||
+  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+function bytesFromBase64(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; ++i) {
+    arr[i] = bin.charCodeAt(i);
+  }
+  return arr;
+}
+
+const btoa: (bin: string) => string =
+  globalThis.btoa ||
+  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+function base64FromBytes(arr: Uint8Array): string {
+  const bin: string[] = [];
+  for (let i = 0; i < arr.byteLength; ++i) {
+    bin.push(String.fromCharCode(arr[i]));
+  }
+  return btoa(bin.join(""));
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin

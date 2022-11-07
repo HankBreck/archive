@@ -41,14 +41,14 @@ export interface ContractregistryMsgRegisterContractResponse {
 export type ContractregistryParams = object;
 
 /**
- * QueryContractResponse is the response type for the Query/Contract RPC method.
+ * QueryContractResponse is the response type for the Query/Contracts RPC method.
  */
 export interface ContractregistryQueryContractResponse {
   contract?: ContractregistryContract;
 }
 
 /**
- * QueryContractResponse is the response type for the Query/Contract RPC method.
+ * QueryContractsResponse is the response type for the Query/Contracts RPC method.
  */
 export interface ContractregistryQueryContractsResponse {
   contracts?: ContractregistryContract[];
@@ -63,6 +63,11 @@ export interface ContractregistryQueryContractsResponse {
 export interface ContractregistryQueryParamsResponse {
   /** params holds all the parameters of this module. */
   params?: ContractregistryParams;
+}
+
+export interface ContractregistryQuerySigningDataResponse {
+  /** @format byte */
+  signing_data?: string;
 }
 
 export interface ProtobufAny {
@@ -113,13 +118,6 @@ export interface V1Beta1PageRequest {
    * is set.
    */
   count_total?: boolean;
-
-  /**
-   * reverse is set to true if results are to be returned in the descending order.
-   *
-   * Since: cosmos-sdk 0.43
-   */
-  reverse?: boolean;
 }
 
 /**
@@ -364,7 +362,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       "pagination.offset"?: string;
       "pagination.limit"?: string;
       "pagination.count_total"?: boolean;
-      "pagination.reverse"?: boolean;
     },
     params: RequestParams = {},
   ) =>
@@ -388,6 +385,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<ContractregistryQueryParamsResponse, RpcStatus>({
       path: `/archive/contractregistry/params`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QuerySigningData
+   * @request GET:/archive/contractregistry/signingdata
+   */
+  querySigningData = (query?: { id?: string }, params: RequestParams = {}) =>
+    this.request<ContractregistryQuerySigningDataResponse, RpcStatus>({
+      path: `/archive/contractregistry/signingdata`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });
