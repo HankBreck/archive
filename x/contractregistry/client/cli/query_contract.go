@@ -33,11 +33,11 @@ func CmdQueryContract() *cobra.Command {
 				return err
 			}
 
-			params := &types.QueryContractRequest{
+			req := &types.QueryContractRequest{
 				Id: id,
 			}
 
-			res, err := queryClient.Contract(cmd.Context(), params)
+			res, err := queryClient.Contract(cmd.Context(), req)
 			if err != nil {
 				return err
 			}

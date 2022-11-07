@@ -59,7 +59,7 @@ func (k Keeper) GetContracts(ctx sdk.Context, pageReq *query.PageRequest) ([]typ
 	contracts := []types.Contract{}
 
 	pageRes, err := query.Paginate(store, pageReq, func(_, value []byte) error {
-		var contract *types.Contract
+		contract := &types.Contract{}
 		err := k.cdc.Unmarshal(value, contract)
 		if err != nil {
 			return err
