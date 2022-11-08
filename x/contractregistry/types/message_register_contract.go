@@ -49,5 +49,20 @@ func (msg *MsgRegisterContract) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address (%s)", err)
 	}
 
+	// Validate that Schema is valid JSON
+	// TODO: Use the JSON Schema library here
+	err = msg.SigningDataSchema.ValidateBasic()
+	if err != nil {
+		return ErrInvalid.Wrapf("Signing data schema must be valid JSON")
+	}
+	if msg.SigningDataSchema.Bytes() == nil {
+		return ErrEmpty.Wrapf("Signing data schema cannot be null")
+	}
+
+	// Should we allow no contact info?
+	if msg.ContactInfo == nil {
+		return ErrEmpty.Wrapf("Contact info cannot be null")
+	}
+
 	return nil
 }
