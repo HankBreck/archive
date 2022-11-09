@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"archive/x/contractregistry/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // SetSigningData test cases
@@ -110,4 +112,159 @@ func (suite *KeeperTestSuite) TestHasSigningData() {
 
 	hasData := k.HasSigningData(suite.Ctx, ids[0])
 	suite.True(hasData)
+}
+
+func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
+	k := suite.App.ContractregistryKeeper
+	var signingDataSchema types.RawSigningData
+	signingDataSchema.UnmarshalJSON([]byte(getTestSchema()))
+	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
+		Creator:     string(suite.TestAccs[0]),
+		Description: "",
+		Authors:     []string{},
+		ContactInfo: &types.ContactInfo{
+			Method: types.ContactMethod_Email,
+			Value:  "breckenridgeh2@gmail.com",
+		},
+		MoreInfoUri:       "",
+		SigningDataSchema: signingDataSchema,
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+	})
+
+	var inputData types.RawSigningData
+	inputData.UnmarshalJSON([]byte(getTestDoc()))
+	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	suite.NoError(err)
+	suite.True(matches)
+}
+
+func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
+	k := suite.App.ContractregistryKeeper
+	var signingDataSchema types.RawSigningData
+	signingDataSchema.UnmarshalJSON(getTestSchema())
+	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
+		Creator:     string(suite.TestAccs[0]),
+		Description: "",
+		Authors:     []string{},
+		ContactInfo: &types.ContactInfo{
+			Method: types.ContactMethod_Email,
+			Value:  "breckenridgeh2@gmail.com",
+		},
+		MoreInfoUri:       "",
+		SigningDataSchema: signingDataSchema,
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+	})
+
+	var inputData types.RawSigningData
+	inputData.UnmarshalJSON([]byte(`
+	{
+		"notOwnerships": [
+			{ "owner": "address", "ownership_proportion": 1 },
+			{ "owner": "address2", "ownership_proportion": 99 }
+		]
+	}`))
+	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	suite.Error(err)
+	suite.False(matches)
+}
+
+func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_InvalidJSONSchema() {
+	k := suite.App.ContractregistryKeeper
+	var signingDataSchema types.RawSigningData
+	signingDataSchema.UnmarshalJSON([]byte(`"hello": "world"`)) // missing braces around JSON
+	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
+		Creator:     string(suite.TestAccs[0]),
+		Description: "",
+		Authors:     []string{},
+		ContactInfo: &types.ContactInfo{
+			Method: types.ContactMethod_Email,
+			Value:  "breckenridgeh2@gmail.com",
+		},
+		MoreInfoUri:       "",
+		SigningDataSchema: signingDataSchema,
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+	})
+
+	var inputData types.RawSigningData
+	inputData.UnmarshalJSON(getTestDoc())
+	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	suite.Error(err)
+	suite.False(matches)
+}
+
+func getTestDoc() []byte {
+	return []byte(`
+	{
+		"ownerships": [
+			{ "owner": "address", "ownership_proportion": 1 },
+			{ "owner": "address2", "ownership_proportion": 99 }
+		]
+	}`)
+}
+
+func getTestSchema() []byte {
+	return []byte(`
+	{
+		"$schema": "https://json-schema.org/draft/2019-09/schema",
+		"$id": "http://example.com/example.json",
+		"type": "object",
+		"default": {},
+		"title": "Root Schema",
+		"required": [
+			"ownerships"
+		],
+		"properties": {
+			"ownerships": {
+				"type": "array",
+				"default": [],
+				"title": "The ownerships Schema",
+				"items": {
+					"type": "object",
+					"default": {},
+					"title": "A Schema",
+					"required": [
+						"owner",
+						"ownership_proportion"
+					],
+					"properties": {
+						"owner": {
+							"type": "string",
+							"default": "",
+							"title": "The owner Schema",
+							"examples": [
+								"address"
+							]
+						},
+						"ownership_proportion": {
+							"type": "integer",
+							"default": 0,
+							"title": "The ownership_proportion Schema",
+							"examples": [
+								1
+							]
+						}
+					},
+					"examples": [{
+						"owner": "address",
+						"ownership_proportion": 1
+					}]
+				},
+				"examples": [
+					[{
+						"owner": "address",
+						"ownership_proportion": 1
+					}]
+				]
+			}
+		},
+		"examples": [{
+			"ownerships": [{
+				"owner": "address",
+				"ownership_proportion": 1
+			}]
+		}]
+	}`)
 }

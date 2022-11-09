@@ -138,6 +138,7 @@ require (
 	github.com/regen-network/cosmos-proto v0.3.1 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
+	github.com/santhosh-tekuri/jsonschema/v5 v5.0.2
 	github.com/sasha-s/go-deadlock v0.2.1-0.20190427202633-1595213edefa // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
