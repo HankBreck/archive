@@ -22,7 +22,10 @@ message MsgCreateCda {
 	repeated string signing_parties = 2;
 	uint64 contract_id = 3;
 	string legal_metadata_uri = 4;
-    google.protobuf.Any signing_data = 5;
+    bytes signing_data = 5 [
+        (gogoproto.customname) = "SigningData",
+		(gogoproto.casttype) = "RawSigningData"
+    ];
 	google.protobuf.Timestamp utc_expire_time = 6 [
         (gogoproto.stdtime) = true,
         (gogoproto.nullable) = false
@@ -36,7 +39,9 @@ message MsgCreateCdaResponse {
 message MsgApproveCda {
   string creator = 1;
   uint64 cda_id = 2;
-  google.protobuf.Any signing_data = 3;
+  bytes signing_data = 3 [
+    (gogoproto.casttype) = "RawSigningData"
+  ];
 }
 
 message MsgApproveCdaResponse {}
