@@ -3,6 +3,8 @@ package types
 import (
 	time "time"
 
+	crtypes "archive/x/contractregistry/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -11,7 +13,7 @@ const TypeMsgCreateCda = "create_cda"
 
 var _ sdk.Msg = &MsgCreateCda{}
 
-func NewMsgCreateCda(creator string, signingParties []string, contractId uint64, legalMetadataUri string, signingData RawSigningData, utcExpireTime time.Time) *MsgCreateCda {
+func NewMsgCreateCda(creator string, signingParties []string, contractId uint64, legalMetadataUri string, signingData crtypes.RawSigningData, utcExpireTime time.Time) *MsgCreateCda {
 	return &MsgCreateCda{
 		Creator:          creator,
 		SigningParties:   signingParties,
