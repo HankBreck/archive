@@ -1,7 +1,6 @@
 package types
 
 import (
-	"github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -10,7 +9,7 @@ const TypeMsgApproveCda = "approve_cda"
 
 var _ sdk.Msg = &MsgApproveCda{}
 
-func NewMsgApproveCda(creator string, cdaId uint64, signingData *types.Any) *MsgApproveCda {
+func NewMsgApproveCda(creator string, cdaId uint64, signingData RawSigningData) *MsgApproveCda {
 	return &MsgApproveCda{
 		Creator:     creator,
 		CdaId:       cdaId,
