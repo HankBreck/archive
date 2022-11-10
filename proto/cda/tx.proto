@@ -24,7 +24,7 @@ message MsgCreateCda {
 	string legal_metadata_uri = 4;
     bytes signing_data = 5 [
         (gogoproto.customname) = "SigningData",
-		(gogoproto.casttype) = "RawSigningData"
+		(gogoproto.casttype) = "archive/x/contractregistry/types.RawSigningData"
     ];
 	google.protobuf.Timestamp utc_expire_time = 6 [
         (gogoproto.stdtime) = true,
