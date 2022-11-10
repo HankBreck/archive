@@ -40,7 +40,7 @@ message MsgApproveCda {
   string creator = 1;
   uint64 cda_id = 2;
   bytes signing_data = 3 [
-    (gogoproto.casttype) = "RawSigningData"
+    (gogoproto.casttype) = "archive/x/contractregistry/types.RawSigningData"
   ];
 }
 
