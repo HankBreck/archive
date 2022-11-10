@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"archive/x/cda/types"
+	"bytes"
 	"strconv"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -32,11 +33,11 @@ func (k Keeper) SetApproval(ctx sdk.Context, msg *types.MsgApproveCda) error {
 	}
 
 	// Ensure signing data matches
-	metadata, err := k.GetMetadata(ctx, msg.CdaId)
+	metadata, err := k.GetSigningData(ctx, msg.CdaId)
 	if err != nil {
 		return err
 	}
-	if !metadata.Equal(msg.SigningData) {
+	if !bytes.Equal(metadata.Bytes(), msg.SigningData.Bytes()) {
 		return types.ErrInvalidSigningData
 	}
 

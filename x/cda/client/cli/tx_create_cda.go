@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"archive/x/cda/types"
+	crtypes "archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
@@ -49,10 +49,8 @@ func CmdCreateCda() *cobra.Command {
 			legalMetadataUri := args[1]
 
 			// Signing Data
-			signingData := &sdktypes.Any{
-				TypeUrl: args[2],
-				Value:   []byte(args[3]),
-			}
+			var signingData crtypes.RawSigningData
+			signingData.UnmarshalJSON([]byte(args[3]))
 
 			// Parse expiration time from argument string
 			// TODO: Figure out how to limit this to UTC times

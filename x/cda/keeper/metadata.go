@@ -2,15 +2,15 @@ package keeper
 
 import (
 	"archive/x/cda/types"
+	crtypes "archive/x/contractregistry/types"
 	"encoding/binary"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // TODO: Check that the contract id exists
-func (k Keeper) SetMetadata(ctx sdk.Context, cdaId uint64, metadata *sdktypes.Any) error {
+func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata crtypes.RawSigningData) error {
 	// Ensure cdaId references an existing CDA
 	if !k.HasCDA(ctx, cdaId) {
 		return types.ErrNonExistentCdaId
@@ -22,15 +22,15 @@ func (k Keeper) SetMetadata(ctx sdk.Context, cdaId uint64, metadata *sdktypes.An
 
 }
 
-func (k Keeper) GetMetadata(ctx sdk.Context, cdaId uint64) (*sdktypes.Any, error) {
+func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (crtypes.RawSigningData, error) {
 	store := k.getMetadataStore(ctx)
 
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, cdaId)
 
 	bzMetadata := store.Get(bzKey)
-	metadata := &sdktypes.Any{}
-	err := k.cdc.Unmarshal(bzMetadata, metadata)
+	var metadata crtypes.RawSigningData
+	err := metadata.UnmarshalJSON(bzMetadata)
 	if err != nil {
 		return nil, err
 	}
@@ -38,13 +38,13 @@ func (k Keeper) GetMetadata(ctx sdk.Context, cdaId uint64) (*sdktypes.Any, error
 	return metadata, nil
 }
 
-func (k Keeper) uncheckedSetMetadata(ctx sdk.Context, cdaId uint64, metadata *sdktypes.Any) error {
+func (k Keeper) uncheckedSetMetadata(ctx sdk.Context, cdaId uint64, metadata crtypes.RawSigningData) error {
 	store := k.getMetadataStore(ctx)
 
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, cdaId)
 
-	bzValue, err := k.cdc.Marshal(metadata)
+	bzValue, err := metadata.MarshalJSON()
 	if err != nil {
 		return err
 	}

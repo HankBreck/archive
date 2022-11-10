@@ -2,8 +2,8 @@ package keeper_test
 
 import (
 	"archive/x/cda/types"
+	crtypes "archive/x/contractregistry/types"
 
-	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -60,10 +60,14 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 
-	invalidSigningData := &sdktypes.Any{
-		TypeUrl: "archive/Test prime",
-		Value:   []byte("{\"test prime\": 1}"),
-	}
+	var invalidSigningData crtypes.RawSigningData
+	invalidSigningData.UnmarshalJSON([]byte(`
+	{
+		"notOwnerships": [
+			{ "owner": "address", "ownership_proportion": 1 },
+			{ "owner": "address2", "ownership_proportion": 99 }
+		]
+	}`))
 	msg := types.MsgApproveCda{
 		Creator:     owners[0].String(),
 		CdaId:       ids[0],

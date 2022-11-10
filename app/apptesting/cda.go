@@ -19,7 +19,7 @@ func (s *KeeperTestHelper) ApproveCda(cdaId uint64, owner *sdk.AccAddress) error
 		return err
 	}
 
-	signingData, err := k.GetMetadata(s.Ctx, cdaId)
+	signingData, err := k.GetSigningData(s.Ctx, cdaId)
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func (s *KeeperTestHelper) PrepareCdasForOwner(signers []*sdk.AccAddress, count 
 			}
 		}
 
-		err := k.SetMetadata(s.Ctx, id, s.GetSigningData())
+		err := k.SetSigningData(s.Ctx, id, s.GetSigningData())
 		if err != nil {
 			panic(err)
 		}
@@ -97,7 +97,7 @@ func (s *KeeperTestHelper) PrepareVoidedCdaForSigners(signers []*sdk.AccAddress)
 			panic(err)
 		}
 	}
-	err := k.SetMetadata(s.Ctx, id, s.GetSigningData())
+	err := k.SetSigningData(s.Ctx, id, s.GetSigningData())
 	if err != nil {
 		panic(err)
 	}

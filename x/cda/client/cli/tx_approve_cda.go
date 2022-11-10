@@ -4,11 +4,11 @@ import (
 	"strconv"
 
 	"archive/x/cda/types"
+	crtypes "archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdktypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
@@ -34,10 +34,8 @@ func CmdApproveCda() *cobra.Command {
 			}
 
 			// Signing Data
-			signingData := &sdktypes.Any{
-				TypeUrl: args[2],
-				Value:   []byte(args[3]),
-			}
+			var signingData crtypes.RawSigningData
+			signingData.UnmarshalJSON([]byte(args[3]))
 
 			msg := types.NewMsgApproveCda(
 				clientCtx.GetFromAddress().String(),

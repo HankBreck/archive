@@ -46,7 +46,7 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 	}
 
 	// Store the signing metadata for the CDA
-	k.SetMetadata(ctx, id, msg.SigningData)
+	k.SetSigningData(ctx, id, msg.SigningData)
 
 	// Return the id to the user
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
