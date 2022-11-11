@@ -6,6 +6,7 @@ import (
 	"archive/testutil/sample"
 	cdasimulation "archive/x/cda/simulation"
 	"archive/x/cda/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -78,7 +79,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgCreateCDA,
-		cdasimulation.SimulateMsgCreateCDA(am.accountKeeper, am.bankKeeper, am.keeper),
+		cdasimulation.SimulateMsgCreateCDA(am.keeper),
 	))
 
 	var weightMsgApproveCda int
@@ -89,7 +90,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgApproveCda,
-		cdasimulation.SimulateMsgApproveCda(am.accountKeeper, am.bankKeeper, am.keeper),
+		cdasimulation.SimulateMsgApproveCda(am.keeper),
 	))
 
 	var weightMsgFinalizeCda int
@@ -100,7 +101,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgFinalizeCda,
-		cdasimulation.SimulateMsgFinalizeCda(am.accountKeeper, am.bankKeeper, am.keeper),
+		cdasimulation.SimulateMsgFinalizeCda(am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

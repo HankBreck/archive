@@ -417,7 +417,7 @@ func New(
 		app.GetSubspace(cdamoduletypes.ModuleName),
 		app.ContractregistryKeeper,
 	)
-	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper, app.AccountKeeper, app.BankKeeper)
+	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 

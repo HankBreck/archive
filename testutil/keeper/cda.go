@@ -5,6 +5,8 @@ import (
 
 	"archive/x/cda/keeper"
 	"archive/x/cda/types"
+	crkeeper "archive/x/contractregistry/keeper"
+	crtypes "archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -31,6 +33,17 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
+	crStoreKey := sdk.NewKVStoreKey(crtypes.StoreKey)
+	crMemStoreKey := storetypes.NewMemoryStoreKey(crtypes.MemStoreKey)
+	crSubspace := typesparams.NewSubspace(
+		cdc,
+		crtypes.Amino,
+		crStoreKey,
+		crMemStoreKey,
+		"ContractregistryParams",
+	)
+	crKeeper := crkeeper.NewKeeper(cdc, crStoreKey, crMemStoreKey, crSubspace)
+
 	paramsSubspace := typesparams.NewSubspace(cdc,
 		types.Amino,
 		storeKey,
@@ -42,6 +55,7 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		crKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
