@@ -486,6 +486,7 @@ paths:
                       default: Pending
                 title: List of CDA objects
               pagination:
+                title: Pagination to view all CDAs
                 type: object
                 properties:
                   next_key:
@@ -773,6 +774,7 @@ paths:
                   format: uint64
                 title: List of CDA ids belonging to the owner
               pagination:
+                title: Pagination to view all CDAs
                 type: object
                 properties:
                   next_key:
@@ -1059,8 +1061,8 @@ paths:
             type: object
             properties:
               params:
+                description: params holds all the parameters of this module.
                 type: object
-                description: Params defines the parameters for the module.
             description: >-
               QueryParamsResponse is response type for the Query/Params RPC
               method.
@@ -32001,6 +32003,7 @@ definitions:
           format: uint64
         title: List of CDA ids belonging to the owner
       pagination:
+        title: Pagination to view all CDAs
         type: object
         properties:
           next_key:
@@ -32059,6 +32062,7 @@ definitions:
               default: Pending
         title: List of CDA objects
       pagination:
+        title: Pagination to view all CDAs
         type: object
         properties:
           next_key:
@@ -32087,8 +32091,8 @@ definitions:
     type: object
     properties:
       params:
+        description: params holds all the parameters of this module.
         type: object
-        description: Params defines the parameters for the module.
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   cosmos.base.query.v1beta1.PageRequest:
     type: object

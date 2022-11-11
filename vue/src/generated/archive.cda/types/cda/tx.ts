@@ -2,7 +2,6 @@
 import { Reader, util, configure, Writer } from "protobufjs/minimal";
 import { Timestamp } from "../google/protobuf/timestamp";
 import * as Long from "long";
-import { Any } from "../google/protobuf/any";
 
 export const protobufPackage = "archive.cda";
 
@@ -11,7 +10,7 @@ export interface MsgCreateCda {
   signingParties: string[];
   contractId: number;
   legalMetadataUri: string;
-  signingData: Any | undefined;
+  signingData: Uint8Array;
   utcExpireTime: Date | undefined;
 }
 
@@ -22,7 +21,7 @@ export interface MsgCreateCdaResponse {
 export interface MsgApproveCda {
   creator: string;
   cdaId: number;
-  signingData: Any | undefined;
+  signingData: Uint8Array;
 }
 
 export interface MsgApproveCdaResponse {}
@@ -55,8 +54,8 @@ export const MsgCreateCda = {
     if (message.legalMetadataUri !== "") {
       writer.uint32(34).string(message.legalMetadataUri);
     }
-    if (message.signingData !== undefined) {
-      Any.encode(message.signingData, writer.uint32(42).fork()).ldelim();
+    if (message.signingData.length !== 0) {
+      writer.uint32(42).bytes(message.signingData);
     }
     if (message.utcExpireTime !== undefined) {
       Timestamp.encode(
@@ -88,7 +87,7 @@ export const MsgCreateCda = {
           message.legalMetadataUri = reader.string();
           break;
         case 5:
-          message.signingData = Any.decode(reader, reader.uint32());
+          message.signingData = reader.bytes();
           break;
         case 6:
           message.utcExpireTime = fromTimestamp(
@@ -130,9 +129,7 @@ export const MsgCreateCda = {
       message.legalMetadataUri = "";
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      message.signingData = Any.fromJSON(object.signingData);
-    } else {
-      message.signingData = undefined;
+      message.signingData = bytesFromBase64(object.signingData);
     }
     if (object.utcExpireTime !== undefined && object.utcExpireTime !== null) {
       message.utcExpireTime = fromJsonTimestamp(object.utcExpireTime);
@@ -154,9 +151,11 @@ export const MsgCreateCda = {
     message.legalMetadataUri !== undefined &&
       (obj.legalMetadataUri = message.legalMetadataUri);
     message.signingData !== undefined &&
-      (obj.signingData = message.signingData
-        ? Any.toJSON(message.signingData)
-        : undefined);
+      (obj.signingData = base64FromBytes(
+        message.signingData !== undefined
+          ? message.signingData
+          : new Uint8Array()
+      ));
     message.utcExpireTime !== undefined &&
       (obj.utcExpireTime =
         message.utcExpireTime !== undefined
@@ -192,9 +191,9 @@ export const MsgCreateCda = {
       message.legalMetadataUri = "";
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      message.signingData = Any.fromPartial(object.signingData);
+      message.signingData = object.signingData;
     } else {
-      message.signingData = undefined;
+      message.signingData = new Uint8Array();
     }
     if (object.utcExpireTime !== undefined && object.utcExpireTime !== null) {
       message.utcExpireTime = object.utcExpireTime;
@@ -273,8 +272,8 @@ export const MsgApproveCda = {
     if (message.cdaId !== 0) {
       writer.uint32(16).uint64(message.cdaId);
     }
-    if (message.signingData !== undefined) {
-      Any.encode(message.signingData, writer.uint32(26).fork()).ldelim();
+    if (message.signingData.length !== 0) {
+      writer.uint32(26).bytes(message.signingData);
     }
     return writer;
   },
@@ -293,7 +292,7 @@ export const MsgApproveCda = {
           message.cdaId = longToNumber(reader.uint64() as Long);
           break;
         case 3:
-          message.signingData = Any.decode(reader, reader.uint32());
+          message.signingData = reader.bytes();
           break;
         default:
           reader.skipType(tag & 7);
@@ -316,9 +315,7 @@ export const MsgApproveCda = {
       message.cdaId = 0;
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      message.signingData = Any.fromJSON(object.signingData);
-    } else {
-      message.signingData = undefined;
+      message.signingData = bytesFromBase64(object.signingData);
     }
     return message;
   },
@@ -328,9 +325,11 @@ export const MsgApproveCda = {
     message.creator !== undefined && (obj.creator = message.creator);
     message.cdaId !== undefined && (obj.cdaId = message.cdaId);
     message.signingData !== undefined &&
-      (obj.signingData = message.signingData
-        ? Any.toJSON(message.signingData)
-        : undefined);
+      (obj.signingData = base64FromBytes(
+        message.signingData !== undefined
+          ? message.signingData
+          : new Uint8Array()
+      ));
     return obj;
   },
 
@@ -347,9 +346,9 @@ export const MsgApproveCda = {
       message.cdaId = 0;
     }
     if (object.signingData !== undefined && object.signingData !== null) {
-      message.signingData = Any.fromPartial(object.signingData);
+      message.signingData = object.signingData;
     } else {
-      message.signingData = undefined;
+      message.signingData = new Uint8Array();
     }
     return message;
   },
@@ -558,6 +557,29 @@ var globalThis: any = (() => {
   if (typeof global !== "undefined") return global;
   throw "Unable to locate global object";
 })();
+
+const atob: (b64: string) => string =
+  globalThis.atob ||
+  ((b64) => globalThis.Buffer.from(b64, "base64").toString("binary"));
+function bytesFromBase64(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; ++i) {
+    arr[i] = bin.charCodeAt(i);
+  }
+  return arr;
+}
+
+const btoa: (bin: string) => string =
+  globalThis.btoa ||
+  ((bin) => globalThis.Buffer.from(bin, "binary").toString("base64"));
+function base64FromBytes(arr: Uint8Array): string {
+  const bin: string[] = [];
+  for (let i = 0; i < arr.byteLength; ++i) {
+    bin.push(String.fromCharCode(arr[i]));
+  }
+  return btoa(bin.join(""));
+}
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
