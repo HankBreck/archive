@@ -18,3 +18,5 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 
 // TODO:
 // Write tests for msg server functions
+// Create CDA
+//		Test signing metadata valid json but not schema match

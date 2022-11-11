@@ -6,6 +6,7 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 
 	"archive/x/cda/types"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -17,6 +18,8 @@ type (
 		storeKey   sdk.StoreKey
 		memKey     sdk.StoreKey
 		paramstore paramtypes.Subspace
+
+		crKeeper types.ContractregistryKeeper
 	}
 )
 
@@ -25,6 +28,7 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
+	crKeeper types.ContractregistryKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -38,6 +42,8 @@ func NewKeeper(
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
+
+		crKeeper: crKeeper,
 	}
 }
 

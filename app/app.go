@@ -402,14 +402,6 @@ func New(
 	)
 	monitoringModule := monitoringp.NewAppModule(appCodec, app.MonitoringKeeper)
 
-	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
-		appCodec,
-		keys[cdamoduletypes.StoreKey],
-		keys[cdamoduletypes.MemStoreKey],
-		app.GetSubspace(cdamoduletypes.ModuleName),
-	)
-	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper, app.AccountKeeper, app.BankKeeper)
-
 	app.ContractregistryKeeper = *contractregistrymodulekeeper.NewKeeper(
 		appCodec,
 		keys[contractregistrymoduletypes.StoreKey],
@@ -417,6 +409,15 @@ func New(
 		app.GetSubspace(contractregistrymoduletypes.ModuleName),
 	)
 	contractregistryModule := contractregistrymodule.NewAppModule(appCodec, app.ContractregistryKeeper)
+
+	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
+		appCodec,
+		keys[cdamoduletypes.StoreKey],
+		keys[cdamoduletypes.MemStoreKey],
+		app.GetSubspace(cdamoduletypes.ModuleName),
+		app.ContractregistryKeeper,
+	)
+	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 

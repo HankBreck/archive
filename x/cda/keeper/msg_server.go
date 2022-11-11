@@ -35,6 +35,12 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		Status:           types.CDA_Pending,
 	}
 
+	// Ensure the signing data matches the expected contract's schema
+	matches, err := k.crKeeper.MatchesSigningDataSchema(ctx, msg.ContractId, msg.SigningData)
+	if err != nil || !matches {
+		return nil, types.ErrInvalidSigningData.Wrap("does not match schema")
+	}
+
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
 	for i := range cda.SigningParties {
