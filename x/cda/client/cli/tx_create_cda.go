@@ -10,7 +10,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +19,7 @@ const SIGNING_PARTIES = "signing-parties"
 
 func CmdCreateCda() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-cda [legal contract ID] [legal metadata URI] [signing data type URI] [signing data stringified]",
+		Use:   "create-cda [legal contract ID] [legal metadata URI] [signing data type URI] [signing data stringified] [expiration time UTC]",
 		Short: "Broadcast message CreateCda",
 		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -34,9 +33,6 @@ func CmdCreateCda() *cobra.Command {
 			signingParties, err := cmd.Flags().GetStringArray(SIGNING_PARTIES)
 			if err != nil {
 				return err
-			}
-			for _, addr := range signingParties {
-				sdk.MustAccAddressFromBech32(addr)
 			}
 
 			// Contract ID

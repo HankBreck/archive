@@ -17,7 +17,7 @@ var _ = strconv.Itoa(0)
 
 func CmdApproveCda() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "approve-cda [cda-id] [signing data type URI] [signing data stringified]",
+		Use:   "approve-cda [cda-id] [signing data stringified]",
 		Short: "Broadcast message approve-cda",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -35,7 +35,7 @@ func CmdApproveCda() *cobra.Command {
 
 			// Signing Data
 			var signingData crtypes.RawSigningData
-			signingData.UnmarshalJSON([]byte(args[3]))
+			signingData.UnmarshalJSON([]byte(args[1]))
 
 			msg := types.NewMsgApproveCda(
 				clientCtx.GetFromAddress().String(),
