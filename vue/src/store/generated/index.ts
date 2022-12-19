@@ -1,10 +1,12 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
+import ArchiveIdentity from './archive.identity'
 import ArchiveCda from './archive.cda'
 import ArchiveContractregistry from './archive.contractregistry'
 
 
 export default { 
+  ArchiveIdentity: load(ArchiveIdentity, 'archive.identity'),
   ArchiveCda: load(ArchiveCda, 'archive.cda'),
   ArchiveContractregistry: load(ArchiveContractregistry, 'archive.contractregistry'),
   
