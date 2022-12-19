@@ -9,17 +9,9 @@
  * ---------------------------------------------------------------
  */
 
-/**
- * Params defines the parameters for the module.
- */
-export type IdentityParams = object;
-
-/**
- * QueryParamsResponse is response type for the Query/Params RPC method.
- */
-export interface IdentityQueryParamsResponse {
-  /** params holds all the parameters of this module. */
-  params?: IdentityParams;
+export interface IdentityMsgRegisterIssuerResponse {
+  /** @format int32 */
+  id?: number;
 }
 
 export interface ProtobufAny {
@@ -154,23 +146,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title archive/identity/genesis.proto
+ * @title archive/identity/tx.proto
  * @version version not set
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryParams
-   * @summary Parameters queries the parameters of the module.
-   * @request GET:/archive/identity/params
-   */
-  queryParams = (params: RequestParams = {}) =>
-    this.request<IdentityQueryParamsResponse, RpcStatus>({
-      path: `/archive/identity/params`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-}
+export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {}

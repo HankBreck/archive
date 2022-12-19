@@ -1,4 +1,4 @@
-import { Params } from "./types/archive/identity/params"
+import { Params } from "./types/identity/params"
 
 
 export {     
