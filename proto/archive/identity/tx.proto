@@ -9,6 +9,7 @@ option go_package = "archive/x/identity/types";
 // Msg defines the Msg service.
 service Msg {
     rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
+    rpc IssueCertificate(MsgIssueCertificate) returns (MsgIssueCertificateResponse);
     // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -20,6 +21,18 @@ message MsgRegisterIssuer {
 }
 
 message MsgRegisterIssuerResponse {
+    uint64 id = 1;
+}
+
+message MsgIssueCertificate {
+    string creator = 1;
+    string recipient = 2;
+    string salt = 3;
+    string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
+    map<string, string> hashes = 5;
+}
+
+message MsgIssueCertificateResponse {
     uint64 id = 1;
 }
 // this line is used by starport scaffolding # proto/tx/message

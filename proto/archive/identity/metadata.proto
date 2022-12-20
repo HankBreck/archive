@@ -1,9 +1,0 @@
-syntax = "proto3";
-package archive.identity;
-
-import "gogoproto/gogo.proto";
-
-message Hash {
-    string key = 1;
-    string value = 2;
-}
