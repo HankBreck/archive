@@ -1,25 +1,25 @@
 syntax = "proto3";
 package archive.identity;
 
+import "gogoproto/gogo.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "archive/x/identity/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+    rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
+    // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRegisterIssuer {
-  string creator = 1;
-  string name = 2;
-  string moreInfoUri = 3;
-  uint64 cost = 4;
+    string creator = 1;
+    string name = 2;
+    string more_info_uri = 3 [ (gogoproto.customname) = "MoreInfoUri"];
+    uint64 cost = 4;
 }
 
 message MsgRegisterIssuerResponse {
-  int32 id = 1;
+    uint64 id = 1;
 }
-
 // this line is used by starport scaffolding # proto/tx/message
