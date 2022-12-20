@@ -3,7 +3,7 @@ package archive.identity;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "cosmos/base/query/v1beta1/pagination.proto";
+// import "cosmos/base/query/v1beta1/pagination.proto";
 import "archive/identity/params.proto";
 // this line is used by starport scaffolding # 1
 
