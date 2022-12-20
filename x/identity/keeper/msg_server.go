@@ -54,3 +54,42 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 
 	return &types.MsgRegisterIssuerResponse{Id: id}, nil
 }
+
+func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	_ = ctx
+
+	addr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	// Find issuer ID from msg.Creator
+	_ = addr
+
+	cert := types.Certificate{
+		// Id filled by next func
+		IssuerId:          uint64(9), // TODO: Fill with issuer ID
+		Salt:              msg.Salt,
+		MetadataSchemaUri: msg.MetadataSchemaUri,
+		Hashes:            msg.Hashes,
+	}
+
+	// Store certificate
+	_ = cert
+
+	// Add recipient to member store
+	_ = msg.Recipient
+
+	// emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.Type
+	))
+
+	return nil, nil
+}
