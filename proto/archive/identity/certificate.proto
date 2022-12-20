@@ -1,11 +1,15 @@
 syntax = "proto3";
 package archive.identity;
 
+import "gogoproto/gogo.proto";
+
+option go_package = "archive/x/identity/types";
+
 message Certificate {
     uint64 id = 1;
 	uint64 issuer_id = 2;
 	string salt = 3;
-	string metadata_schema_uri = 4;
+	string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
 	map<string, string> hashes = 5;
 }
 
