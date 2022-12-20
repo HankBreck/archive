@@ -140,33 +140,167 @@ func (m *MsgRegisterIssuerResponse) GetId() uint64 {
 	return 0
 }
 
+type MsgIssueCertificate struct {
+	Creator           string            `protobuf:"bytes,1,opt,name=creator,proto3" json:"creator,omitempty"`
+	Recipient         string            `protobuf:"bytes,2,opt,name=recipient,proto3" json:"recipient,omitempty"`
+	Salt              string            `protobuf:"bytes,3,opt,name=salt,proto3" json:"salt,omitempty"`
+	MetadataSchemaUri string            `protobuf:"bytes,4,opt,name=metadata_schema_uri,json=metadataSchemaUri,proto3" json:"metadata_schema_uri,omitempty"`
+	Hashes            map[string]string `protobuf:"bytes,5,rep,name=hashes,proto3" json:"hashes,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (m *MsgIssueCertificate) Reset()         { *m = MsgIssueCertificate{} }
+func (m *MsgIssueCertificate) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueCertificate) ProtoMessage()    {}
+func (*MsgIssueCertificate) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad5475f4c184c4e6, []int{2}
+}
+func (m *MsgIssueCertificate) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueCertificate) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueCertificate.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueCertificate) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueCertificate.Merge(m, src)
+}
+func (m *MsgIssueCertificate) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueCertificate) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueCertificate.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueCertificate proto.InternalMessageInfo
+
+func (m *MsgIssueCertificate) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *MsgIssueCertificate) GetRecipient() string {
+	if m != nil {
+		return m.Recipient
+	}
+	return ""
+}
+
+func (m *MsgIssueCertificate) GetSalt() string {
+	if m != nil {
+		return m.Salt
+	}
+	return ""
+}
+
+func (m *MsgIssueCertificate) GetMetadataSchemaUri() string {
+	if m != nil {
+		return m.MetadataSchemaUri
+	}
+	return ""
+}
+
+func (m *MsgIssueCertificate) GetHashes() map[string]string {
+	if m != nil {
+		return m.Hashes
+	}
+	return nil
+}
+
+type MsgIssueCertificateResponse struct {
+	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (m *MsgIssueCertificateResponse) Reset()         { *m = MsgIssueCertificateResponse{} }
+func (m *MsgIssueCertificateResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgIssueCertificateResponse) ProtoMessage()    {}
+func (*MsgIssueCertificateResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ad5475f4c184c4e6, []int{3}
+}
+func (m *MsgIssueCertificateResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgIssueCertificateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgIssueCertificateResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgIssueCertificateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgIssueCertificateResponse.Merge(m, src)
+}
+func (m *MsgIssueCertificateResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgIssueCertificateResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgIssueCertificateResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgIssueCertificateResponse proto.InternalMessageInfo
+
+func (m *MsgIssueCertificateResponse) GetId() uint64 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*MsgRegisterIssuer)(nil), "archive.identity.MsgRegisterIssuer")
 	proto.RegisterType((*MsgRegisterIssuerResponse)(nil), "archive.identity.MsgRegisterIssuerResponse")
+	proto.RegisterType((*MsgIssueCertificate)(nil), "archive.identity.MsgIssueCertificate")
+	proto.RegisterMapType((map[string]string)(nil), "archive.identity.MsgIssueCertificate.HashesEntry")
+	proto.RegisterType((*MsgIssueCertificateResponse)(nil), "archive.identity.MsgIssueCertificateResponse")
 }
 
 func init() { proto.RegisterFile("archive/identity/tx.proto", fileDescriptor_ad5475f4c184c4e6) }
 
 var fileDescriptor_ad5475f4c184c4e6 = []byte{
-	// 283 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xb1, 0x4e, 0xc3, 0x30,
-	0x14, 0x45, 0xeb, 0x34, 0x02, 0xe1, 0x8a, 0x02, 0x16, 0x83, 0xdb, 0xc1, 0x54, 0x65, 0xa9, 0x54,
-	0x29, 0x91, 0xda, 0x3f, 0xe8, 0xd6, 0x21, 0x8b, 0x25, 0x16, 0x96, 0x2a, 0x4d, 0x5e, 0x83, 0x87,
-	0xe4, 0x45, 0xb6, 0x8b, 0xda, 0x5f, 0x60, 0xe2, 0xb3, 0x18, 0x3b, 0x32, 0x21, 0x94, 0xfc, 0x08,
-	0x8a, 0x21, 0x02, 0xb5, 0x0b, 0xdb, 0x7d, 0x3e, 0x4f, 0xd7, 0xd7, 0xbe, 0x74, 0x10, 0xeb, 0xe4,
-	0x49, 0x3d, 0x43, 0xa8, 0x52, 0x28, 0xac, 0xb2, 0xfb, 0xd0, 0xee, 0x82, 0x52, 0xa3, 0x45, 0x76,
-	0xfd, 0x83, 0x82, 0x16, 0x0d, 0x6f, 0x33, 0xcc, 0xd0, 0xc1, 0xb0, 0x51, 0xdf, 0x7b, 0xe3, 0x17,
-	0x42, 0x6f, 0x22, 0x93, 0x49, 0xc8, 0x94, 0xb1, 0xa0, 0x97, 0xc6, 0x6c, 0x41, 0x33, 0x4e, 0xcf,
-	0x13, 0x0d, 0xb1, 0x45, 0xcd, 0xc9, 0x88, 0x4c, 0x2e, 0x64, 0x3b, 0x32, 0x46, 0xfd, 0x22, 0xce,
-	0x81, 0x7b, 0xee, 0xd8, 0x69, 0x36, 0xa7, 0x97, 0x39, 0x6a, 0x58, 0xa9, 0x62, 0x83, 0xab, 0xad,
-	0x56, 0xbc, 0xdb, 0xc0, 0xc5, 0x55, 0xf5, 0x71, 0xd7, 0x8b, 0x50, 0xc3, 0xb2, 0xd8, 0xe0, 0x83,
-	0x56, 0xb2, 0x97, 0xff, 0x0e, 0x8d, 0x51, 0x82, 0xc6, 0x72, 0x7f, 0x44, 0x26, 0xbe, 0x74, 0x7a,
-	0x3c, 0xa5, 0x83, 0x93, 0x2c, 0x12, 0x4c, 0x89, 0x85, 0x01, 0xd6, 0xa7, 0x9e, 0x4a, 0x5d, 0x1c,
-	0x5f, 0x7a, 0x2a, 0x9d, 0x29, 0xda, 0x8d, 0x4c, 0xc6, 0xd6, 0xb4, 0x7f, 0x14, 0xfe, 0x3e, 0x38,
-	0x7e, 0x7b, 0x70, 0xe2, 0x3a, 0x9c, 0xfe, 0x63, 0xa9, 0xbd, 0x7a, 0x31, 0x7b, 0xab, 0x04, 0x39,
-	0x54, 0x82, 0x7c, 0x56, 0x82, 0xbc, 0xd6, 0xa2, 0x73, 0xa8, 0x45, 0xe7, 0xbd, 0x16, 0x9d, 0x47,
-	0xde, 0x36, 0xb0, 0xfb, 0xd3, 0xc1, 0xbe, 0x04, 0xb3, 0x3e, 0x73, 0xff, 0x3b, 0xff, 0x0a, 0x00,
-	0x00, 0xff, 0xff, 0x89, 0x62, 0xa1, 0x0a, 0xa4, 0x01, 0x00, 0x00,
+	// 453 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0xcd, 0x3a, 0x6e, 0x51, 0x27, 0xa2, 0x24, 0xdb, 0x22, 0xb9, 0x01, 0xb9, 0x51, 0x10, 0x52,
+	0xa4, 0xaa, 0x8e, 0x48, 0x2f, 0xc0, 0xb1, 0xa8, 0x12, 0x39, 0xf8, 0xb2, 0x88, 0x0b, 0x97, 0x68,
+	0xeb, 0x4c, 0xec, 0x15, 0xb5, 0x37, 0xda, 0xdd, 0x54, 0xcd, 0x2f, 0x70, 0xe2, 0x4b, 0xf8, 0x0e,
+	0x8e, 0x95, 0xb8, 0x70, 0xaa, 0x90, 0xf3, 0x23, 0xc8, 0x1b, 0x9b, 0x96, 0x24, 0xa0, 0xdc, 0xde,
+	0xce, 0x7b, 0xde, 0x79, 0x6f, 0xc7, 0x03, 0x47, 0x5c, 0x45, 0x89, 0xb8, 0xc6, 0xbe, 0x18, 0x63,
+	0x66, 0x84, 0x99, 0xf7, 0xcd, 0x4d, 0x30, 0x55, 0xd2, 0x48, 0xda, 0x2c, 0xa9, 0xa0, 0xa2, 0xda,
+	0x87, 0xb1, 0x8c, 0xa5, 0x25, 0xfb, 0x05, 0x5a, 0xea, 0xba, 0x5f, 0x08, 0xb4, 0x42, 0x1d, 0x33,
+	0x8c, 0x85, 0x36, 0xa8, 0x86, 0x5a, 0xcf, 0x50, 0x51, 0x0f, 0x1e, 0x45, 0x0a, 0xb9, 0x91, 0xca,
+	0x23, 0x1d, 0xd2, 0xdb, 0x63, 0xd5, 0x91, 0x52, 0x70, 0x33, 0x9e, 0xa2, 0xe7, 0xd8, 0xb2, 0xc5,
+	0xf4, 0x0c, 0x1e, 0xa7, 0x52, 0xe1, 0x48, 0x64, 0x13, 0x39, 0x9a, 0x29, 0xe1, 0xd5, 0x0b, 0xf2,
+	0xfc, 0x49, 0x7e, 0x77, 0xdc, 0x08, 0xa5, 0xc2, 0x61, 0x36, 0x91, 0x1f, 0x95, 0x60, 0x8d, 0xf4,
+	0xfe, 0x50, 0x5c, 0x14, 0x49, 0x6d, 0x3c, 0xb7, 0x43, 0x7a, 0x2e, 0xb3, 0xb8, 0x7b, 0x02, 0x47,
+	0x6b, 0x5e, 0x18, 0xea, 0xa9, 0xcc, 0x34, 0xd2, 0x7d, 0x70, 0xc4, 0xd8, 0xda, 0x71, 0x99, 0x23,
+	0xc6, 0xdd, 0x6f, 0x0e, 0x1c, 0x84, 0x3a, 0xb6, 0xaa, 0x77, 0xa8, 0x8c, 0x98, 0x88, 0x88, 0x1b,
+	0xfc, 0x8f, 0xf7, 0xe7, 0xb0, 0xa7, 0x30, 0x12, 0x53, 0x81, 0x99, 0x29, 0x03, 0xdc, 0x17, 0x0a,
+	0x43, 0x9a, 0x5f, 0x99, 0xa5, 0x79, 0x66, 0x31, 0xbd, 0x80, 0x83, 0x14, 0x0d, 0x1f, 0x73, 0xc3,
+	0x47, 0x3a, 0x4a, 0x30, 0xe5, 0x36, 0x9f, 0x6b, 0xf3, 0x3d, 0xcd, 0xef, 0x8e, 0x5b, 0x61, 0x49,
+	0x7f, 0xb0, 0x6c, 0x91, 0xb2, 0x95, 0xae, 0x96, 0xe8, 0x10, 0x76, 0x13, 0xae, 0x13, 0xd4, 0xde,
+	0x4e, 0xa7, 0xde, 0x6b, 0x0c, 0x5e, 0x05, 0xab, 0xd3, 0x09, 0x36, 0x24, 0x09, 0xde, 0xdb, 0x6f,
+	0x2e, 0x32, 0xa3, 0xe6, 0xac, 0xbc, 0xa0, 0xfd, 0x06, 0x1a, 0x0f, 0xca, 0xb4, 0x09, 0xf5, 0xcf,
+	0x38, 0x2f, 0x83, 0x16, 0x90, 0x1e, 0xc2, 0xce, 0x35, 0xbf, 0x9a, 0x55, 0x13, 0x5a, 0x1e, 0xde,
+	0x3a, 0xaf, 0x49, 0xf7, 0x14, 0x9e, 0x6d, 0xe8, 0xf2, 0xaf, 0xf7, 0x1d, 0xfc, 0x20, 0x50, 0x0f,
+	0x75, 0x4c, 0x2f, 0x61, 0x7f, 0xe5, 0xef, 0x78, 0xb1, 0xd1, 0xfe, 0xdf, 0xa2, 0xf6, 0xc9, 0x16,
+	0xa2, 0x3f, 0xbd, 0x13, 0x68, 0xae, 0xcd, 0xf1, 0xe5, 0x56, 0x8f, 0xd4, 0x3e, 0xdd, 0x4a, 0x56,
+	0x75, 0x3a, 0x1f, 0x7c, 0xcf, 0x7d, 0x72, 0x9b, 0xfb, 0xe4, 0x57, 0xee, 0x93, 0xaf, 0x0b, 0xbf,
+	0x76, 0xbb, 0xf0, 0x6b, 0x3f, 0x17, 0x7e, 0xed, 0x93, 0x57, 0x2d, 0xd3, 0xcd, 0x83, 0x75, 0x9a,
+	0x4f, 0x51, 0x5f, 0xee, 0xda, 0x55, 0x39, 0xfb, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x60, 0x02, 0xc4,
+	0x1e, 0x6f, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -182,6 +316,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
 	RegisterIssuer(ctx context.Context, in *MsgRegisterIssuer, opts ...grpc.CallOption) (*MsgRegisterIssuerResponse, error)
+	IssueCertificate(ctx context.Context, in *MsgIssueCertificate, opts ...grpc.CallOption) (*MsgIssueCertificateResponse, error)
 }
 
 type msgClient struct {
@@ -201,9 +336,19 @@ func (c *msgClient) RegisterIssuer(ctx context.Context, in *MsgRegisterIssuer, o
 	return out, nil
 }
 
+func (c *msgClient) IssueCertificate(ctx context.Context, in *MsgIssueCertificate, opts ...grpc.CallOption) (*MsgIssueCertificateResponse, error) {
+	out := new(MsgIssueCertificateResponse)
+	err := c.cc.Invoke(ctx, "/archive.identity.Msg/IssueCertificate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	RegisterIssuer(context.Context, *MsgRegisterIssuer) (*MsgRegisterIssuerResponse, error)
+	IssueCertificate(context.Context, *MsgIssueCertificate) (*MsgIssueCertificateResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -212,6 +357,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) RegisterIssuer(ctx context.Context, req *MsgRegisterIssuer) (*MsgRegisterIssuerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterIssuer not implemented")
+}
+func (*UnimplementedMsgServer) IssueCertificate(ctx context.Context, req *MsgIssueCertificate) (*MsgIssueCertificateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueCertificate not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -236,6 +384,24 @@ func _Msg_RegisterIssuer_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_IssueCertificate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgIssueCertificate)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).IssueCertificate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/archive.identity.Msg/IssueCertificate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).IssueCertificate(ctx, req.(*MsgIssueCertificate))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "archive.identity.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -243,6 +409,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterIssuer",
 			Handler:    _Msg_RegisterIssuer_Handler,
+		},
+		{
+			MethodName: "IssueCertificate",
+			Handler:    _Msg_IssueCertificate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -326,6 +496,104 @@ func (m *MsgRegisterIssuerResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgIssueCertificate) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueCertificate) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueCertificate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Hashes) > 0 {
+		for k := range m.Hashes {
+			v := m.Hashes[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintTx(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintTx(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintTx(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.MetadataSchemaUri) > 0 {
+		i -= len(m.MetadataSchemaUri)
+		copy(dAtA[i:], m.MetadataSchemaUri)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.MetadataSchemaUri)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Salt) > 0 {
+		i -= len(m.Salt)
+		copy(dAtA[i:], m.Salt)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Salt)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Recipient) > 0 {
+		i -= len(m.Recipient)
+		copy(dAtA[i:], m.Recipient)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Recipient)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgIssueCertificateResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgIssueCertificateResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgIssueCertificateResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Id != 0 {
+		i = encodeVarintTx(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -362,6 +630,51 @@ func (m *MsgRegisterIssuer) Size() (n int) {
 }
 
 func (m *MsgRegisterIssuerResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Id != 0 {
+		n += 1 + sovTx(uint64(m.Id))
+	}
+	return n
+}
+
+func (m *MsgIssueCertificate) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Recipient)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.Salt)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.MetadataSchemaUri)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	if len(m.Hashes) > 0 {
+		for k, v := range m.Hashes {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovTx(uint64(len(k))) + 1 + len(v) + sovTx(uint64(len(v)))
+			n += mapEntrySize + 1 + sovTx(uint64(mapEntrySize))
+		}
+	}
+	return n
+}
+
+func (m *MsgIssueCertificateResponse) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -571,6 +884,380 @@ func (m *MsgRegisterIssuerResponse) Unmarshal(dAtA []byte) error {
 		}
 		if fieldNum <= 0 {
 			return fmt.Errorf("proto: MsgRegisterIssuerResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			m.Id = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Id |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueCertificate) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueCertificate: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueCertificate: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Recipient", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Recipient = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Salt", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Salt = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MetadataSchemaUri", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MetadataSchemaUri = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hashes", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Hashes == nil {
+				m.Hashes = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowTx
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTx
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthTx
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthTx
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowTx
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthTx
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthTx
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipTx(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if (skippy < 0) || (iNdEx+skippy) < 0 {
+						return ErrInvalidLengthTx
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Hashes[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgIssueCertificateResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgIssueCertificateResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgIssueCertificateResponse: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
