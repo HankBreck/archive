@@ -1,0 +1,15 @@
+syntax = "proto3";
+package archive.identity;
+
+import "gogoproto/gogo.proto";
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "archive/x/identity/types";
+
+message Issuer {
+    uint64 id = 1;
+    string creator = 2;
+	string name = 3;
+	string more_info_uri = 4 [(gogoproto.customname) = "MoreInfoUri"];
+	uint64 cost = 5;
+}
