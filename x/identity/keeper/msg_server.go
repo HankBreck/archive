@@ -3,6 +3,7 @@ package keeper
 import (
 	"archive/x/identity/types"
 	"context"
+	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -20,13 +21,36 @@ func NewMsgServerImpl(keeper Keeper) types.MsgServer {
 }
 
 func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterIssuer) (*types.MsgRegisterIssuerResponse, error) {
+	// Handle message and context
 	if msg == nil {
 		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// Field validity check (is duplicate of validatebasic?)
+	addr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.MsgRegisterIssuerResponse{}, nil
+	// Create the issuer
+	issuer := types.Issuer{
+		// ID set inside of k.AppendIssuer()
+		Creator:     addr.String(),
+		Name:        msg.Name,
+		MoreInfoUri: msg.MoreInfoUri,
+		Cost:        msg.Cost,
+	}
+	id := k.AppendIssuer(ctx, issuer)
+
+	// Emit Event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgRegisterIssuer,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterIssuer"),
+		sdk.NewAttribute("issuer_id", strconv.FormatUint(id, 10)),
+	))
+
+	return &types.MsgRegisterIssuerResponse{Id: id}, nil
 }
