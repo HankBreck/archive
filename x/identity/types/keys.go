@@ -16,9 +16,12 @@ const (
 	// IssuerKey defines the prefix under which Contract objects are stored
 	IssuerKey = "id-issuers-"
 
-	// IssuerCountKey defines the prefix under which the current count of issuers is stored.
-	// This is used to determine the next ID an issuer should be stored under.
-	IssuerCountKey = "id-issuer-count-"
+	// CertificateCountKey defines the prefix under which the current count of certificates is stored.
+	// This is used to determine the next ID a Certificate should be stored under.
+	CertificateCountKey = "id-cert-count-"
+
+	// CertificateKey defines the prefix under which Certificate objects are stored
+	CertificateKey = "id-certs-"
 )
 
 func KeyPrefix(p string) []byte {

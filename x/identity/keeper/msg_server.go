@@ -64,14 +64,14 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Ensure msg.Creator is a registered Issuer
+	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
 	k.HasIssuer(ctx, creatorAddr.String())
 
-	// Ensure msg.recipient is a valid account
+	// Ensure msg.recipient is a valid account (duplicate of ValidateBasic)
 	recipientAddr, err := sdk.AccAddressFromBech32(msg.Recipient)
 	if err != nil {
 		return nil, err
@@ -80,16 +80,16 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 		return nil, sdkerrors.ErrNotFound.Wrapf("Recipient address does not exist")
 	}
 
-	cert := types.Certificate{
+	certificate := types.Certificate{
 		// Id filled by next func
-		IssuerId:          uint64(9), // TODO: Fill with issuer ID
+		IssuerAddress:     msg.Creator,
 		Salt:              msg.Salt,
 		MetadataSchemaUri: msg.MetadataSchemaUri,
 		Hashes:            msg.Hashes,
 	}
 
 	// Store certificate
-	_ = cert
+	id := k.AppendCertificate(ctx, certificate)
 
 	// Add recipient to member store
 	_ = msg.Recipient
@@ -101,7 +101,7 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(sdk.AttributeKeyAction, "IssueCertificate"),
 		sdk.NewAttribute("recipient", msg.Recipient),
-		sdk.NewAttribute("certificate_id", strconv.FormatUint(0, 10)), // TODO: replace 0 with the cert ID
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(id, 10)), // TODO: replace 0 with the cert ID
 	))
 
 	return nil, nil
