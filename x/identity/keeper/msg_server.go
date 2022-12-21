@@ -88,7 +88,12 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 
 	// emit events
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.Type
+		types.TypeMsgIssueCertificate,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "IssueCertificate"),
+		sdk.NewAttribute("recipient", msg.Recipient),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(0, 10)), // TODO: replace 0 with the cert ID
 	))
 
 	return nil, nil
