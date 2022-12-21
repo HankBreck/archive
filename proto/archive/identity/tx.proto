@@ -20,9 +20,7 @@ message MsgRegisterIssuer {
     uint64 cost = 4;
 }
 
-message MsgRegisterIssuerResponse {
-    uint64 id = 1;
-}
+message MsgRegisterIssuerResponse {}
 
 message MsgIssueCertificate {
     string creator = 1;

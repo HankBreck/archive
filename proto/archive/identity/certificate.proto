@@ -12,8 +12,3 @@ message Certificate {
 	string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
 	map<string, string> hashes = 5;
 }
-
-message Hash {
-    string key = 1;
-    string value = 2;
-}
