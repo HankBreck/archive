@@ -80,15 +80,14 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 		return nil, sdkerrors.ErrNotFound.Wrapf("Recipient address does not exist")
 	}
 
+	// Create and store the certificate
 	certificate := types.Certificate{
-		// Id filled by next func
+		// Id filled in AppendCertificate()
 		IssuerAddress:     msg.Creator,
 		Salt:              msg.Salt,
 		MetadataSchemaUri: msg.MetadataSchemaUri,
 		Hashes:            msg.Hashes,
 	}
-
-	// Store certificate
 	id := k.AppendCertificate(ctx, certificate)
 
 	// Add recipient to member store
