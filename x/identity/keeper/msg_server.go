@@ -27,7 +27,7 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Field validity check (is duplicate of validatebasic?)
+	// Field validity check (this is likely a duplicate of ValidateBasic)
 	addr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
@@ -64,13 +64,19 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 
 	_ = ctx
 
-	addr, err := sdk.AccAddressFromBech32(msg.Creator)
+	// Ensure msg.Creator is a registered Issuer
+	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
+	k.HasIssuer(ctx, c)
 
-	// Find issuer ID from msg.Creator
-	_ = addr
+	// Ensure msg.recipient is a valid account
+	recipientAddr, err := sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return nil, err
+	}
+	exists := k.accKeeper.HasAccount(ctx, recipientAddr)
 
 	cert := types.Certificate{
 		// Id filled by next func
