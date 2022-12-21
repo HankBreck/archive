@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type msgServer struct {
@@ -63,21 +64,21 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	_ = ctx
-
 	// Ensure msg.Creator is a registered Issuer
 	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
-	k.HasIssuer(ctx, c)
+	k.HasIssuer(ctx, creatorAddr.String())
 
 	// Ensure msg.recipient is a valid account
 	recipientAddr, err := sdk.AccAddressFromBech32(msg.Recipient)
 	if err != nil {
 		return nil, err
 	}
-	exists := k.accKeeper.HasAccount(ctx, recipientAddr)
+	if !k.accKeeper.HasAccount(ctx, recipientAddr) {
+		return nil, sdkerrors.ErrNotFound.Wrapf("Recipient address does not exist")
+	}
 
 	cert := types.Certificate{
 		// Id filled by next func
