@@ -35,13 +35,15 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 
 	// Create the issuer
 	issuer := types.Issuer{
-		// ID set inside of k.AppendIssuer()
 		Creator:     addr.String(),
 		Name:        msg.Name,
 		MoreInfoUri: msg.MoreInfoUri,
 		Cost:        msg.Cost,
 	}
-	id := k.AppendIssuer(ctx, issuer)
+	err = k.SetIssuer(ctx, issuer)
+	if err != nil {
+		return nil, err
+	}
 
 	// Emit Event
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
@@ -49,10 +51,9 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterIssuer"),
-		sdk.NewAttribute("issuer_id", strconv.FormatUint(id, 10)),
 	))
 
-	return &types.MsgRegisterIssuerResponse{Id: id}, nil
+	return &types.MsgRegisterIssuerResponse{Id: 0}, nil
 }
 
 func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
