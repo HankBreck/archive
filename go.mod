@@ -26,7 +26,7 @@ require google.golang.org/protobuf v1.28.1 // indirect
 
 require (
 	github.com/golang/glog v1.0.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.14.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.0 // indirect
 )
 
 require (
@@ -168,11 +168,11 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
-	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/net v0.3.0 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.2.0 // indirect
-	golang.org/x/term v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/term v0.3.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/ini.v1 v1.66.3 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
