@@ -6,30 +6,48 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-func (k Keeper) AppendIssuer(ctx sdk.Context, issuer types.Issuer) uint64 {
-	count := k.getIssuerCount(ctx)
-	if k.HasIssuer(ctx, count) {
-		panic("Duplicate Issuer ID found... this should never happen")
+// SetIssuer stores the Issuer object under the creator's key.
+// Returns an error if the creator address has already created an Issuer.
+func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) error {
+	if k.HasIssuer(ctx, issuer.Creator) {
+		return types.ErrExistingIssuer
 	}
-	issuer.Id = count
 
-	// TODO: Any more checks necessary?
 	k.uncheckedSetIssuer(ctx, issuer)
-	k.setIssuerCount(ctx, count+1)
-	return count
 }
 
-// HasIssuer returns true if a issuer is stored under id, else false
-func (k Keeper) HasIssuer(ctx sdk.Context, id uint64) bool {
+// GetIssuer returns the Issuer object created by creator.
+// Returns an error if the creator has not created an issuer
+func (k Keeper) GetIssuer(ctx sdk.Context, creator string) (*types.Issuer, error) {
+	// Fetch Issuer from store
 	store := k.getIssuerStore(ctx)
-	bzKey := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzKey, id)
-	return store.Has(bzKey)
+	bzIssuer := store.Get([]byte(creator))
+
+	// Check if Issuer exists
+	if len(bzIssuer) == 0 {
+		return nil, sdkerrors.ErrNotFound.Wrapf("No Issuer found for address %s", creator)
+	}
+
+	// Unmarshal Issuer
+	var issuer types.Issuer
+	err := k.cdc.Unmarshal(bzIssuer, &issuer)
+	if err != nil {
+		return nil, err
+	}
+
+	return &issuer, nil
 }
 
-// Stores the issuer with a key of issuer.Id. The issuer.Id field must be set by a calling function.
+// HasIssuer returns true if a issuer is stored under the creator's address, else false
+func (k Keeper) HasIssuer(ctx sdk.Context, creator string) bool {
+	store := k.getIssuerStore(ctx)
+	return store.Has([]byte(creator))
+}
+
+// Stores the issuer with a key of issuer.Creator.
 // The issuer passed as an argument is assumed to be valid, so calling functions must assure this.
 func (k Keeper) uncheckedSetIssuer(ctx sdk.Context, issuer types.Issuer) {
 	store := k.getIssuerStore(ctx)
@@ -42,20 +60,4 @@ func (k Keeper) uncheckedSetIssuer(ctx sdk.Context, issuer types.Issuer) {
 func (k Keeper) getIssuerStore(ctx sdk.Context) prefix.Store {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.IssuerKey))
 	return store
-}
-
-func (k Keeper) getIssuerCount(ctx sdk.Context) uint64 {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.IssuerCountKey))
-	bzCount := store.Get([]byte{0})
-	if bzCount == nil {
-		return 0
-	}
-	return binary.BigEndian.Uint64(bzCount)
-}
-
-func (k Keeper) setIssuerCount(ctx sdk.Context, count uint64) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.IssuerCountKey))
-	bzCount := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzCount, count)
-	store.Set([]byte{0}, bzCount)
 }
