@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"archive/x/identity/types"
-	"encoding/binary"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -15,8 +14,8 @@ func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) error {
 	if k.HasIssuer(ctx, issuer.Creator) {
 		return types.ErrExistingIssuer
 	}
-
 	k.uncheckedSetIssuer(ctx, issuer)
+	return nil
 }
 
 // GetIssuer returns the Issuer object created by creator.
@@ -51,10 +50,8 @@ func (k Keeper) HasIssuer(ctx sdk.Context, creator string) bool {
 // The issuer passed as an argument is assumed to be valid, so calling functions must assure this.
 func (k Keeper) uncheckedSetIssuer(ctx sdk.Context, issuer types.Issuer) {
 	store := k.getIssuerStore(ctx)
-	bzKey := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzKey, issuer.Id)
 	bzContract := k.cdc.MustMarshal(&issuer)
-	store.Set(bzKey, bzContract)
+	store.Set([]byte(issuer.Creator), bzContract)
 }
 
 func (k Keeper) getIssuerStore(ctx sdk.Context) prefix.Store {
