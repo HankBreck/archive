@@ -6,6 +6,7 @@ import (
 	"archive/testutil/sample"
 	identitysimulation "archive/x/identity/simulation"
 	"archive/x/identity/types"
+
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -70,7 +71,7 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	)
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRegisterIssuer,
-		identitysimulation.SimulateMsgRegisterIssuer(am.accountKeeper, am.bankKeeper, am.keeper),
+		identitysimulation.SimulateMsgRegisterIssuer(am.accountKeeper, am.keeper),
 	))
 
 	// this line is used by starport scaffolding # simapp/module/operation

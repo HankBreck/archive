@@ -54,7 +54,7 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterIssuer"),
 	))
 
-	return &types.MsgRegisterIssuerResponse{Id: 0}, nil
+	return &types.MsgRegisterIssuerResponse{}, nil
 }
 
 func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
