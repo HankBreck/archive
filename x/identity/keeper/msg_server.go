@@ -106,5 +106,5 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 		sdk.NewAttribute("certificate_id", strconv.FormatUint(id, 10)), // TODO: replace 0 with the cert ID
 	))
 
-	return nil, nil
+	return &types.MsgIssueCertificateResponse{Id: id}, nil
 }
