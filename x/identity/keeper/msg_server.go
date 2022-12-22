@@ -91,7 +91,10 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	id := k.AppendCertificate(ctx, certificate)
 
 	// Add recipient to member store
-	_ = msg.Recipient
+	err = k.CreateMembership(ctx, id, recipientAddr)
+	if err != nil {
+		return nil, err
+	}
 
 	// emit events
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
