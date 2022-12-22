@@ -1,5 +1,7 @@
 package types
 
+import "encoding/binary"
+
 const (
 	// ModuleName defines the module name
 	ModuleName = "identity"
@@ -16,14 +18,19 @@ const (
 	// IssuerKey defines the prefix under which Contract objects are stored
 	IssuerKey = "id-issuers-"
 
+	// CertificateKey defines the prefix under which Certificate objects are stored
+	CertificateKey = "id-certs-"
+
 	// CertificateCountKey defines the prefix under which the current count of certificates is stored.
 	// This is used to determine the next ID a Certificate should be stored under.
 	CertificateCountKey = "id-cert-count-"
 
-	// CertificateKey defines the prefix under which Certificate objects are stored
-	CertificateKey = "id-certs-"
+	// MembershipKey defines the prefix under which Membership lists are stored
+	MembershipKey = "id-memberships-"
 )
 
-func KeyPrefix(p string) []byte {
-	return []byte(p)
+func MembershipKeyPrefix(id uint64) []byte {
+	bzId := make([]byte, 8)
+	binary.BigEndian.PutUint64(bzId, id)
+	return append([]byte(MembershipKey), bzId...)
 }
