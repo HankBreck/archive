@@ -431,7 +431,6 @@ func New(
 		keys[identitymoduletypes.StoreKey],
 		keys[identitymoduletypes.MemStoreKey],
 		app.GetSubspace(identitymoduletypes.ModuleName),
-		app.AccountKeeper,
 	)
 	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper)
 

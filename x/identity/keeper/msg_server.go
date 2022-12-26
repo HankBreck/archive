@@ -78,9 +78,6 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	if err != nil {
 		return nil, err
 	}
-	if !k.accKeeper.HasAccount(ctx, recipientAddr) {
-		return nil, sdkerrors.ErrNotFound.Wrapf("Recipient address does not exist")
-	}
 
 	// Create and store the certificate
 	certificate := types.Certificate{
