@@ -32700,6 +32700,14 @@ definitions:
     title: >-
       QuerySigningDataResponse is the reseponse type for the Query/SigningData
       RPC method
+  archive.identity.HashEntry:
+    type: object
+    properties:
+      field:
+        type: string
+      hash:
+        type: string
+    title: 'HashEntry is a record of a field: hash mapping used in Certificates'
   archive.identity.MsgIssueCertificateResponse:
     type: object
     properties:

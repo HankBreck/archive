@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface IdentityHashEntry {
+  field?: string;
+  hash?: string;
+}
+
 export interface IdentityMsgIssueCertificateResponse {
   /** @format uint64 */
   id?: string;

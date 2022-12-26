@@ -4,21 +4,81 @@ import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "archive.identity";
 
+/** HashEntry is a record of a field: hash mapping used in Certificates */
+export interface HashEntry {
+  field: string;
+  hash: string;
+}
+
+/** Certificate is the structure of an identity certificate */
 export interface Certificate {
   id: number;
   issuerAddress: string;
   salt: string;
   metadataSchemaUri: string;
-  hashes: { [key: string]: string };
+  hashes: HashEntry[];
 }
 
-export interface Certificate_HashesEntry {
-  key: string;
-  value: string;
+function createBaseHashEntry(): HashEntry {
+  return { field: "", hash: "" };
 }
+
+export const HashEntry = {
+  encode(message: HashEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.field !== "") {
+      writer.uint32(10).string(message.field);
+    }
+    if (message.hash !== "") {
+      writer.uint32(18).string(message.hash);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): HashEntry {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseHashEntry();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.field = reader.string();
+          break;
+        case 2:
+          message.hash = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): HashEntry {
+    return {
+      field: isSet(object.field) ? String(object.field) : "",
+      hash: isSet(object.hash) ? String(object.hash) : "",
+    };
+  },
+
+  toJSON(message: HashEntry): unknown {
+    const obj: any = {};
+    message.field !== undefined && (obj.field = message.field);
+    message.hash !== undefined && (obj.hash = message.hash);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<HashEntry>, I>>(object: I): HashEntry {
+    const message = createBaseHashEntry();
+    message.field = object.field ?? "";
+    message.hash = object.hash ?? "";
+    return message;
+  },
+};
 
 function createBaseCertificate(): Certificate {
-  return { id: 0, issuerAddress: "", salt: "", metadataSchemaUri: "", hashes: {} };
+  return { id: 0, issuerAddress: "", salt: "", metadataSchemaUri: "", hashes: [] };
 }
 
 export const Certificate = {
@@ -35,9 +95,9 @@ export const Certificate = {
     if (message.metadataSchemaUri !== "") {
       writer.uint32(34).string(message.metadataSchemaUri);
     }
-    Object.entries(message.hashes).forEach(([key, value]) => {
-      Certificate_HashesEntry.encode({ key: key as any, value }, writer.uint32(42).fork()).ldelim();
-    });
+    for (const v of message.hashes) {
+      HashEntry.encode(v!, writer.uint32(42).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -61,10 +121,7 @@ export const Certificate = {
           message.metadataSchemaUri = reader.string();
           break;
         case 5:
-          const entry5 = Certificate_HashesEntry.decode(reader, reader.uint32());
-          if (entry5.value !== undefined) {
-            message.hashes[entry5.key] = entry5.value;
-          }
+          message.hashes.push(HashEntry.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -80,12 +137,7 @@ export const Certificate = {
       issuerAddress: isSet(object.issuerAddress) ? String(object.issuerAddress) : "",
       salt: isSet(object.salt) ? String(object.salt) : "",
       metadataSchemaUri: isSet(object.metadataSchemaUri) ? String(object.metadataSchemaUri) : "",
-      hashes: isObject(object.hashes)
-        ? Object.entries(object.hashes).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
-          return acc;
-        }, {})
-        : {},
+      hashes: Array.isArray(object?.hashes) ? object.hashes.map((e: any) => HashEntry.fromJSON(e)) : [],
     };
   },
 
@@ -95,11 +147,10 @@ export const Certificate = {
     message.issuerAddress !== undefined && (obj.issuerAddress = message.issuerAddress);
     message.salt !== undefined && (obj.salt = message.salt);
     message.metadataSchemaUri !== undefined && (obj.metadataSchemaUri = message.metadataSchemaUri);
-    obj.hashes = {};
     if (message.hashes) {
-      Object.entries(message.hashes).forEach(([k, v]) => {
-        obj.hashes[k] = v;
-      });
+      obj.hashes = message.hashes.map((e) => e ? HashEntry.toJSON(e) : undefined);
+    } else {
+      obj.hashes = [];
     }
     return obj;
   },
@@ -110,67 +161,7 @@ export const Certificate = {
     message.issuerAddress = object.issuerAddress ?? "";
     message.salt = object.salt ?? "";
     message.metadataSchemaUri = object.metadataSchemaUri ?? "";
-    message.hashes = Object.entries(object.hashes ?? {}).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = String(value);
-      }
-      return acc;
-    }, {});
-    return message;
-  },
-};
-
-function createBaseCertificate_HashesEntry(): Certificate_HashesEntry {
-  return { key: "", value: "" };
-}
-
-export const Certificate_HashesEntry = {
-  encode(message: Certificate_HashesEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): Certificate_HashesEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseCertificate_HashesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.string();
-          break;
-        case 2:
-          message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): Certificate_HashesEntry {
-    return { key: isSet(object.key) ? String(object.key) : "", value: isSet(object.value) ? String(object.value) : "" };
-  },
-
-  toJSON(message: Certificate_HashesEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<Certificate_HashesEntry>, I>>(object: I): Certificate_HashesEntry {
-    const message = createBaseCertificate_HashesEntry();
-    message.key = object.key ?? "";
-    message.value = object.value ?? "";
+    message.hashes = object.hashes?.map((e) => HashEntry.fromPartial(e)) || [];
     return message;
   },
 };
@@ -215,10 +206,6 @@ function longToNumber(long: Long): number {
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
-}
-
-function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
 }
 
 function isSet(value: any): boolean {

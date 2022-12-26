@@ -1,6 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { HashEntry } from "./certificate";
 
 export const protobufPackage = "archive.identity";
 
@@ -19,12 +20,7 @@ export interface MsgIssueCertificate {
   recipient: string;
   salt: string;
   metadataSchemaUri: string;
-  hashes: { [key: string]: string };
-}
-
-export interface MsgIssueCertificate_HashesEntry {
-  key: string;
-  value: string;
+  hashes: HashEntry[];
 }
 
 export interface MsgIssueCertificateResponse {
@@ -147,7 +143,7 @@ export const MsgRegisterIssuerResponse = {
 };
 
 function createBaseMsgIssueCertificate(): MsgIssueCertificate {
-  return { creator: "", recipient: "", salt: "", metadataSchemaUri: "", hashes: {} };
+  return { creator: "", recipient: "", salt: "", metadataSchemaUri: "", hashes: [] };
 }
 
 export const MsgIssueCertificate = {
@@ -164,9 +160,9 @@ export const MsgIssueCertificate = {
     if (message.metadataSchemaUri !== "") {
       writer.uint32(34).string(message.metadataSchemaUri);
     }
-    Object.entries(message.hashes).forEach(([key, value]) => {
-      MsgIssueCertificate_HashesEntry.encode({ key: key as any, value }, writer.uint32(42).fork()).ldelim();
-    });
+    for (const v of message.hashes) {
+      HashEntry.encode(v!, writer.uint32(42).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -190,10 +186,7 @@ export const MsgIssueCertificate = {
           message.metadataSchemaUri = reader.string();
           break;
         case 5:
-          const entry5 = MsgIssueCertificate_HashesEntry.decode(reader, reader.uint32());
-          if (entry5.value !== undefined) {
-            message.hashes[entry5.key] = entry5.value;
-          }
+          message.hashes.push(HashEntry.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -209,12 +202,7 @@ export const MsgIssueCertificate = {
       recipient: isSet(object.recipient) ? String(object.recipient) : "",
       salt: isSet(object.salt) ? String(object.salt) : "",
       metadataSchemaUri: isSet(object.metadataSchemaUri) ? String(object.metadataSchemaUri) : "",
-      hashes: isObject(object.hashes)
-        ? Object.entries(object.hashes).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-          acc[key] = String(value);
-          return acc;
-        }, {})
-        : {},
+      hashes: Array.isArray(object?.hashes) ? object.hashes.map((e: any) => HashEntry.fromJSON(e)) : [],
     };
   },
 
@@ -224,11 +212,10 @@ export const MsgIssueCertificate = {
     message.recipient !== undefined && (obj.recipient = message.recipient);
     message.salt !== undefined && (obj.salt = message.salt);
     message.metadataSchemaUri !== undefined && (obj.metadataSchemaUri = message.metadataSchemaUri);
-    obj.hashes = {};
     if (message.hashes) {
-      Object.entries(message.hashes).forEach(([k, v]) => {
-        obj.hashes[k] = v;
-      });
+      obj.hashes = message.hashes.map((e) => e ? HashEntry.toJSON(e) : undefined);
+    } else {
+      obj.hashes = [];
     }
     return obj;
   },
@@ -239,69 +226,7 @@ export const MsgIssueCertificate = {
     message.recipient = object.recipient ?? "";
     message.salt = object.salt ?? "";
     message.metadataSchemaUri = object.metadataSchemaUri ?? "";
-    message.hashes = Object.entries(object.hashes ?? {}).reduce<{ [key: string]: string }>((acc, [key, value]) => {
-      if (value !== undefined) {
-        acc[key] = String(value);
-      }
-      return acc;
-    }, {});
-    return message;
-  },
-};
-
-function createBaseMsgIssueCertificate_HashesEntry(): MsgIssueCertificate_HashesEntry {
-  return { key: "", value: "" };
-}
-
-export const MsgIssueCertificate_HashesEntry = {
-  encode(message: MsgIssueCertificate_HashesEntry, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
-    if (message.key !== "") {
-      writer.uint32(10).string(message.key);
-    }
-    if (message.value !== "") {
-      writer.uint32(18).string(message.value);
-    }
-    return writer;
-  },
-
-  decode(input: _m0.Reader | Uint8Array, length?: number): MsgIssueCertificate_HashesEntry {
-    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
-    let end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseMsgIssueCertificate_HashesEntry();
-    while (reader.pos < end) {
-      const tag = reader.uint32();
-      switch (tag >>> 3) {
-        case 1:
-          message.key = reader.string();
-          break;
-        case 2:
-          message.value = reader.string();
-          break;
-        default:
-          reader.skipType(tag & 7);
-          break;
-      }
-    }
-    return message;
-  },
-
-  fromJSON(object: any): MsgIssueCertificate_HashesEntry {
-    return { key: isSet(object.key) ? String(object.key) : "", value: isSet(object.value) ? String(object.value) : "" };
-  },
-
-  toJSON(message: MsgIssueCertificate_HashesEntry): unknown {
-    const obj: any = {};
-    message.key !== undefined && (obj.key = message.key);
-    message.value !== undefined && (obj.value = message.value);
-    return obj;
-  },
-
-  fromPartial<I extends Exact<DeepPartial<MsgIssueCertificate_HashesEntry>, I>>(
-    object: I,
-  ): MsgIssueCertificate_HashesEntry {
-    const message = createBaseMsgIssueCertificate_HashesEntry();
-    message.key = object.key ?? "";
-    message.value = object.value ?? "";
+    message.hashes = object.hashes?.map((e) => HashEntry.fromPartial(e)) || [];
     return message;
   },
 };
@@ -424,10 +349,6 @@ function longToNumber(long: Long): number {
 if (_m0.util.Long !== Long) {
   _m0.util.Long = Long as any;
   _m0.configure();
-}
-
-function isObject(value: any): boolean {
-  return typeof value === "object" && value !== null;
 }
 
 function isSet(value: any): boolean {

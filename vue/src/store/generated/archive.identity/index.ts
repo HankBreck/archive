@@ -1,11 +1,12 @@
 import { Client, registry, MissingWalletError } from 'archive-client-ts'
 
+import { HashEntry } from "archive-client-ts/archive.identity/types"
 import { Certificate } from "archive-client-ts/archive.identity/types"
 import { Issuer } from "archive-client-ts/archive.identity/types"
 import { Params } from "archive-client-ts/archive.identity/types"
 
 
-export { Certificate, Issuer, Params };
+export { HashEntry, Certificate, Issuer, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -39,6 +40,7 @@ const getDefaultState = () => {
 				Params: {},
 				
 				_Structure: {
+						HashEntry: getStructure(HashEntry.fromPartial({})),
 						Certificate: getStructure(Certificate.fromPartial({})),
 						Issuer: getStructure(Issuer.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
