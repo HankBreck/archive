@@ -106,7 +106,6 @@ export interface ProtobufAny {
    * expect it to use in the context of Any. However, for URLs which use the
    * scheme `http`, `https`, or no scheme, one can optionally set up a type
    * server that maps type URLs to message definitions as follows:
-   *
    * * If no scheme is provided, `https` is assumed.
    * * An HTTP GET on the URL must yield a [google.protobuf.Type][]
    *   value in binary format, or produce an error.
@@ -115,11 +114,9 @@ export interface ProtobufAny {
    *   lookup. Therefore, binary compatibility needs to be preserved
    *   on changes to types. (Use versioned type names to manage
    *   breaking changes.)
-   *
    * Note: this functionality is not currently available in the official
    * protobuf release, and it is not used for type URLs beginning with
    * type.googleapis.com.
-   *
    * Schemes other than `http`, `https` (or the empty scheme) might be
    * used with implementation specific semantics.
    */
@@ -195,6 +192,7 @@ export interface TypesBlockID {
  */
 export interface TypesHeader {
   /**
+   * basic block info
    * Consensus captures the consensus rules for processing a block in the blockchain,
    * including all blockchain data structures and the rules of the application's
    * state transition machine.
@@ -207,33 +205,65 @@ export interface TypesHeader {
 
   /** @format date-time */
   time?: string;
+
+  /** prev block info */
   last_block_id?: TypesBlockID;
 
-  /** @format byte */
+  /**
+   * hashes of block data
+   * commit from validators from the last block
+   * @format byte
+   */
   last_commit_hash?: string;
 
-  /** @format byte */
+  /**
+   * transactions
+   * @format byte
+   */
   data_hash?: string;
 
-  /** @format byte */
+  /**
+   * hashes from the app output from the prev block
+   * validators for the current block
+   * @format byte
+   */
   validators_hash?: string;
 
-  /** @format byte */
+  /**
+   * validators for the next block
+   * @format byte
+   */
   next_validators_hash?: string;
 
-  /** @format byte */
+  /**
+   * consensus params for current block
+   * @format byte
+   */
   consensus_hash?: string;
 
-  /** @format byte */
+  /**
+   * state after txs from the previous block
+   * @format byte
+   */
   app_hash?: string;
 
-  /** @format byte */
+  /**
+   * root hash of all results from the txs from the previous block
+   * @format byte
+   */
   last_results_hash?: string;
 
-  /** @format byte */
+  /**
+   * consensus info
+   * evidence included in the block
+   * @format byte
+   */
   evidence_hash?: string;
 
-  /** @format byte */
+  /**
+   * original proposer of the block
+   * @format byte
+   */
   proposer_address?: string;
 }
 
@@ -456,10 +486,18 @@ corresponding request message has used PageRequest.
  }
 */
 export interface V1Beta1PageResponse {
-  /** @format byte */
+  /**
+   * next_key is the key to be passed to PageRequest.key to
+   * query the next page most efficiently
+   * @format byte
+   */
   next_key?: string;
 
-  /** @format uint64 */
+  /**
+   * total is total number of results available if PageRequest.count_total
+   * was set, its value is undefined otherwise
+   * @format uint64
+   */
   total?: string;
 }
 
@@ -643,7 +681,11 @@ export interface V1Beta1Redelegation {
   /** validator_dst_address is the validator redelegation destination operator address. */
   validator_dst_address?: string;
 
-  /** entries are the redelegation entries. */
+  /**
+   * entries are the redelegation entries.
+   *
+   * redelegation entries
+   */
   entries?: V1Beta1RedelegationEntry[];
 }
 
@@ -706,7 +748,11 @@ export interface V1Beta1UnbondingDelegation {
   /** validator_address is the bech32-encoded address of the validator. */
   validator_address?: string;
 
-  /** entries are the unbonding delegation entries. */
+  /**
+   * entries are the unbonding delegation entries.
+   *
+   * unbonding delegation entries
+   */
   entries?: V1Beta1UnbondingDelegationEntry[];
 }
 
@@ -746,10 +792,11 @@ export interface VersionConsensus {
   app?: string;
 }
 
-export type QueryParamsType = Record<string | number, any>;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -759,29 +806,20 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: keyof Omit<Body, "body" | "bodyUsed">;
+  format?: ResponseType;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
 }
 
 export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
 
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType) => RequestParams | void;
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
@@ -790,149 +828,86 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
-  private securityData: SecurityDataType = null as any;
-  private securityWorker: null | ApiConfig<SecurityDataType>["securityWorker"] = null;
-  private abortControllers = new Map<CancelToken, AbortController>();
+  public instance: AxiosInstance;
+  private securityData: SecurityDataType | null = null;
+  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private secure?: boolean;
+  private format?: ResponseType;
 
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
+  constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || "" });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
   }
 
-  public setSecurityData = (data: SecurityDataType) => {
+  public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
   };
 
-  private addQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-
-    return (
-      encodeURIComponent(key) +
-      "=" +
-      encodeURIComponent(Array.isArray(value) ? value.join(",") : typeof value === "number" ? value : `${value}`)
-    );
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-    return keys
-      .map((key) =>
-        typeof query[key] === "object" && !Array.isArray(query[key])
-          ? this.toQueryString(query[key] as QueryParamsType)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((data, key) => {
-        data.append(key, input[key]);
-        return data;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  };
-
-  private mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  private mergeRequestParams(params1: AxiosRequestConfig, params2?: AxiosRequestConfig): AxiosRequestConfig {
     return {
-      ...this.baseApiParams,
+      ...this.instance.defaults,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
+        ...(this.instance.defaults.headers || {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
     };
   }
 
-  private createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
+  private createFormData(input: Record<string, unknown>): FormData {
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      formData.append(
+        key,
+        property instanceof Blob
+          ? property
+          : typeof property === "object" && property !== null
+          ? JSON.stringify(property)
+          : `${property}`,
+      );
+      return formData;
+    }, new FormData());
+  }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
-
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = <T = any, E = any>({
-    body,
+  public request = async <T = any, _E = any>({
     secure,
     path,
     type,
     query,
-    format = "json",
-    baseUrl,
-    cancelToken,
+    format,
+    body,
     ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
-    const secureParams = (secure && this.securityWorker && this.securityWorker(this.securityData)) || {};
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
+    const secureParams =
+      ((typeof secure === "boolean" ? secure : this.secure) &&
+        this.securityWorker &&
+        (await this.securityWorker(this.securityData))) ||
+      {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
+    const responseFormat = (format && this.format) || void 0;
 
-    return fetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
+    if (type === ContentType.FormData && body && body !== null && typeof body === "object") {
+      requestParams.headers.common = { Accept: "*/*" };
+      requestParams.headers.post = {};
+      requestParams.headers.put = {};
+
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    return this.instance.request({
       ...requestParams,
       headers: {
         ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
         ...(requestParams.headers || {}),
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : void 0,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
-      r.data = (null as unknown) as T;
-      r.error = (null as unknown) as E;
-
-      const data = await response[format]()
-        .then((data) => {
-          if (r.ok) {
-            r.data = data;
-          } else {
-            r.error = data;
-          }
-          return r;
-        })
-        .catch((e) => {
-          r.error = e;
-          return r;
-        });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data;
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
     });
   };
 }
@@ -951,7 +926,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/staking/v1beta1/delegations/{delegator_addr}
    */
   queryDelegatorDelegations = (
-    delegator_addr: string,
+    delegatorAddr: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -962,7 +937,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryDelegatorDelegationsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/delegations/${delegator_addr}`,
+      path: `/cosmos/staking/v1beta1/delegations/${delegatorAddr}`,
       method: "GET",
       query: query,
       format: "json",
@@ -978,7 +953,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * @request GET:/cosmos/staking/v1beta1/delegators/{delegator_addr}/redelegations
    */
   queryRedelegations = (
-    delegator_addr: string,
+    delegatorAddr: string,
     query?: {
       src_validator_addr?: string;
       dst_validator_addr?: string;
@@ -991,7 +966,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryRedelegationsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/delegators/${delegator_addr}/redelegations`,
+      path: `/cosmos/staking/v1beta1/delegators/${delegatorAddr}/redelegations`,
       method: "GET",
       query: query,
       format: "json",
@@ -1008,7 +983,7 @@ delegator address.
  * @request GET:/cosmos/staking/v1beta1/delegators/{delegator_addr}/unbonding_delegations
  */
   queryDelegatorUnbondingDelegations = (
-    delegator_addr: string,
+    delegatorAddr: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1019,7 +994,7 @@ delegator address.
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryDelegatorUnbondingDelegationsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/delegators/${delegator_addr}/unbonding_delegations`,
+      path: `/cosmos/staking/v1beta1/delegators/${delegatorAddr}/unbonding_delegations`,
       method: "GET",
       query: query,
       format: "json",
@@ -1036,7 +1011,7 @@ address.
  * @request GET:/cosmos/staking/v1beta1/delegators/{delegator_addr}/validators
  */
   queryDelegatorValidators = (
-    delegator_addr: string,
+    delegatorAddr: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1047,7 +1022,7 @@ address.
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryDelegatorValidatorsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/delegators/${delegator_addr}/validators`,
+      path: `/cosmos/staking/v1beta1/delegators/${delegatorAddr}/validators`,
       method: "GET",
       query: query,
       format: "json",
@@ -1063,9 +1038,9 @@ address.
 pair.
  * @request GET:/cosmos/staking/v1beta1/delegators/{delegator_addr}/validators/{validator_addr}
  */
-  queryDelegatorValidator = (delegator_addr: string, validator_addr: string, params: RequestParams = {}) =>
+  queryDelegatorValidator = (delegatorAddr: string, validatorAddr: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryDelegatorValidatorResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/delegators/${delegator_addr}/validators/${validator_addr}`,
+      path: `/cosmos/staking/v1beta1/delegators/${delegatorAddr}/validators/${validatorAddr}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1154,9 +1129,9 @@ pair.
    * @summary Validator queries validator info for given validator address.
    * @request GET:/cosmos/staking/v1beta1/validators/{validator_addr}
    */
-  queryValidator = (validator_addr: string, params: RequestParams = {}) =>
+  queryValidator = (validatorAddr: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryValidatorResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/validators/${validator_addr}`,
+      path: `/cosmos/staking/v1beta1/validators/${validatorAddr}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1171,7 +1146,7 @@ pair.
    * @request GET:/cosmos/staking/v1beta1/validators/{validator_addr}/delegations
    */
   queryValidatorDelegations = (
-    validator_addr: string,
+    validatorAddr: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1182,7 +1157,7 @@ pair.
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryValidatorDelegationsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/validators/${validator_addr}/delegations`,
+      path: `/cosmos/staking/v1beta1/validators/${validatorAddr}/delegations`,
       method: "GET",
       query: query,
       format: "json",
@@ -1197,9 +1172,9 @@ pair.
    * @summary Delegation queries delegate info for given validator delegator pair.
    * @request GET:/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}
    */
-  queryDelegation = (validator_addr: string, delegator_addr: string, params: RequestParams = {}) =>
+  queryDelegation = (validatorAddr: string, delegatorAddr: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryDelegationResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/validators/${validator_addr}/delegations/${delegator_addr}`,
+      path: `/cosmos/staking/v1beta1/validators/${validatorAddr}/delegations/${delegatorAddr}`,
       method: "GET",
       format: "json",
       ...params,
@@ -1214,9 +1189,9 @@ pair.
 pair.
  * @request GET:/cosmos/staking/v1beta1/validators/{validator_addr}/delegations/{delegator_addr}/unbonding_delegation
  */
-  queryUnbondingDelegation = (validator_addr: string, delegator_addr: string, params: RequestParams = {}) =>
+  queryUnbondingDelegation = (validatorAddr: string, delegatorAddr: string, params: RequestParams = {}) =>
     this.request<V1Beta1QueryUnbondingDelegationResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/validators/${validator_addr}/delegations/${delegator_addr}/unbonding_delegation`,
+      path: `/cosmos/staking/v1beta1/validators/${validatorAddr}/delegations/${delegatorAddr}/unbonding_delegation`,
       method: "GET",
       format: "json",
       ...params,
@@ -1231,7 +1206,7 @@ pair.
    * @request GET:/cosmos/staking/v1beta1/validators/{validator_addr}/unbonding_delegations
    */
   queryValidatorUnbondingDelegations = (
-    validator_addr: string,
+    validatorAddr: string,
     query?: {
       "pagination.key"?: string;
       "pagination.offset"?: string;
@@ -1242,7 +1217,7 @@ pair.
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryValidatorUnbondingDelegationsResponse, RpcStatus>({
-      path: `/cosmos/staking/v1beta1/validators/${validator_addr}/unbonding_delegations`,
+      path: `/cosmos/staking/v1beta1/validators/${validatorAddr}/unbonding_delegations`,
       method: "GET",
       query: query,
       format: "json",

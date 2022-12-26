@@ -114,6 +114,7 @@ import (
 	identitymodule "archive/x/identity"
 	identitymodulekeeper "archive/x/identity/keeper"
 	identitymoduletypes "archive/x/identity/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/HankBreck/archive/app/params"
@@ -430,8 +431,9 @@ func New(
 		keys[identitymoduletypes.StoreKey],
 		keys[identitymoduletypes.MemStoreKey],
 		app.GetSubspace(identitymoduletypes.ModuleName),
+		app.AccountKeeper,
 	)
-	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper, app.BankKeeper)
+	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 

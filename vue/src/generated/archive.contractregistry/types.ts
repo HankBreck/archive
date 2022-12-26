@@ -1,6 +1,6 @@
-import { Contract } from "./types/contractregistry/contract"
-import { ContactInfo } from "./types/contractregistry/contract"
-import { Params } from "./types/contractregistry/params"
+import { Contract } from "./types/archive/contractregistry/contract"
+import { ContactInfo } from "./types/archive/contractregistry/contract"
+import { Params } from "./types/archive/contractregistry/params"
 
 
 export {     

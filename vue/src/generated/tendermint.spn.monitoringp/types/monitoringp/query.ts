@@ -1,57 +1,55 @@
 /* eslint-disable */
-import { Reader, Writer } from "protobufjs/minimal";
-import { ConsumerClientID } from "../monitoringp/consumer_client_id";
-import { ConnectionChannelID } from "../monitoringp/connection_channel_id";
-import { MonitoringInfo } from "../monitoringp/monitoring_info";
-import { Params } from "../monitoringp/params";
+import _m0 from "protobufjs/minimal";
+import { ConnectionChannelID } from "./connection_channel_id";
+import { ConsumerClientID } from "./consumer_client_id";
+import { MonitoringInfo } from "./monitoring_info";
+import { Params } from "./params";
 
 export const protobufPackage = "tendermint.spn.monitoringp";
 
-export interface QueryGetConsumerClientIDRequest {}
+export interface QueryGetConsumerClientIDRequest {
+}
 
 export interface QueryGetConsumerClientIDResponse {
   ConsumerClientID: ConsumerClientID | undefined;
 }
 
-export interface QueryGetConnectionChannelIDRequest {}
+export interface QueryGetConnectionChannelIDRequest {
+}
 
 export interface QueryGetConnectionChannelIDResponse {
   ConnectionChannelID: ConnectionChannelID | undefined;
 }
 
-export interface QueryGetMonitoringInfoRequest {}
+export interface QueryGetMonitoringInfoRequest {
+}
 
 export interface QueryGetMonitoringInfoResponse {
   MonitoringInfo: MonitoringInfo | undefined;
 }
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
-export interface QueryParamsRequest {}
+export interface QueryParamsRequest {
+}
 
 /** QueryParamsResponse is response type for the Query/Params RPC method. */
 export interface QueryParamsResponse {
   params: Params | undefined;
 }
 
-const baseQueryGetConsumerClientIDRequest: object = {};
+function createBaseQueryGetConsumerClientIDRequest(): QueryGetConsumerClientIDRequest {
+  return {};
+}
 
 export const QueryGetConsumerClientIDRequest = {
-  encode(
-    _: QueryGetConsumerClientIDRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(_: QueryGetConsumerClientIDRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetConsumerClientIDRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetConsumerClientIDRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetConsumerClientIDRequest,
-    } as QueryGetConsumerClientIDRequest;
+    const message = createBaseQueryGetConsumerClientIDRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -64,10 +62,7 @@ export const QueryGetConsumerClientIDRequest = {
   },
 
   fromJSON(_: any): QueryGetConsumerClientIDRequest {
-    const message = {
-      ...baseQueryGetConsumerClientIDRequest,
-    } as QueryGetConsumerClientIDRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryGetConsumerClientIDRequest): unknown {
@@ -75,49 +70,33 @@ export const QueryGetConsumerClientIDRequest = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<QueryGetConsumerClientIDRequest>
-  ): QueryGetConsumerClientIDRequest {
-    const message = {
-      ...baseQueryGetConsumerClientIDRequest,
-    } as QueryGetConsumerClientIDRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryGetConsumerClientIDRequest>, I>>(_: I): QueryGetConsumerClientIDRequest {
+    const message = createBaseQueryGetConsumerClientIDRequest();
     return message;
   },
 };
 
-const baseQueryGetConsumerClientIDResponse: object = {};
+function createBaseQueryGetConsumerClientIDResponse(): QueryGetConsumerClientIDResponse {
+  return { ConsumerClientID: undefined };
+}
 
 export const QueryGetConsumerClientIDResponse = {
-  encode(
-    message: QueryGetConsumerClientIDResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryGetConsumerClientIDResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.ConsumerClientID !== undefined) {
-      ConsumerClientID.encode(
-        message.ConsumerClientID,
-        writer.uint32(10).fork()
-      ).ldelim();
+      ConsumerClientID.encode(message.ConsumerClientID, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetConsumerClientIDResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetConsumerClientIDResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetConsumerClientIDResponse,
-    } as QueryGetConsumerClientIDResponse;
+    const message = createBaseQueryGetConsumerClientIDResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.ConsumerClientID = ConsumerClientID.decode(
-            reader,
-            reader.uint32()
-          );
+          message.ConsumerClientID = ConsumerClientID.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -128,70 +107,43 @@ export const QueryGetConsumerClientIDResponse = {
   },
 
   fromJSON(object: any): QueryGetConsumerClientIDResponse {
-    const message = {
-      ...baseQueryGetConsumerClientIDResponse,
-    } as QueryGetConsumerClientIDResponse;
-    if (
-      object.ConsumerClientID !== undefined &&
-      object.ConsumerClientID !== null
-    ) {
-      message.ConsumerClientID = ConsumerClientID.fromJSON(
-        object.ConsumerClientID
-      );
-    } else {
-      message.ConsumerClientID = undefined;
-    }
-    return message;
+    return {
+      ConsumerClientID: isSet(object.ConsumerClientID) ? ConsumerClientID.fromJSON(object.ConsumerClientID) : undefined,
+    };
   },
 
   toJSON(message: QueryGetConsumerClientIDResponse): unknown {
     const obj: any = {};
-    message.ConsumerClientID !== undefined &&
-      (obj.ConsumerClientID = message.ConsumerClientID
-        ? ConsumerClientID.toJSON(message.ConsumerClientID)
-        : undefined);
+    message.ConsumerClientID !== undefined && (obj.ConsumerClientID = message.ConsumerClientID
+      ? ConsumerClientID.toJSON(message.ConsumerClientID)
+      : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryGetConsumerClientIDResponse>
+  fromPartial<I extends Exact<DeepPartial<QueryGetConsumerClientIDResponse>, I>>(
+    object: I,
   ): QueryGetConsumerClientIDResponse {
-    const message = {
-      ...baseQueryGetConsumerClientIDResponse,
-    } as QueryGetConsumerClientIDResponse;
-    if (
-      object.ConsumerClientID !== undefined &&
-      object.ConsumerClientID !== null
-    ) {
-      message.ConsumerClientID = ConsumerClientID.fromPartial(
-        object.ConsumerClientID
-      );
-    } else {
-      message.ConsumerClientID = undefined;
-    }
+    const message = createBaseQueryGetConsumerClientIDResponse();
+    message.ConsumerClientID = (object.ConsumerClientID !== undefined && object.ConsumerClientID !== null)
+      ? ConsumerClientID.fromPartial(object.ConsumerClientID)
+      : undefined;
     return message;
   },
 };
 
-const baseQueryGetConnectionChannelIDRequest: object = {};
+function createBaseQueryGetConnectionChannelIDRequest(): QueryGetConnectionChannelIDRequest {
+  return {};
+}
 
 export const QueryGetConnectionChannelIDRequest = {
-  encode(
-    _: QueryGetConnectionChannelIDRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(_: QueryGetConnectionChannelIDRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetConnectionChannelIDRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetConnectionChannelIDRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetConnectionChannelIDRequest,
-    } as QueryGetConnectionChannelIDRequest;
+    const message = createBaseQueryGetConnectionChannelIDRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -204,10 +156,7 @@ export const QueryGetConnectionChannelIDRequest = {
   },
 
   fromJSON(_: any): QueryGetConnectionChannelIDRequest {
-    const message = {
-      ...baseQueryGetConnectionChannelIDRequest,
-    } as QueryGetConnectionChannelIDRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryGetConnectionChannelIDRequest): unknown {
@@ -215,49 +164,35 @@ export const QueryGetConnectionChannelIDRequest = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<QueryGetConnectionChannelIDRequest>
+  fromPartial<I extends Exact<DeepPartial<QueryGetConnectionChannelIDRequest>, I>>(
+    _: I,
   ): QueryGetConnectionChannelIDRequest {
-    const message = {
-      ...baseQueryGetConnectionChannelIDRequest,
-    } as QueryGetConnectionChannelIDRequest;
+    const message = createBaseQueryGetConnectionChannelIDRequest();
     return message;
   },
 };
 
-const baseQueryGetConnectionChannelIDResponse: object = {};
+function createBaseQueryGetConnectionChannelIDResponse(): QueryGetConnectionChannelIDResponse {
+  return { ConnectionChannelID: undefined };
+}
 
 export const QueryGetConnectionChannelIDResponse = {
-  encode(
-    message: QueryGetConnectionChannelIDResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryGetConnectionChannelIDResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.ConnectionChannelID !== undefined) {
-      ConnectionChannelID.encode(
-        message.ConnectionChannelID,
-        writer.uint32(10).fork()
-      ).ldelim();
+      ConnectionChannelID.encode(message.ConnectionChannelID, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetConnectionChannelIDResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetConnectionChannelIDResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetConnectionChannelIDResponse,
-    } as QueryGetConnectionChannelIDResponse;
+    const message = createBaseQueryGetConnectionChannelIDResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.ConnectionChannelID = ConnectionChannelID.decode(
-            reader,
-            reader.uint32()
-          );
+          message.ConnectionChannelID = ConnectionChannelID.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -268,70 +203,45 @@ export const QueryGetConnectionChannelIDResponse = {
   },
 
   fromJSON(object: any): QueryGetConnectionChannelIDResponse {
-    const message = {
-      ...baseQueryGetConnectionChannelIDResponse,
-    } as QueryGetConnectionChannelIDResponse;
-    if (
-      object.ConnectionChannelID !== undefined &&
-      object.ConnectionChannelID !== null
-    ) {
-      message.ConnectionChannelID = ConnectionChannelID.fromJSON(
-        object.ConnectionChannelID
-      );
-    } else {
-      message.ConnectionChannelID = undefined;
-    }
-    return message;
+    return {
+      ConnectionChannelID: isSet(object.ConnectionChannelID)
+        ? ConnectionChannelID.fromJSON(object.ConnectionChannelID)
+        : undefined,
+    };
   },
 
   toJSON(message: QueryGetConnectionChannelIDResponse): unknown {
     const obj: any = {};
-    message.ConnectionChannelID !== undefined &&
-      (obj.ConnectionChannelID = message.ConnectionChannelID
-        ? ConnectionChannelID.toJSON(message.ConnectionChannelID)
-        : undefined);
+    message.ConnectionChannelID !== undefined && (obj.ConnectionChannelID = message.ConnectionChannelID
+      ? ConnectionChannelID.toJSON(message.ConnectionChannelID)
+      : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryGetConnectionChannelIDResponse>
+  fromPartial<I extends Exact<DeepPartial<QueryGetConnectionChannelIDResponse>, I>>(
+    object: I,
   ): QueryGetConnectionChannelIDResponse {
-    const message = {
-      ...baseQueryGetConnectionChannelIDResponse,
-    } as QueryGetConnectionChannelIDResponse;
-    if (
-      object.ConnectionChannelID !== undefined &&
-      object.ConnectionChannelID !== null
-    ) {
-      message.ConnectionChannelID = ConnectionChannelID.fromPartial(
-        object.ConnectionChannelID
-      );
-    } else {
-      message.ConnectionChannelID = undefined;
-    }
+    const message = createBaseQueryGetConnectionChannelIDResponse();
+    message.ConnectionChannelID = (object.ConnectionChannelID !== undefined && object.ConnectionChannelID !== null)
+      ? ConnectionChannelID.fromPartial(object.ConnectionChannelID)
+      : undefined;
     return message;
   },
 };
 
-const baseQueryGetMonitoringInfoRequest: object = {};
+function createBaseQueryGetMonitoringInfoRequest(): QueryGetMonitoringInfoRequest {
+  return {};
+}
 
 export const QueryGetMonitoringInfoRequest = {
-  encode(
-    _: QueryGetMonitoringInfoRequest,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(_: QueryGetMonitoringInfoRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetMonitoringInfoRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetMonitoringInfoRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetMonitoringInfoRequest,
-    } as QueryGetMonitoringInfoRequest;
+    const message = createBaseQueryGetMonitoringInfoRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -344,10 +254,7 @@ export const QueryGetMonitoringInfoRequest = {
   },
 
   fromJSON(_: any): QueryGetMonitoringInfoRequest {
-    const message = {
-      ...baseQueryGetMonitoringInfoRequest,
-    } as QueryGetMonitoringInfoRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryGetMonitoringInfoRequest): unknown {
@@ -355,49 +262,33 @@ export const QueryGetMonitoringInfoRequest = {
     return obj;
   },
 
-  fromPartial(
-    _: DeepPartial<QueryGetMonitoringInfoRequest>
-  ): QueryGetMonitoringInfoRequest {
-    const message = {
-      ...baseQueryGetMonitoringInfoRequest,
-    } as QueryGetMonitoringInfoRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryGetMonitoringInfoRequest>, I>>(_: I): QueryGetMonitoringInfoRequest {
+    const message = createBaseQueryGetMonitoringInfoRequest();
     return message;
   },
 };
 
-const baseQueryGetMonitoringInfoResponse: object = {};
+function createBaseQueryGetMonitoringInfoResponse(): QueryGetMonitoringInfoResponse {
+  return { MonitoringInfo: undefined };
+}
 
 export const QueryGetMonitoringInfoResponse = {
-  encode(
-    message: QueryGetMonitoringInfoResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryGetMonitoringInfoResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.MonitoringInfo !== undefined) {
-      MonitoringInfo.encode(
-        message.MonitoringInfo,
-        writer.uint32(10).fork()
-      ).ldelim();
+      MonitoringInfo.encode(message.MonitoringInfo, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(
-    input: Reader | Uint8Array,
-    length?: number
-  ): QueryGetMonitoringInfoResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryGetMonitoringInfoResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = {
-      ...baseQueryGetMonitoringInfoResponse,
-    } as QueryGetMonitoringInfoResponse;
+    const message = createBaseQueryGetMonitoringInfoResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.MonitoringInfo = MonitoringInfo.decode(
-            reader,
-            reader.uint32()
-          );
+          message.MonitoringInfo = MonitoringInfo.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -408,54 +299,42 @@ export const QueryGetMonitoringInfoResponse = {
   },
 
   fromJSON(object: any): QueryGetMonitoringInfoResponse {
-    const message = {
-      ...baseQueryGetMonitoringInfoResponse,
-    } as QueryGetMonitoringInfoResponse;
-    if (object.MonitoringInfo !== undefined && object.MonitoringInfo !== null) {
-      message.MonitoringInfo = MonitoringInfo.fromJSON(object.MonitoringInfo);
-    } else {
-      message.MonitoringInfo = undefined;
-    }
-    return message;
+    return {
+      MonitoringInfo: isSet(object.MonitoringInfo) ? MonitoringInfo.fromJSON(object.MonitoringInfo) : undefined,
+    };
   },
 
   toJSON(message: QueryGetMonitoringInfoResponse): unknown {
     const obj: any = {};
-    message.MonitoringInfo !== undefined &&
-      (obj.MonitoringInfo = message.MonitoringInfo
-        ? MonitoringInfo.toJSON(message.MonitoringInfo)
-        : undefined);
+    message.MonitoringInfo !== undefined
+      && (obj.MonitoringInfo = message.MonitoringInfo ? MonitoringInfo.toJSON(message.MonitoringInfo) : undefined);
     return obj;
   },
 
-  fromPartial(
-    object: DeepPartial<QueryGetMonitoringInfoResponse>
+  fromPartial<I extends Exact<DeepPartial<QueryGetMonitoringInfoResponse>, I>>(
+    object: I,
   ): QueryGetMonitoringInfoResponse {
-    const message = {
-      ...baseQueryGetMonitoringInfoResponse,
-    } as QueryGetMonitoringInfoResponse;
-    if (object.MonitoringInfo !== undefined && object.MonitoringInfo !== null) {
-      message.MonitoringInfo = MonitoringInfo.fromPartial(
-        object.MonitoringInfo
-      );
-    } else {
-      message.MonitoringInfo = undefined;
-    }
+    const message = createBaseQueryGetMonitoringInfoResponse();
+    message.MonitoringInfo = (object.MonitoringInfo !== undefined && object.MonitoringInfo !== null)
+      ? MonitoringInfo.fromPartial(object.MonitoringInfo)
+      : undefined;
     return message;
   },
 };
 
-const baseQueryParamsRequest: object = {};
+function createBaseQueryParamsRequest(): QueryParamsRequest {
+  return {};
+}
 
 export const QueryParamsRequest = {
-  encode(_: QueryParamsRequest, writer: Writer = Writer.create()): Writer {
+  encode(_: QueryParamsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryParamsRequest {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+    const message = createBaseQueryParamsRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -468,8 +347,7 @@ export const QueryParamsRequest = {
   },
 
   fromJSON(_: any): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
-    return message;
+    return {};
   },
 
   toJSON(_: QueryParamsRequest): unknown {
@@ -477,29 +355,28 @@ export const QueryParamsRequest = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<QueryParamsRequest>): QueryParamsRequest {
-    const message = { ...baseQueryParamsRequest } as QueryParamsRequest;
+  fromPartial<I extends Exact<DeepPartial<QueryParamsRequest>, I>>(_: I): QueryParamsRequest {
+    const message = createBaseQueryParamsRequest();
     return message;
   },
 };
 
-const baseQueryParamsResponse: object = {};
+function createBaseQueryParamsResponse(): QueryParamsResponse {
+  return { params: undefined };
+}
 
 export const QueryParamsResponse = {
-  encode(
-    message: QueryParamsResponse,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: QueryParamsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.params !== undefined) {
       Params.encode(message.params, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryParamsResponse {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryParamsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
+    const message = createBaseQueryParamsResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -515,29 +392,20 @@ export const QueryParamsResponse = {
   },
 
   fromJSON(object: any): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromJSON(object.params);
-    } else {
-      message.params = undefined;
-    }
-    return message;
+    return { params: isSet(object.params) ? Params.fromJSON(object.params) : undefined };
   },
 
   toJSON(message: QueryParamsResponse): unknown {
     const obj: any = {};
-    message.params !== undefined &&
-      (obj.params = message.params ? Params.toJSON(message.params) : undefined);
+    message.params !== undefined && (obj.params = message.params ? Params.toJSON(message.params) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<QueryParamsResponse>): QueryParamsResponse {
-    const message = { ...baseQueryParamsResponse } as QueryParamsResponse;
-    if (object.params !== undefined && object.params !== null) {
-      message.params = Params.fromPartial(object.params);
-    } else {
-      message.params = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<QueryParamsResponse>, I>>(object: I): QueryParamsResponse {
+    const message = createBaseQueryParamsResponse();
+    message.params = (object.params !== undefined && object.params !== null)
+      ? Params.fromPartial(object.params)
+      : undefined;
     return message;
   },
 };
@@ -545,17 +413,11 @@ export const QueryParamsResponse = {
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Queries a ConsumerClientID by index. */
-  ConsumerClientID(
-    request: QueryGetConsumerClientIDRequest
-  ): Promise<QueryGetConsumerClientIDResponse>;
+  ConsumerClientID(request: QueryGetConsumerClientIDRequest): Promise<QueryGetConsumerClientIDResponse>;
   /** Queries a ConnectionChannelID by index. */
-  ConnectionChannelID(
-    request: QueryGetConnectionChannelIDRequest
-  ): Promise<QueryGetConnectionChannelIDResponse>;
+  ConnectionChannelID(request: QueryGetConnectionChannelIDRequest): Promise<QueryGetConnectionChannelIDResponse>;
   /** Queries a MonitoringInfo by index. */
-  MonitoringInfo(
-    request: QueryGetMonitoringInfoRequest
-  ): Promise<QueryGetMonitoringInfoResponse>;
+  MonitoringInfo(request: QueryGetMonitoringInfoRequest): Promise<QueryGetMonitoringInfoResponse>;
   /** Params queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
 }
@@ -564,75 +426,51 @@ export class QueryClientImpl implements Query {
   private readonly rpc: Rpc;
   constructor(rpc: Rpc) {
     this.rpc = rpc;
+    this.ConsumerClientID = this.ConsumerClientID.bind(this);
+    this.ConnectionChannelID = this.ConnectionChannelID.bind(this);
+    this.MonitoringInfo = this.MonitoringInfo.bind(this);
+    this.Params = this.Params.bind(this);
   }
-  ConsumerClientID(
-    request: QueryGetConsumerClientIDRequest
-  ): Promise<QueryGetConsumerClientIDResponse> {
+  ConsumerClientID(request: QueryGetConsumerClientIDRequest): Promise<QueryGetConsumerClientIDResponse> {
     const data = QueryGetConsumerClientIDRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "tendermint.spn.monitoringp.Query",
-      "ConsumerClientID",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetConsumerClientIDResponse.decode(new Reader(data))
-    );
+    const promise = this.rpc.request("tendermint.spn.monitoringp.Query", "ConsumerClientID", data);
+    return promise.then((data) => QueryGetConsumerClientIDResponse.decode(new _m0.Reader(data)));
   }
 
-  ConnectionChannelID(
-    request: QueryGetConnectionChannelIDRequest
-  ): Promise<QueryGetConnectionChannelIDResponse> {
+  ConnectionChannelID(request: QueryGetConnectionChannelIDRequest): Promise<QueryGetConnectionChannelIDResponse> {
     const data = QueryGetConnectionChannelIDRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "tendermint.spn.monitoringp.Query",
-      "ConnectionChannelID",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetConnectionChannelIDResponse.decode(new Reader(data))
-    );
+    const promise = this.rpc.request("tendermint.spn.monitoringp.Query", "ConnectionChannelID", data);
+    return promise.then((data) => QueryGetConnectionChannelIDResponse.decode(new _m0.Reader(data)));
   }
 
-  MonitoringInfo(
-    request: QueryGetMonitoringInfoRequest
-  ): Promise<QueryGetMonitoringInfoResponse> {
+  MonitoringInfo(request: QueryGetMonitoringInfoRequest): Promise<QueryGetMonitoringInfoResponse> {
     const data = QueryGetMonitoringInfoRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "tendermint.spn.monitoringp.Query",
-      "MonitoringInfo",
-      data
-    );
-    return promise.then((data) =>
-      QueryGetMonitoringInfoResponse.decode(new Reader(data))
-    );
+    const promise = this.rpc.request("tendermint.spn.monitoringp.Query", "MonitoringInfo", data);
+    return promise.then((data) => QueryGetMonitoringInfoResponse.decode(new _m0.Reader(data)));
   }
 
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
-    const promise = this.rpc.request(
-      "tendermint.spn.monitoringp.Query",
-      "Params",
-      data
-    );
-    return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+    const promise = this.rpc.request("tendermint.spn.monitoringp.Query", "Params", data);
+    return promise.then((data) => QueryParamsResponse.decode(new _m0.Reader(data)));
   }
 }
 
 interface Rpc {
-  request(
-    service: string,
-    method: string,
-    data: Uint8Array
-  ): Promise<Uint8Array>;
+  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
 }
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}

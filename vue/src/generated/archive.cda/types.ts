@@ -1,6 +1,6 @@
-import { CDA } from "./types/cda/cda"
-import { Ownership } from "./types/cda/cda"
-import { Params } from "./types/cda/params"
+import { CDA } from "./types/archive/cda/cda"
+import { Ownership } from "./types/archive/cda/cda"
+import { Params } from "./types/archive/cda/params"
 
 
 export {     

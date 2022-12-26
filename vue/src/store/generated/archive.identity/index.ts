@@ -1,9 +1,11 @@
 import { Client, registry, MissingWalletError } from 'archive-client-ts'
 
+import { Certificate } from "archive-client-ts/archive.identity/types"
+import { Issuer } from "archive-client-ts/archive.identity/types"
 import { Params } from "archive-client-ts/archive.identity/types"
 
 
-export { Params };
+export { Certificate, Issuer, Params };
 
 function initClient(vuexGetters) {
 	return new Client(vuexGetters['common/env/getEnv'], vuexGetters['common/wallet/signer'])
@@ -37,6 +39,8 @@ const getDefaultState = () => {
 				Params: {},
 				
 				_Structure: {
+						Certificate: getStructure(Certificate.fromPartial({})),
+						Issuer: getStructure(Issuer.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
 		},
@@ -141,6 +145,19 @@ export default {
 				}
 			}
 		},
+		async sendMsgIssueCertificate({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.ArchiveIdentity.tx.sendMsgIssueCertificate({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgIssueCertificate:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		
 		async MsgRegisterIssuer({ rootGetters }, { value }) {
 			try {
@@ -152,6 +169,19 @@ export default {
 					throw new Error('TxClient:MsgRegisterIssuer:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgRegisterIssuer:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgIssueCertificate({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ArchiveIdentity.tx.msgIssueCertificate({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgIssueCertificate:Create Could not create message: ' + e.message)
 				}
 			}
 		},

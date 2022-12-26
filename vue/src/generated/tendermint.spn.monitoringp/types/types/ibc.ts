@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "tendermint.spn.types";
 
@@ -39,20 +39,22 @@ export interface ValidatorSet {
   validators: Validator[];
 }
 
-const baseMerkleRoot: object = { hash: "" };
+function createBaseMerkleRoot(): MerkleRoot {
+  return { hash: "" };
+}
 
 export const MerkleRoot = {
-  encode(message: MerkleRoot, writer: Writer = Writer.create()): Writer {
+  encode(message: MerkleRoot, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.hash !== "") {
       writer.uint32(10).string(message.hash);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MerkleRoot {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MerkleRoot {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMerkleRoot } as MerkleRoot;
+    const message = createBaseMerkleRoot();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -68,13 +70,7 @@ export const MerkleRoot = {
   },
 
   fromJSON(object: any): MerkleRoot {
-    const message = { ...baseMerkleRoot } as MerkleRoot;
-    if (object.hash !== undefined && object.hash !== null) {
-      message.hash = String(object.hash);
-    } else {
-      message.hash = "";
-    }
-    return message;
+    return { hash: isSet(object.hash) ? String(object.hash) : "" };
   },
 
   toJSON(message: MerkleRoot): unknown {
@@ -83,21 +79,19 @@ export const MerkleRoot = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MerkleRoot>): MerkleRoot {
-    const message = { ...baseMerkleRoot } as MerkleRoot;
-    if (object.hash !== undefined && object.hash !== null) {
-      message.hash = object.hash;
-    } else {
-      message.hash = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<MerkleRoot>, I>>(object: I): MerkleRoot {
+    const message = createBaseMerkleRoot();
+    message.hash = object.hash ?? "";
     return message;
   },
 };
 
-const baseConsensusState: object = { nextValidatorsHash: "", timestamp: "" };
+function createBaseConsensusState(): ConsensusState {
+  return { nextValidatorsHash: "", timestamp: "", root: undefined };
+}
 
 export const ConsensusState = {
-  encode(message: ConsensusState, writer: Writer = Writer.create()): Writer {
+  encode(message: ConsensusState, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.nextValidatorsHash !== "") {
       writer.uint32(10).string(message.nextValidatorsHash);
     }
@@ -110,10 +104,10 @@ export const ConsensusState = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): ConsensusState {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): ConsensusState {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseConsensusState } as ConsensusState;
+    const message = createBaseConsensusState();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -135,66 +129,38 @@ export const ConsensusState = {
   },
 
   fromJSON(object: any): ConsensusState {
-    const message = { ...baseConsensusState } as ConsensusState;
-    if (
-      object.nextValidatorsHash !== undefined &&
-      object.nextValidatorsHash !== null
-    ) {
-      message.nextValidatorsHash = String(object.nextValidatorsHash);
-    } else {
-      message.nextValidatorsHash = "";
-    }
-    if (object.timestamp !== undefined && object.timestamp !== null) {
-      message.timestamp = String(object.timestamp);
-    } else {
-      message.timestamp = "";
-    }
-    if (object.root !== undefined && object.root !== null) {
-      message.root = MerkleRoot.fromJSON(object.root);
-    } else {
-      message.root = undefined;
-    }
-    return message;
+    return {
+      nextValidatorsHash: isSet(object.nextValidatorsHash) ? String(object.nextValidatorsHash) : "",
+      timestamp: isSet(object.timestamp) ? String(object.timestamp) : "",
+      root: isSet(object.root) ? MerkleRoot.fromJSON(object.root) : undefined,
+    };
   },
 
   toJSON(message: ConsensusState): unknown {
     const obj: any = {};
-    message.nextValidatorsHash !== undefined &&
-      (obj.nextValidatorsHash = message.nextValidatorsHash);
+    message.nextValidatorsHash !== undefined && (obj.nextValidatorsHash = message.nextValidatorsHash);
     message.timestamp !== undefined && (obj.timestamp = message.timestamp);
-    message.root !== undefined &&
-      (obj.root = message.root ? MerkleRoot.toJSON(message.root) : undefined);
+    message.root !== undefined && (obj.root = message.root ? MerkleRoot.toJSON(message.root) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<ConsensusState>): ConsensusState {
-    const message = { ...baseConsensusState } as ConsensusState;
-    if (
-      object.nextValidatorsHash !== undefined &&
-      object.nextValidatorsHash !== null
-    ) {
-      message.nextValidatorsHash = object.nextValidatorsHash;
-    } else {
-      message.nextValidatorsHash = "";
-    }
-    if (object.timestamp !== undefined && object.timestamp !== null) {
-      message.timestamp = object.timestamp;
-    } else {
-      message.timestamp = "";
-    }
-    if (object.root !== undefined && object.root !== null) {
-      message.root = MerkleRoot.fromPartial(object.root);
-    } else {
-      message.root = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<ConsensusState>, I>>(object: I): ConsensusState {
+    const message = createBaseConsensusState();
+    message.nextValidatorsHash = object.nextValidatorsHash ?? "";
+    message.timestamp = object.timestamp ?? "";
+    message.root = (object.root !== undefined && object.root !== null)
+      ? MerkleRoot.fromPartial(object.root)
+      : undefined;
     return message;
   },
 };
 
-const basePubKey: object = { type: "", value: "" };
+function createBasePubKey(): PubKey {
+  return { type: "", value: "" };
+}
 
 export const PubKey = {
-  encode(message: PubKey, writer: Writer = Writer.create()): Writer {
+  encode(message: PubKey, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.type !== "") {
       writer.uint32(10).string(message.type);
     }
@@ -204,10 +170,10 @@ export const PubKey = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): PubKey {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): PubKey {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...basePubKey } as PubKey;
+    const message = createBasePubKey();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -226,18 +192,10 @@ export const PubKey = {
   },
 
   fromJSON(object: any): PubKey {
-    const message = { ...basePubKey } as PubKey;
-    if (object.type !== undefined && object.type !== null) {
-      message.type = String(object.type);
-    } else {
-      message.type = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = String(object.value);
-    } else {
-      message.value = "";
-    }
-    return message;
+    return {
+      type: isSet(object.type) ? String(object.type) : "",
+      value: isSet(object.value) ? String(object.value) : "",
+    };
   },
 
   toJSON(message: PubKey): unknown {
@@ -247,26 +205,20 @@ export const PubKey = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<PubKey>): PubKey {
-    const message = { ...basePubKey } as PubKey;
-    if (object.type !== undefined && object.type !== null) {
-      message.type = object.type;
-    } else {
-      message.type = "";
-    }
-    if (object.value !== undefined && object.value !== null) {
-      message.value = object.value;
-    } else {
-      message.value = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<PubKey>, I>>(object: I): PubKey {
+    const message = createBasePubKey();
+    message.type = object.type ?? "";
+    message.value = object.value ?? "";
     return message;
   },
 };
 
-const baseValidator: object = { proposerPriority: "", votingPower: "" };
+function createBaseValidator(): Validator {
+  return { proposerPriority: "", votingPower: "", pubKey: undefined };
+}
 
 export const Validator = {
-  encode(message: Validator, writer: Writer = Writer.create()): Writer {
+  encode(message: Validator, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.proposerPriority !== "") {
       writer.uint32(10).string(message.proposerPriority);
     }
@@ -279,10 +231,10 @@ export const Validator = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): Validator {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): Validator {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseValidator } as Validator;
+    const message = createBaseValidator();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -304,78 +256,48 @@ export const Validator = {
   },
 
   fromJSON(object: any): Validator {
-    const message = { ...baseValidator } as Validator;
-    if (
-      object.proposerPriority !== undefined &&
-      object.proposerPriority !== null
-    ) {
-      message.proposerPriority = String(object.proposerPriority);
-    } else {
-      message.proposerPriority = "";
-    }
-    if (object.votingPower !== undefined && object.votingPower !== null) {
-      message.votingPower = String(object.votingPower);
-    } else {
-      message.votingPower = "";
-    }
-    if (object.pubKey !== undefined && object.pubKey !== null) {
-      message.pubKey = PubKey.fromJSON(object.pubKey);
-    } else {
-      message.pubKey = undefined;
-    }
-    return message;
+    return {
+      proposerPriority: isSet(object.proposerPriority) ? String(object.proposerPriority) : "",
+      votingPower: isSet(object.votingPower) ? String(object.votingPower) : "",
+      pubKey: isSet(object.pubKey) ? PubKey.fromJSON(object.pubKey) : undefined,
+    };
   },
 
   toJSON(message: Validator): unknown {
     const obj: any = {};
-    message.proposerPriority !== undefined &&
-      (obj.proposerPriority = message.proposerPriority);
-    message.votingPower !== undefined &&
-      (obj.votingPower = message.votingPower);
-    message.pubKey !== undefined &&
-      (obj.pubKey = message.pubKey ? PubKey.toJSON(message.pubKey) : undefined);
+    message.proposerPriority !== undefined && (obj.proposerPriority = message.proposerPriority);
+    message.votingPower !== undefined && (obj.votingPower = message.votingPower);
+    message.pubKey !== undefined && (obj.pubKey = message.pubKey ? PubKey.toJSON(message.pubKey) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<Validator>): Validator {
-    const message = { ...baseValidator } as Validator;
-    if (
-      object.proposerPriority !== undefined &&
-      object.proposerPriority !== null
-    ) {
-      message.proposerPriority = object.proposerPriority;
-    } else {
-      message.proposerPriority = "";
-    }
-    if (object.votingPower !== undefined && object.votingPower !== null) {
-      message.votingPower = object.votingPower;
-    } else {
-      message.votingPower = "";
-    }
-    if (object.pubKey !== undefined && object.pubKey !== null) {
-      message.pubKey = PubKey.fromPartial(object.pubKey);
-    } else {
-      message.pubKey = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<Validator>, I>>(object: I): Validator {
+    const message = createBaseValidator();
+    message.proposerPriority = object.proposerPriority ?? "";
+    message.votingPower = object.votingPower ?? "";
+    message.pubKey = (object.pubKey !== undefined && object.pubKey !== null)
+      ? PubKey.fromPartial(object.pubKey)
+      : undefined;
     return message;
   },
 };
 
-const baseValidatorSet: object = {};
+function createBaseValidatorSet(): ValidatorSet {
+  return { validators: [] };
+}
 
 export const ValidatorSet = {
-  encode(message: ValidatorSet, writer: Writer = Writer.create()): Writer {
+  encode(message: ValidatorSet, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     for (const v of message.validators) {
       Validator.encode(v!, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): ValidatorSet {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): ValidatorSet {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseValidatorSet } as ValidatorSet;
-    message.validators = [];
+    const message = createBaseValidatorSet();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -391,47 +313,39 @@ export const ValidatorSet = {
   },
 
   fromJSON(object: any): ValidatorSet {
-    const message = { ...baseValidatorSet } as ValidatorSet;
-    message.validators = [];
-    if (object.validators !== undefined && object.validators !== null) {
-      for (const e of object.validators) {
-        message.validators.push(Validator.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      validators: Array.isArray(object?.validators) ? object.validators.map((e: any) => Validator.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: ValidatorSet): unknown {
     const obj: any = {};
     if (message.validators) {
-      obj.validators = message.validators.map((e) =>
-        e ? Validator.toJSON(e) : undefined
-      );
+      obj.validators = message.validators.map((e) => e ? Validator.toJSON(e) : undefined);
     } else {
       obj.validators = [];
     }
     return obj;
   },
 
-  fromPartial(object: DeepPartial<ValidatorSet>): ValidatorSet {
-    const message = { ...baseValidatorSet } as ValidatorSet;
-    message.validators = [];
-    if (object.validators !== undefined && object.validators !== null) {
-      for (const e of object.validators) {
-        message.validators.push(Validator.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<ValidatorSet>, I>>(object: I): ValidatorSet {
+    const message = createBaseValidatorSet();
+    message.validators = object.validators?.map((e) => Validator.fromPartial(e)) || [];
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}
