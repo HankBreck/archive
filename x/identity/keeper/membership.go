@@ -10,7 +10,7 @@ import (
 // CreateMembership stores the first member in the prefixed store for the given certificateId.
 // It assumes that recipient is a valid address, so calling functions must ensure this.
 // Panics if the certificate referenced by certificateId does not exist.
-func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipient sdk.AccAddress) error {
+func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipient sdk.AccAddress) {
 	// Ensure the certificate of ID exists
 	if !k.HasCertificate(ctx, certificateId) {
 		panic(types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId))
@@ -22,7 +22,6 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 	}
 
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{})
-	return nil
 }
 
 // HasMember returns true if the member is a member of the certificate referenced by certificateId.
