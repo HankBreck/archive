@@ -26,10 +26,19 @@ func CmdIssueCertificate() *cobra.Command {
 			argMetadataSchemaUri := args[2]
 
 			// Parse hashes from string input
-			var argHashes map[string]string
-			err = json.Unmarshal([]byte(args[3]), &argHashes)
+			var hashes map[string]string
+			err = json.Unmarshal([]byte(args[3]), &hashes)
 			if err != nil {
 				return err
+			}
+
+			// Build HashEntry objects from the map of hashes
+			argHashes := []*types.HashEntry{}
+			for field, hash := range hashes {
+				argHashes = append(argHashes, &types.HashEntry{
+					Field: field,
+					Hash:  hash,
+				})
 			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
