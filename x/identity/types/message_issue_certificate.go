@@ -9,7 +9,7 @@ const TypeMsgIssueCertificate = "issue_certificate"
 
 var _ sdk.Msg = &MsgIssueCertificate{}
 
-func NewMsgIssueCertificate(creator string, recipient string, salt string, metadataSchemaUri string, hashes map[string]string) *MsgIssueCertificate {
+func NewMsgIssueCertificate(creator string, recipient string, salt string, metadataSchemaUri string, hashes []*HashEntry) *MsgIssueCertificate {
 	return &MsgIssueCertificate{
 		Creator:           creator,
 		Recipient:         recipient,
