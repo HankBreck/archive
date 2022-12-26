@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"archive/x/identity/types"
-	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,14 +11,14 @@ import (
 // It assumes that recipient is a valid address, so calling functions must ensure this.
 // Panics if the certificate referenced by certificateId does not exist.
 func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipient sdk.AccAddress) error {
-	// ensure the certificate of ID exists
+	// Ensure the certificate of ID exists
 	if !k.HasCertificate(ctx, certificateId) {
-		panic(fmt.Sprintf("No certificate found for ID %d... this should never happen", certificateId))
+		panic(types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId))
 	}
 
-	// ensure membership for this ID does not exist
+	// Ensure membership for this ID does not exist (i.e. this is the initialization of the membership)
 	if k.HasMember(ctx, certificateId, recipient) {
-		return types.ErrExistingMember.Wrapf("certificateId: %d, address: %s", certificateId, recipient.String())
+		panic(types.ErrExistingMember.Wrapf("certificateId: %d, address: %s", certificateId, recipient.String()))
 	}
 
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{})
@@ -30,6 +29,22 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
 	store := k.getMembershipStoreForId(ctx, certificateId)
 	return store.Has(member.Bytes())
+}
+
+// UpdateMembers updates the membership list for the certificate referenced by id.
+// Each address in the toAdd list is granted membership, whereas each address in
+// toRemove's membership is revoked.
+//
+// Returns an error if no certificate exists for the given certificateId.
+func (k Keeper) UpdateMembers(ctx sdk.Context, certificateId uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress) error {
+	// Ensure certId exists
+	if !k.HasCertificate(ctx, certificateId) {
+		return types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
+	}
+
+	// Perform update
+	k.uncheckedUpdateMembers(ctx, certificateId, toAdd, toRemove)
+	return nil
 }
 
 // uncheckedUpdateMembers updates the membership list for the certificate referenced by id.
