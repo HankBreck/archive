@@ -2,6 +2,7 @@ syntax = "proto3";
 package archive.identity;
 
 import "gogoproto/gogo.proto";
+import "archive/identity/certificate.proto";
 // this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "archive/x/identity/types";
@@ -27,7 +28,7 @@ message MsgIssueCertificate {
     string recipient = 2;
     string salt = 3;
     string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
-    map<string, string> hashes = 5;
+    repeated HashEntry hashes = 5;
 }
 
 message MsgIssueCertificateResponse {

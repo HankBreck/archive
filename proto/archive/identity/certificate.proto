@@ -17,5 +17,5 @@ message Certificate {
 	string issuer_address = 2 [(gogoproto.customname) = "IssuerAddress"];
 	string salt = 3;
 	string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
-	repeated HashEntry hashes = 5 [(gogoproto.nullable) = false];
+	repeated HashEntry hashes = 5;
 }
