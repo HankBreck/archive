@@ -34,7 +34,7 @@ message QueryParamsResponse {
 
 message QueryIdentityMembersRequest {
     uint64 id = 1;
-    bool is_pending = 2 [(gogoproto.customname) = "isPending"];
+    bool is_pending = 2 [(gogoproto.customname) = "IsPending"];
     cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
 message QueryIdentityMembersResponse {
