@@ -109,10 +109,19 @@ func (suite *KeeperTestSuite) TestUpdatePendingMembers() {
 	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
 
 	// Test add & remove pending members
-	toAdd := []sdk.AccAddress{suite.TestAccs[1]}
+	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
 	toRemove := []sdk.AccAddress{recipient}
 	err := k.UpdatePendingMembers(suite.Ctx, id, toAdd, toRemove)
 	suite.NoError(err)
 	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
 	suite.True(k.HasPendingMember(suite.Ctx, id, toAdd[0]))
+}
+
+func (suite *KeeperTestSuite) TestUpdatePendingMembers_NonexistentCert() {
+	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[1]
+	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
+	toRemove := []sdk.AccAddress{recipient}
+	err := k.UpdatePendingMembers(suite.Ctx, uint64(10), toAdd, toRemove)
+	suite.Error(err)
 }
