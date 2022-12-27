@@ -8,7 +8,16 @@ import (
 
 // TODO:
 // 	GetMembers
-// 	UpdateMembers
+// 	UpdatePendingMembers
+//		Fails when cert doesnt exist
+//  UpdateMembershipStatus
+//		Fails when cert doesnt exist
+//		Fails when member is not in pending state
+//		Base case
+// 			Removes member from pending list
+//			Adds member to accepted list
+//		Fails when trying to accept twice
+// 	HasMember
 
 func (suite *KeeperTestSuite) TestCreateMembership() {
 	k := suite.App.IdentityKeeper
@@ -80,11 +89,11 @@ func (suite *KeeperTestSuite) TestDoubleAddMember() {
 	suite.Panics(func() { k.CreateMembership(suite.Ctx, id, recipient) })
 }
 
-func (suite *KeeperTestSuite) TestHasMember() {
+func (suite *KeeperTestSuite) TestHasPendingMember() {
 	k := suite.App.IdentityKeeper
 	issuer := suite.TestAccs[0]
 	recipient := suite.TestAccs[1]
 	id, _ := suite.PrepareCertificate(issuer, &recipient)
-	suite.True(k.HasMember(suite.Ctx, id, recipient))
-	suite.False(k.HasMember(suite.Ctx, id, issuer))
+	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
+	suite.False(k.HasPendingMember(suite.Ctx, id, issuer))
 }
