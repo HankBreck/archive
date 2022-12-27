@@ -26,6 +26,20 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{}, true)
 }
 
+// HasMember returns true if the member is an "accepted" member of the
+// certificate referenced by certificateId.
+func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
+	store := k.getMembershipStoreForId(ctx, certificateId, false)
+	return store.Has(member.Bytes())
+}
+
+// HasMember returns true if the member is a "pending" member of the
+// certificate referenced by certificateId.
+func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
+	store := k.getMembershipStoreForId(ctx, certificateId, true)
+	return store.Has(member.Bytes())
+}
+
 // UpdateMembershipStatus transitions the state of the identity to accept or reject membership invitations.
 // Returns an error if the certificate does not exist or the address is not a pending member.
 func (k Keeper) UpdateMembershipStatus(ctx sdk.Context, certificateId uint64, member sdk.AccAddress, isAccept bool) error {
@@ -48,20 +62,6 @@ func (k Keeper) UpdateMembershipStatus(ctx sdk.Context, certificateId uint64, me
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{}, []sdk.AccAddress{member}, true)
 
 	return nil
-}
-
-// HasMember returns true if the member is an "accepted" member of the
-// certificate referenced by certificateId.
-func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
-	store := k.getMembershipStoreForId(ctx, certificateId, false)
-	return store.Has(member.Bytes())
-}
-
-// HasMember returns true if the member is a "pending" member of the
-// certificate referenced by certificateId.
-func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
-	store := k.getMembershipStoreForId(ctx, certificateId, true)
-	return store.Has(member.Bytes())
 }
 
 // UpdateMembers updates the pending membership list for the certificate referenced by id.
