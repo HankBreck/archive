@@ -29,8 +29,16 @@ const (
 	MembershipKey = "id-memberships-"
 )
 
-func MembershipKeyPrefix(id uint64) []byte {
+func MembershipKeyPrefix(id uint64, isPending bool) []byte {
 	bzId := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzId, id)
-	return append([]byte(MembershipKey), bzId...)
+
+	var prefix []byte
+	if isPending {
+		prefix = append([]byte(MembershipKey), byte(0))
+	} else {
+		prefix = append([]byte(MembershipKey), byte(1))
+	}
+
+	return append(prefix, bzId...)
 }
