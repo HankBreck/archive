@@ -7,17 +7,11 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgIssueCertificate } from "./types/archive/identity/tx";
 import { MsgRegisterIssuer } from "./types/archive/identity/tx";
+import { MsgIssueCertificate } from "./types/archive/identity/tx";
 
 
-export { MsgIssueCertificate, MsgRegisterIssuer };
-
-type sendMsgIssueCertificateParams = {
-  value: MsgIssueCertificate,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgRegisterIssuer, MsgIssueCertificate };
 
 type sendMsgRegisterIssuerParams = {
   value: MsgRegisterIssuer,
@@ -25,13 +19,19 @@ type sendMsgRegisterIssuerParams = {
   memo?: string
 };
 
-
-type msgIssueCertificateParams = {
+type sendMsgIssueCertificateParams = {
   value: MsgIssueCertificate,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgRegisterIssuerParams = {
   value: MsgRegisterIssuer,
+};
+
+type msgIssueCertificateParams = {
+  value: MsgIssueCertificate,
 };
 
 
@@ -52,20 +52,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgRegisterIssuer({ value, fee, memo }: sendMsgRegisterIssuerParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgRegisterIssuer: Unable to sign Tx. Signer is not present.')
@@ -80,20 +66,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
-			try {
-				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
+		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgRegisterIssuer({ value }: msgRegisterIssuerParams): EncodeObject {
 			try {
 				return { typeUrl: "/archive.identity.MsgRegisterIssuer", value: MsgRegisterIssuer.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgRegisterIssuer: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
 			}
 		},
 		

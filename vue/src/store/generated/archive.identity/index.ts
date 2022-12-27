@@ -38,6 +38,7 @@ function getStructure(template) {
 const getDefaultState = () => {
 	return {
 				Params: {},
+				IdentityMembers: {},
 				
 				_Structure: {
 						HashEntry: getStructure(HashEntry.fromPartial({})),
@@ -77,6 +78,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Params[JSON.stringify(params)] ?? {}
+		},
+				getIdentityMembers: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.IdentityMembers[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -129,6 +136,28 @@ export default {
 				return getters['getParams']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryIdentityMembers({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const client = initClient(rootGetters);
+				let value= (await client.ArchiveIdentity.query.queryIdentityMembers( key.id,  key.isPending)).data
+				
+					
+				commit('QUERY', { query: 'IdentityMembers', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryIdentityMembers', payload: { options: { all }, params: {...key},query }})
+				return getters['getIdentityMembers']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryIdentityMembers API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

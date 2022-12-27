@@ -15,7 +15,12 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/archive/identity/params";
   }
-  // this line is used by starport scaffolding # 2
+  // Queries a list of IdentityMembers items.
+	rpc IdentityMembers(QueryIdentityMembersRequest) returns (QueryIdentityMembersResponse) {
+		option (google.api.http).get = "/archive/identity/identity_members/{id}/{isPending}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -25,6 +30,14 @@ message QueryParamsRequest {}
 message QueryParamsResponse {
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryIdentityMembersRequest {
+  uint64 id = 1;
+  bool isPending = 2;
+}
+
+message QueryIdentityMembersResponse {
 }
 
 // this line is used by starport scaffolding # 3

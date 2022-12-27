@@ -1542,6 +1542,45 @@ paths:
           format: uint64
       tags:
         - Query
+  /archive/identity/identity_members/{id}/{isPending}:
+    get:
+      summary: Queries a list of IdentityMembers items.
+      operationId: ArchiveIdentityIdentityMembers
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: isPending
+          in: path
+          required: true
+          type: boolean
+      tags:
+        - Query
   /archive/identity/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -32719,6 +32758,8 @@ definitions:
   archive.identity.Params:
     type: object
     description: Params defines the parameters for the module.
+  archive.identity.QueryIdentityMembersResponse:
+    type: object
   archive.identity.QueryParamsResponse:
     type: object
     properties:

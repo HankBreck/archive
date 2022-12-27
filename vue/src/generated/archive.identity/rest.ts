@@ -26,6 +26,8 @@ export type IdentityMsgRegisterIssuerResponse = object;
  */
 export type IdentityParams = object;
 
+export type IdentityQueryIdentityMembersResponse = object;
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -170,6 +172,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIdentityMembers
+   * @summary Queries a list of IdentityMembers items.
+   * @request GET:/archive/identity/identity_members/{id}/{isPending}
+   */
+  queryIdentityMembers = (id: string, isPending: boolean, params: RequestParams = {}) =>
+    this.request<IdentityQueryIdentityMembersResponse, RpcStatus>({
+      path: `/archive/identity/identity_members/${id}/${isPending}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
