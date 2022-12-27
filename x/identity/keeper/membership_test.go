@@ -97,3 +97,22 @@ func (suite *KeeperTestSuite) TestHasPendingMember() {
 	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
 	suite.False(k.HasPendingMember(suite.Ctx, id, issuer))
 }
+
+func (suite *KeeperTestSuite) TestUpdatePendingMembers() {
+	// Setup initial certificate
+	k := suite.App.IdentityKeeper
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+
+	// Assert initial pending member is present
+	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
+
+	// Test add & remove pending members
+	toAdd := []sdk.AccAddress{suite.TestAccs[1]}
+	toRemove := []sdk.AccAddress{recipient}
+	err := k.UpdatePendingMembers(suite.Ctx, id, toAdd, toRemove)
+	suite.NoError(err)
+	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
+	suite.True(k.HasPendingMember(suite.Ctx, id, toAdd[0]))
+}
