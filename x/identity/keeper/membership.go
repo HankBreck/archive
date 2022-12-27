@@ -5,6 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // CreateMembership stores the first member in the "pending" prefixed store for the given certificateId.
@@ -22,20 +23,44 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 		panic(types.ErrExistingMember.Wrapf("certificateId: %d, address: %s", certificateId, recipient.String()))
 	}
 
-	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{})
+	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{}, true)
+}
+
+// UpdateMembershipStatus transitions the state of the identity to accept or reject membership invitations.
+// Returns an error if the certificate does not exist or the address is not a pending member.
+func (k Keeper) UpdateMembershipStatus(ctx sdk.Context, certificateId uint64, member sdk.AccAddress, isAccept bool) error {
+	// Ensure the certificate of ID exists
+	if !k.HasCertificate(ctx, certificateId) {
+		return types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
+	}
+
+	// Ensure membership is in the pending state
+	if !k.HasPendingMember(ctx, certificateId, member) {
+		return sdkerrors.ErrNotFound.Wrapf("member %s is not in the pending state", member.String())
+	}
+
+	if isAccept {
+		// Add to accepted
+		k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{member}, []sdk.AccAddress{}, false)
+	}
+
+	// Remove from pending
+	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{}, []sdk.AccAddress{member}, true)
+
+	return nil
 }
 
 // HasMember returns true if the member is an "accepted" member of the
 // certificate referenced by certificateId.
 func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
-	store := k.getAcceptedMembershipStoreForId(ctx, certificateId)
+	store := k.getMembershipStoreForId(ctx, certificateId, false)
 	return store.Has(member.Bytes())
 }
 
 // HasMember returns true if the member is a "pending" member of the
 // certificate referenced by certificateId.
 func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
-	store := k.getPendingMembershipStoreForId(ctx, certificateId)
+	store := k.getMembershipStoreForId(ctx, certificateId, true)
 	return store.Has(member.Bytes())
 }
 
@@ -44,23 +69,26 @@ func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member s
 // toRemove's list is removed from the "pending" list.
 //
 // Returns an error if no certificate exists for the given certificateId.
-func (k Keeper) UpdateMembers(ctx sdk.Context, certificateId uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress) error {
+func (k Keeper) UpdatePendingMembers(ctx sdk.Context, certificateId uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress) error {
 	// Ensure certId exists
 	if !k.HasCertificate(ctx, certificateId) {
 		return types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
 	}
 
 	// Perform update
-	k.uncheckedUpdateMembers(ctx, certificateId, toAdd, toRemove)
+	k.uncheckedUpdateMembers(ctx, certificateId, toAdd, toRemove, true)
 	return nil
 }
 
-// uncheckedUpdateMembers updates the "pending" membership list for the certificate referenced by id.
-// Each address in the toAdd list is granted "pending" membership, whereas each address in
-// toRemove's list is removed from the "pending" list.
-// All parameters are assumed to be valid (existing and correct), so calling functions must ensure this.
-func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress) {
-	store := k.getPendingMembershipStoreForId(ctx, id)
+// uncheckedUpdateMembers updates the membership list for the certificate referenced by id.
+// isPending determines which membership list should be updated.
+// Each address in the toAdd list is granted membership, whereas each address in
+// toRemove's list is removed from the list.
+//
+// This function does not perform any sort of validity checks, so calling functions must
+// perform checks before calling.
+func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress, isPending bool) {
+	store := k.getMembershipStoreForId(ctx, id, isPending)
 
 	// Grant membership to each address
 	for _, addr := range toAdd {
@@ -73,12 +101,7 @@ func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.A
 	}
 }
 
-func (k Keeper) getAcceptedMembershipStoreForId(ctx sdk.Context, id uint64) prefix.Store {
-	keyPrefix := types.MembershipKeyPrefix(id, false)
-	return prefix.NewStore(ctx.KVStore(k.storeKey), keyPrefix)
-}
-
-func (k Keeper) getPendingMembershipStoreForId(ctx sdk.Context, id uint64) prefix.Store {
-	keyPrefix := types.MembershipKeyPrefix(id, true)
+func (k Keeper) getMembershipStoreForId(ctx sdk.Context, id uint64, isPending bool) prefix.Store {
+	keyPrefix := types.MembershipKeyPrefix(id, isPending)
 	return prefix.NewStore(ctx.KVStore(k.storeKey), keyPrefix)
 }
