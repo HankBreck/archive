@@ -5,6 +5,7 @@ import (
 
 	testkeeper "archive/testutil/keeper"
 	"archive/x/identity/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 )

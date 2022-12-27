@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // CreateMembership stores the first member in the "pending" prefixed store for the given certificateId.
@@ -24,6 +25,35 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 	}
 
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{}, true)
+}
+
+// GetMembers pages through the members for a given identity. It separates the member lists
+// into those that are pending and those that have accepted their membership.
+//
+// Returns a tuple of: the members found, the page response, and an error.
+func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
+	// Ensure certificateId exists in storage
+	if !k.HasCertificate(ctx, certificateId) {
+		return nil, nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", certificateId)
+	}
+	store := k.getMembershipStoreForId(ctx, certificateId, isPending)
+	members := []string{}
+
+	// Unmarshal each key into the bech32 address
+	pageRes, err := query.Paginate(store, pageReq, func(key []byte, value []byte) error {
+		var memberAddr sdk.AccAddress
+		err := memberAddr.Unmarshal(key)
+		if err != nil {
+			return err
+		}
+		members = append(members, memberAddr.String())
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return members, pageRes, nil
 }
 
 // HasMember returns true if the member is an "accepted" member of the
