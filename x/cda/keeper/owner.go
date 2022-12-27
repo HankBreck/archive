@@ -14,11 +14,11 @@ import (
 // Returns an error if the owner is not a valid bech32 address
 func (k Keeper) AppendOwnerCDA(ctx sdk.Context, owner string, cdaId uint64) error {
 
-	// // Validate address
-	// ownerAddr, err := sdk.AccAddressFromBech32(owner)
-	// if err != nil {
-	// 	return err
-	// }
+	// Validate address
+	_, err := sdk.AccAddressFromBech32(owner)
+	if err != nil {
+		return err
+	}
 
 	// Get current index for this owner
 	count := k.GetOwnerCDACount(ctx, owner)
