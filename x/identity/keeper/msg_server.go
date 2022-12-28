@@ -64,8 +64,8 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
-	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	// Ensure msg.Creator is a registered Issuer
+	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator) // (duplicate of ValidateBasic)
 	if err != nil {
 		return nil, err
 	}
@@ -103,4 +103,21 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	))
 
 	return &types.MsgIssueCertificateResponse{Id: id}, nil
+}
+
+func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIdentity) (*types.MsgAcceptIdentityResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, true)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgAcceptIdentityResponse{}, nil
 }
