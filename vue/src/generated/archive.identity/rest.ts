@@ -14,6 +14,8 @@ export interface IdentityHashEntry {
   hash?: string;
 }
 
+export type IdentityMsgAcceptIdentityResponse = object;
+
 export interface IdentityMsgIssueCertificateResponse {
   /** @format uint64 */
   id?: string;

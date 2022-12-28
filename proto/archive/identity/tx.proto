@@ -11,7 +11,8 @@ option go_package = "archive/x/identity/types";
 service Msg {
     rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
     rpc IssueCertificate(MsgIssueCertificate) returns (MsgIssueCertificateResponse);
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRegisterIssuer {
@@ -34,4 +35,12 @@ message MsgIssueCertificate {
 message MsgIssueCertificateResponse {
     uint64 id = 1;
 }
+message MsgAcceptIdentity {
+  string creator = 1;
+  uint64 id = 2;
+}
+
+message MsgAcceptIdentityResponse {
+}
+
 // this line is used by starport scaffolding # proto/tx/message

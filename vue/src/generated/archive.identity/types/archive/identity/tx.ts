@@ -27,6 +27,14 @@ export interface MsgIssueCertificateResponse {
   id: number;
 }
 
+export interface MsgAcceptIdentity {
+  creator: string;
+  id: number;
+}
+
+export interface MsgAcceptIdentityResponse {
+}
+
 function createBaseMsgRegisterIssuer(): MsgRegisterIssuer {
   return { creator: "", name: "", moreInfoUri: "", cost: 0 };
 }
@@ -278,11 +286,109 @@ export const MsgIssueCertificateResponse = {
   },
 };
 
+function createBaseMsgAcceptIdentity(): MsgAcceptIdentity {
+  return { creator: "", id: 0 };
+}
+
+export const MsgAcceptIdentity = {
+  encode(message: MsgAcceptIdentity, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAcceptIdentity {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAcceptIdentity();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAcceptIdentity {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+    };
+  },
+
+  toJSON(message: MsgAcceptIdentity): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAcceptIdentity>, I>>(object: I): MsgAcceptIdentity {
+    const message = createBaseMsgAcceptIdentity();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    return message;
+  },
+};
+
+function createBaseMsgAcceptIdentityResponse(): MsgAcceptIdentityResponse {
+  return {};
+}
+
+export const MsgAcceptIdentityResponse = {
+  encode(_: MsgAcceptIdentityResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAcceptIdentityResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAcceptIdentityResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAcceptIdentityResponse {
+    return {};
+  },
+
+  toJSON(_: MsgAcceptIdentityResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAcceptIdentityResponse>, I>>(_: I): MsgAcceptIdentityResponse {
+    const message = createBaseMsgAcceptIdentityResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   IssueCertificate(request: MsgIssueCertificate): Promise<MsgIssueCertificateResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AcceptIdentity(request: MsgAcceptIdentity): Promise<MsgAcceptIdentityResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -291,6 +397,7 @@ export class MsgClientImpl implements Msg {
     this.rpc = rpc;
     this.RegisterIssuer = this.RegisterIssuer.bind(this);
     this.IssueCertificate = this.IssueCertificate.bind(this);
+    this.AcceptIdentity = this.AcceptIdentity.bind(this);
   }
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse> {
     const data = MsgRegisterIssuer.encode(request).finish();
@@ -302,6 +409,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgIssueCertificate.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Msg", "IssueCertificate", data);
     return promise.then((data) => MsgIssueCertificateResponse.decode(new _m0.Reader(data)));
+  }
+
+  AcceptIdentity(request: MsgAcceptIdentity): Promise<MsgAcceptIdentityResponse> {
+    const data = MsgAcceptIdentity.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Msg", "AcceptIdentity", data);
+    return promise.then((data) => MsgAcceptIdentityResponse.decode(new _m0.Reader(data)));
   }
 }
 

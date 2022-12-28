@@ -32835,6 +32835,8 @@ definitions:
       hash:
         type: string
     title: 'HashEntry is a record of a field: hash mapping used in Certificates'
+  archive.identity.MsgAcceptIdentityResponse:
+    type: object
   archive.identity.MsgIssueCertificateResponse:
     type: object
     properties:
