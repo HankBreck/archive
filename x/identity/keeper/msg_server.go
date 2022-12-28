@@ -122,7 +122,7 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 
 	// Emit events
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
-		types.TypeMsgIssueCertificate,
+		types.TypeMsgAcceptIdentity,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(sdk.AttributeKeyAction, "AcceptIdentity"),
@@ -135,8 +135,26 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIdentity) (*types.MsgRejectIdentityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add sender to the accepted membership list
+	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, false)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgRejectIdentity,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "RejectIdentity"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+	))
 
 	return &types.MsgRejectIdentityResponse{}, nil
 }
