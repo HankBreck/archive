@@ -1,6 +1,7 @@
 /* eslint-disable */
 import Long from "long";
 import _m0 from "protobufjs/minimal";
+import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
 import { Params } from "./params";
 
 export const protobufPackage = "archive.identity";
@@ -18,9 +19,12 @@ export interface QueryParamsResponse {
 export interface QueryIdentityMembersRequest {
   id: number;
   isPending: boolean;
+  pagination: PageRequest | undefined;
 }
 
 export interface QueryIdentityMembersResponse {
+  members: string[];
+  pagination: PageResponse | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -112,7 +116,7 @@ export const QueryParamsResponse = {
 };
 
 function createBaseQueryIdentityMembersRequest(): QueryIdentityMembersRequest {
-  return { id: 0, isPending: false };
+  return { id: 0, isPending: false, pagination: undefined };
 }
 
 export const QueryIdentityMembersRequest = {
@@ -122,6 +126,9 @@ export const QueryIdentityMembersRequest = {
     }
     if (message.isPending === true) {
       writer.uint32(16).bool(message.isPending);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(26).fork()).ldelim();
     }
     return writer;
   },
@@ -139,6 +146,9 @@ export const QueryIdentityMembersRequest = {
         case 2:
           message.isPending = reader.bool();
           break;
+        case 3:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -151,6 +161,7 @@ export const QueryIdentityMembersRequest = {
     return {
       id: isSet(object.id) ? Number(object.id) : 0,
       isPending: isSet(object.isPending) ? Boolean(object.isPending) : false,
+      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
     };
   },
 
@@ -158,6 +169,8 @@ export const QueryIdentityMembersRequest = {
     const obj: any = {};
     message.id !== undefined && (obj.id = Math.round(message.id));
     message.isPending !== undefined && (obj.isPending = message.isPending);
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
     return obj;
   },
 
@@ -165,16 +178,25 @@ export const QueryIdentityMembersRequest = {
     const message = createBaseQueryIdentityMembersRequest();
     message.id = object.id ?? 0;
     message.isPending = object.isPending ?? false;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };
 
 function createBaseQueryIdentityMembersResponse(): QueryIdentityMembersResponse {
-  return {};
+  return { members: [], pagination: undefined };
 }
 
 export const QueryIdentityMembersResponse = {
-  encode(_: QueryIdentityMembersResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+  encode(message: QueryIdentityMembersResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.members) {
+      writer.uint32(10).string(v!);
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -185,6 +207,12 @@ export const QueryIdentityMembersResponse = {
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
+        case 1:
+          message.members.push(reader.string());
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -193,17 +221,31 @@ export const QueryIdentityMembersResponse = {
     return message;
   },
 
-  fromJSON(_: any): QueryIdentityMembersResponse {
-    return {};
+  fromJSON(object: any): QueryIdentityMembersResponse {
+    return {
+      members: Array.isArray(object?.members) ? object.members.map((e: any) => String(e)) : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
   },
 
-  toJSON(_: QueryIdentityMembersResponse): unknown {
+  toJSON(message: QueryIdentityMembersResponse): unknown {
     const obj: any = {};
+    if (message.members) {
+      obj.members = message.members.map((e) => e);
+    } else {
+      obj.members = [];
+    }
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
     return obj;
   },
 
-  fromPartial<I extends Exact<DeepPartial<QueryIdentityMembersResponse>, I>>(_: I): QueryIdentityMembersResponse {
+  fromPartial<I extends Exact<DeepPartial<QueryIdentityMembersResponse>, I>>(object: I): QueryIdentityMembersResponse {
     const message = createBaseQueryIdentityMembersResponse();
+    message.members = object.members?.map((e) => e) || [];
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
     return message;
   },
 };

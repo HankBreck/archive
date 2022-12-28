@@ -150,9 +150,13 @@ export default {
 			try {
 				const key = params ?? {};
 				const client = initClient(rootGetters);
-				let value= (await client.ArchiveIdentity.query.queryIdentityMembers( key.id,  key.isPending)).data
+				let value= (await client.ArchiveIdentity.query.queryIdentityMembers( key.id,  key.is_pending, query ?? undefined)).data
 				
 					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await client.ArchiveIdentity.query.queryIdentityMembers( key.id,  key.is_pending, {...query ?? {}, 'pagination.key':(<any> value).pagination.next_key} as any)).data
+					value = mergeResults(value, next_values);
+				}
 				commit('QUERY', { query: 'IdentityMembers', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryIdentityMembers', payload: { options: { all }, params: {...key},query }})
 				return getters['getIdentityMembers']( { params: {...key}, query}) ?? {}
