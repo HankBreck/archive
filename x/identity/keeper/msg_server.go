@@ -92,14 +92,14 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	// Add recipient to member store
 	k.CreateMembership(ctx, id, recipientAddr)
 
-	// emit events
+	// Emit events
 	ctx.EventManager().EmitEvent(sdk.NewEvent(
 		types.TypeMsgIssueCertificate,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(sdk.AttributeKeyAction, "IssueCertificate"),
 		sdk.NewAttribute("recipient", msg.Recipient),
-		sdk.NewAttribute("certificate_id", strconv.FormatUint(id, 10)), // TODO: replace 0 with the cert ID
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(id, 10)),
 	))
 
 	return &types.MsgIssueCertificateResponse{Id: id}, nil
@@ -114,10 +114,20 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 		return nil, err
 	}
 
+	// Add sender to the accepted membership list
 	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, true)
 	if err != nil {
 		return nil, err
 	}
+
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgIssueCertificate,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "AcceptIdentity"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+	))
 
 	return &types.MsgAcceptIdentityResponse{}, nil
 }
