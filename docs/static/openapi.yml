@@ -32845,6 +32845,8 @@ definitions:
         format: uint64
   archive.identity.MsgRegisterIssuerResponse:
     type: object
+  archive.identity.MsgRejectIdentityResponse:
+    type: object
   archive.identity.Params:
     type: object
     description: Params defines the parameters for the module.
