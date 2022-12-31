@@ -13,6 +13,7 @@ service Msg {
     rpc IssueCertificate(MsgIssueCertificate) returns (MsgIssueCertificateResponse);
       rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
   rpc RejectIdentity(MsgRejectIdentity) returns (MsgRejectIdentityResponse);
+  rpc RevokeIdentity(MsgRevokeIdentity) returns (MsgRevokeIdentityResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -50,6 +51,15 @@ message MsgRejectIdentity {
 }
 
 message MsgRejectIdentityResponse {
+}
+
+message MsgRevokeIdentity {
+  string creator = 1;
+  uint64 id = 2;
+  string member = 3;
+}
+
+message MsgRevokeIdentityResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message
