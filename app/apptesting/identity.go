@@ -41,3 +41,10 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 
 	return id, nil
 }
+
+func (s *KeeperTestHelper) AcceptMembership(certificateId uint64, member sdk.AccAddress) error {
+	k := s.App.IdentityKeeper
+
+	err := k.UpdateMembershipStatus(s.Ctx, certificateId, member, true)
+	return err
+}

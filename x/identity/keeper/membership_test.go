@@ -151,6 +151,35 @@ func (suite *KeeperTestSuite) TestUpdatePendingMembers_NonexistentCert() {
 	suite.Error(err)
 }
 
+func (suite *KeeperTestSuite) TestUpdateAcceptedMembers() {
+	// Setup initial certificate
+	k := suite.App.IdentityKeeper
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	suite.AcceptMembership(id, recipient)
+
+	// Assert initial member is present
+	suite.True(k.HasMember(suite.Ctx, id, recipient))
+
+	// Test add & remove members
+	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
+	toRemove := []sdk.AccAddress{recipient}
+	err := k.UpdateAcceptedMembers(suite.Ctx, id, toAdd, toRemove)
+	suite.NoError(err)
+	suite.False(k.HasMember(suite.Ctx, id, recipient))
+	suite.True(k.HasMember(suite.Ctx, id, toAdd[0]))
+}
+
+func (suite *KeeperTestSuite) TestUpdateAcceptedMembers_NonexistentCert() {
+	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[1]
+	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
+	toRemove := []sdk.AccAddress{recipient}
+	err := k.UpdateAcceptedMembers(suite.Ctx, uint64(10), toAdd, toRemove)
+	suite.Error(err)
+}
+
 func (suite *KeeperTestSuite) TestUpdateMembershipStatus() {
 	k := suite.App.IdentityKeeper
 	issuer := suite.TestAccs[0]
