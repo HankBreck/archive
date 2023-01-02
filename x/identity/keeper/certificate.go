@@ -51,6 +51,19 @@ func (k Keeper) HasCertificate(ctx sdk.Context, id uint64) bool {
 	return store.Has(bzKey)
 }
 
+// HasCertificate returns true if issuer matches the ID pointing to the certificate's issuer field, else false
+func (k Keeper) HasIssuerForId(ctx sdk.Context, id uint64, issuer sdk.AccAddress) (bool, error) {
+	cert, err := k.GetCertificate(ctx, id)
+	if err != nil {
+		return false, err
+	}
+	addr, err := sdk.AccAddressFromBech32(cert.IssuerAddress)
+	if err != nil {
+		return false, err
+	}
+	return !issuer.Equals(addr), nil
+}
+
 // Stores the certificate with a key of certificate.Id. The certificate.Id field must be set by a calling function.
 // The certificate passed as an argument is assumed to be valid, so calling functions must assure this.
 func (k Keeper) uncheckedSetCertificate(ctx sdk.Context, certificate types.Certificate) {
