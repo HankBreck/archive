@@ -207,3 +207,12 @@ func (k msgServer) RevokeIdentity(goCtx context.Context, msg *types.MsgRevokeIde
 
 	return &types.MsgRevokeIdentityResponse{}, nil
 }
+
+func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounceIdentity) (*types.MsgRenounceIdentityResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Handling the message
+	_ = ctx
+
+	return &types.MsgRenounceIdentityResponse{}, nil
+}
