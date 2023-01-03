@@ -48,12 +48,12 @@ message QueryIdentityMembersResponse {
 }
 
 message QueryIssuersRequest {
-cosmos.base.query.v1beta1.PageRequest pagination = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
 message QueryIssuersResponse {
-  repeated string issuers = 1;
-cosmos.base.query.v1beta1.PageResponse pagination = 2;
+    repeated string issuers = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
