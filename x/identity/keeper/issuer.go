@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
-// SetIssuer stores the Issuer object under the creator's key.
+// SetIssuer stores the Issuer object under the creator's account address.
 // Returns an error if the creator address has already created an Issuer.
 func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) error {
 	if k.HasIssuer(ctx, issuer.Creator) {
@@ -50,8 +50,7 @@ func (k Keeper) GetIssuers(ctx sdk.Context, pageReq *query.PageRequest) ([]strin
 
 	// Unmarshal each key into the bech32 address
 	pageRes, err := query.Paginate(store, pageReq, func(key []byte, _ []byte) error {
-		var issuerAddr sdk.AccAddress
-		err := issuerAddr.Unmarshal(key)
+		issuerAddr, err := sdk.AccAddressFromBech32(string(key))
 		if err != nil {
 			return err
 		}
