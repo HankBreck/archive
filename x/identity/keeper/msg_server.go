@@ -211,8 +211,41 @@ func (k msgServer) RevokeIdentity(goCtx context.Context, msg *types.MsgRevokeIde
 func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounceIdentity) (*types.MsgRenounceIdentityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	addr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the certificate exists
+	if !k.HasCertificate(ctx, msg.Id) {
+		return nil, types.ErrNonexistentCertificate.Wrapf("No identity found for ID %d", msg.Id)
+	}
+
+	// Ensure sender is a member of the identity
+	if !k.HasMember(ctx, msg.Id, addr) {
+		return nil, sdkerrors.ErrNotFound.Wrapf("The sender is not a member identity %d", msg.Id)
+	}
+
+	// Remove from pending and accepted membership lists
+	toAdd := []sdk.AccAddress{}
+	toRemove := []sdk.AccAddress{addr}
+	err = k.UpdateAcceptedMembers(ctx, msg.Id, toAdd, toRemove)
+	if err != nil {
+		return nil, err
+	}
+	err = k.UpdatePendingMembers(ctx, msg.Id, toAdd, toRemove)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgRenounceIdentity,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "RenounceIdentity"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+	))
 
 	return &types.MsgRenounceIdentityResponse{}, nil
 }
