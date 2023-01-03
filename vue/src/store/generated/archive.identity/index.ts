@@ -167,29 +167,16 @@ export default {
 		},
 		
 		
-		async sendMsgIssueCertificate({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgAddIdentityMember({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.ArchiveIdentity.tx.sendMsgIssueCertificate({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.ArchiveIdentity.tx.sendMsgAddIdentityMember({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddIdentityMember:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgIssueCertificate:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
-		async sendMsgAcceptIdentity({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.ArchiveIdentity.tx.sendMsgAcceptIdentity({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAcceptIdentity:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgAcceptIdentity:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgAddIdentityMember:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -245,43 +232,43 @@ export default {
 				}
 			}
 		},
-		async sendMsgAddIdentityMember({ rootGetters }, { value, fee = [], memo = '' }) {
+		async sendMsgIssueCertificate({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
-				const result = await client.ArchiveIdentity.tx.sendMsgAddIdentityMember({ value, fee: {amount: fee, gas: "200000"}, memo })
+				const result = await client.ArchiveIdentity.tx.sendMsgIssueCertificate({ value, fee: {amount: fee, gas: "200000"}, memo })
 				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddIdentityMember:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
 				}else{
-					throw new Error('TxClient:MsgAddIdentityMember:Send Could not broadcast Tx: '+ e.message)
+					throw new Error('TxClient:MsgIssueCertificate:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgAcceptIdentity({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const client=await initClient(rootGetters)
+				const result = await client.ArchiveIdentity.tx.sendMsgAcceptIdentity({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAcceptIdentity:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgAcceptIdentity:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
 		
-		async MsgIssueCertificate({ rootGetters }, { value }) {
+		async MsgAddIdentityMember({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ArchiveIdentity.tx.msgIssueCertificate({value})
+				const msg = await client.ArchiveIdentity.tx.msgAddIdentityMember({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgAddIdentityMember:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgIssueCertificate:Create Could not create message: ' + e.message)
-				}
-			}
-		},
-		async MsgAcceptIdentity({ rootGetters }, { value }) {
-			try {
-				const client=initClient(rootGetters)
-				const msg = await client.ArchiveIdentity.tx.msgAcceptIdentity({value})
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAcceptIdentity:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgAcceptIdentity:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgAddIdentityMember:Create Could not create message: ' + e.message)
 				}
 			}
 		},
@@ -337,16 +324,29 @@ export default {
 				}
 			}
 		},
-		async MsgAddIdentityMember({ rootGetters }, { value }) {
+		async MsgIssueCertificate({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
-				const msg = await client.ArchiveIdentity.tx.msgAddIdentityMember({value})
+				const msg = await client.ArchiveIdentity.tx.msgIssueCertificate({value})
 				return msg
 			} catch (e) {
 				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgAddIdentityMember:Init Could not initialize signing client. Wallet is required.')
+					throw new Error('TxClient:MsgIssueCertificate:Init Could not initialize signing client. Wallet is required.')
 				} else{
-					throw new Error('TxClient:MsgAddIdentityMember:Create Could not create message: ' + e.message)
+					throw new Error('TxClient:MsgIssueCertificate:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgAcceptIdentity({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.ArchiveIdentity.tx.msgAcceptIdentity({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgAcceptIdentity:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgAcceptIdentity:Create Could not create message: ' + e.message)
 				}
 			}
 		},
