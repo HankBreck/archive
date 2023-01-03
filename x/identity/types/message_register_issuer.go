@@ -1,6 +1,8 @@
 package types
 
 import (
+	"archive/x/contractregistry/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -44,5 +46,12 @@ func (msg *MsgRegisterIssuer) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if msg.Name == "" {
+		return sdkerrors.Wrapf(types.ErrEmpty, "name cannot be empty")
+	}
+	if msg.MoreInfoUri == "" {
+		return sdkerrors.Wrapf(types.ErrEmpty, "more info uri cannot be empty")
+	}
+
 	return nil
 }

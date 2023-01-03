@@ -108,7 +108,6 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIdentity) (*types.MsgAcceptIdentityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Validate sender acc address (duplicate of ValidateBasic)
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err

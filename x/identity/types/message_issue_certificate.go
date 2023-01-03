@@ -1,6 +1,8 @@
 package types
 
 import (
+	"archive/x/contractregistry/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -45,6 +47,15 @@ func (msg *MsgIssueCertificate) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
-	// TODO: Fill this in
+	_, err = sdk.AccAddressFromBech32(msg.Recipient)
+	if err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
+	}
+	if msg.MetadataSchemaUri == "" {
+		return sdkerrors.Wrapf(types.ErrEmpty, "invalid metadata schema uri")
+	}
+	if len(msg.Hashes) == 0 {
+		return sdkerrors.Wrapf(types.ErrEmpty, "must contain at least one hash")
+	}
 	return nil
 }
