@@ -20,7 +20,12 @@ service Query {
         option (google.api.http).get = "/archive/identity/identity_members/{id}/{is_pending}";
     }
 
-    // this line is used by starport scaffolding # 2
+    // Queries a list of Issuers items.
+	rpc Issuers(QueryIssuersRequest) returns (QueryIssuersResponse) {
+		option (google.api.http).get = "/archive/identity/issuers";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -40,6 +45,15 @@ message QueryIdentityMembersRequest {
 message QueryIdentityMembersResponse {
     repeated string members = 1;
     cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryIssuersRequest {
+cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryIssuersResponse {
+  repeated string issuers = 1;
+cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3

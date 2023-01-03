@@ -51,6 +51,21 @@ export interface IdentityQueryIdentityMembersResponse {
   pagination?: V1Beta1PageResponse;
 }
 
+export interface IdentityQueryIssuersResponse {
+  issuers?: string[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
+}
+
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -288,6 +303,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   ) =>
     this.request<IdentityQueryIdentityMembersResponse, RpcStatus>({
       path: `/archive/identity/identity_members/${id}/${isPending}`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssuers
+   * @summary Queries a list of Issuers items.
+   * @request GET:/archive/identity/issuers
+   */
+  queryIssuers = (
+    query?: {
+      "pagination.key"?: string;
+      "pagination.offset"?: string;
+      "pagination.limit"?: string;
+      "pagination.count_total"?: boolean;
+      "pagination.reverse"?: boolean;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<IdentityQueryIssuersResponse, RpcStatus>({
+      path: `/archive/identity/issuers`,
       method: "GET",
       query: query,
       format: "json",
