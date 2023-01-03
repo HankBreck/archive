@@ -60,6 +60,15 @@ export interface MsgRenounceIdentity {
 export interface MsgRenounceIdentityResponse {
 }
 
+export interface MsgAddIdentityMember {
+  creator: string;
+  id: number;
+  member: string;
+}
+
+export interface MsgAddIdentityMemberResponse {
+}
+
 function createBaseMsgRegisterIssuer(): MsgRegisterIssuer {
   return { creator: "", name: "", moreInfoUri: "", cost: 0 };
 }
@@ -708,6 +717,112 @@ export const MsgRenounceIdentityResponse = {
   },
 };
 
+function createBaseMsgAddIdentityMember(): MsgAddIdentityMember {
+  return { creator: "", id: 0, member: "" };
+}
+
+export const MsgAddIdentityMember = {
+  encode(message: MsgAddIdentityMember, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    if (message.member !== "") {
+      writer.uint32(26).string(message.member);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddIdentityMember {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddIdentityMember();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.member = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgAddIdentityMember {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      member: isSet(object.member) ? String(object.member) : "",
+    };
+  },
+
+  toJSON(message: MsgAddIdentityMember): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.member !== undefined && (obj.member = message.member);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddIdentityMember>, I>>(object: I): MsgAddIdentityMember {
+    const message = createBaseMsgAddIdentityMember();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.member = object.member ?? "";
+    return message;
+  },
+};
+
+function createBaseMsgAddIdentityMemberResponse(): MsgAddIdentityMemberResponse {
+  return {};
+}
+
+export const MsgAddIdentityMemberResponse = {
+  encode(_: MsgAddIdentityMemberResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgAddIdentityMemberResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgAddIdentityMemberResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgAddIdentityMemberResponse {
+    return {};
+  },
+
+  toJSON(_: MsgAddIdentityMemberResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgAddIdentityMemberResponse>, I>>(_: I): MsgAddIdentityMemberResponse {
+    const message = createBaseMsgAddIdentityMemberResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse>;
@@ -715,8 +830,9 @@ export interface Msg {
   AcceptIdentity(request: MsgAcceptIdentity): Promise<MsgAcceptIdentityResponse>;
   RejectIdentity(request: MsgRejectIdentity): Promise<MsgRejectIdentityResponse>;
   RevokeIdentity(request: MsgRevokeIdentity): Promise<MsgRevokeIdentityResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   RenounceIdentity(request: MsgRenounceIdentity): Promise<MsgRenounceIdentityResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  AddIdentityMember(request: MsgAddIdentityMember): Promise<MsgAddIdentityMemberResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -729,6 +845,7 @@ export class MsgClientImpl implements Msg {
     this.RejectIdentity = this.RejectIdentity.bind(this);
     this.RevokeIdentity = this.RevokeIdentity.bind(this);
     this.RenounceIdentity = this.RenounceIdentity.bind(this);
+    this.AddIdentityMember = this.AddIdentityMember.bind(this);
   }
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse> {
     const data = MsgRegisterIssuer.encode(request).finish();
@@ -764,6 +881,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgRenounceIdentity.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Msg", "RenounceIdentity", data);
     return promise.then((data) => MsgRenounceIdentityResponse.decode(new _m0.Reader(data)));
+  }
+
+  AddIdentityMember(request: MsgAddIdentityMember): Promise<MsgAddIdentityMemberResponse> {
+    const data = MsgAddIdentityMember.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Msg", "AddIdentityMember", data);
+    return promise.then((data) => MsgAddIdentityMemberResponse.decode(new _m0.Reader(data)));
   }
 }
 
