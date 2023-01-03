@@ -42,11 +42,15 @@ func (k Keeper) Issuers(goCtx context.Context, req *types.QueryIssuersRequest) (
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	issuers, pageRes, err := k.GetIssuers(ctx, req.Pagination)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.QueryIssuersResponse{}, nil
+	return &types.QueryIssuersResponse{
+		Issuers:    issuers,
+		Pagination: pageRes,
+	}, nil
 }

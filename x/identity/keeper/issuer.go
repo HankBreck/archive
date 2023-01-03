@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // SetIssuer stores the Issuer object under the creator's key.
@@ -38,6 +39,30 @@ func (k Keeper) GetIssuer(ctx sdk.Context, creator string) (*types.Issuer, error
 	}
 
 	return &issuer, nil
+}
+
+// GetIssuers pages through all registered issuers.
+//
+// Returns a tuple of: the issuers found, the page response, and an error.
+func (k Keeper) GetIssuers(ctx sdk.Context, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
+	store := k.getIssuerStore(ctx)
+	var issuers []string
+
+	// Unmarshal each key into the bech32 address
+	pageRes, err := query.Paginate(store, pageReq, func(key []byte, _ []byte) error {
+		var issuerAddr sdk.AccAddress
+		err := issuerAddr.Unmarshal(key)
+		if err != nil {
+			return err
+		}
+		issuers = append(issuers, issuerAddr.String())
+		return nil
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return issuers, pageRes, nil
 }
 
 // HasIssuer returns true if a issuer is stored under the creator's address, else false
