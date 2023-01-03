@@ -2,6 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
+import { Issuer } from "./issuer";
 import { Params } from "./params";
 
 export const protobufPackage = "archive.identity";
@@ -34,6 +35,14 @@ export interface QueryIssuersRequest {
 export interface QueryIssuersResponse {
   issuers: string[];
   pagination: PageResponse | undefined;
+}
+
+export interface QueryIssuerInfoRequest {
+  issuer: string;
+}
+
+export interface QueryIssuerInfoResponse {
+  issuerInfo: Issuer | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -374,6 +383,103 @@ export const QueryIssuersResponse = {
   },
 };
 
+function createBaseQueryIssuerInfoRequest(): QueryIssuerInfoRequest {
+  return { issuer: "" };
+}
+
+export const QueryIssuerInfoRequest = {
+  encode(message: QueryIssuerInfoRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.issuer !== "") {
+      writer.uint32(10).string(message.issuer);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIssuerInfoRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryIssuerInfoRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.issuer = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryIssuerInfoRequest {
+    return { issuer: isSet(object.issuer) ? String(object.issuer) : "" };
+  },
+
+  toJSON(message: QueryIssuerInfoRequest): unknown {
+    const obj: any = {};
+    message.issuer !== undefined && (obj.issuer = message.issuer);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryIssuerInfoRequest>, I>>(object: I): QueryIssuerInfoRequest {
+    const message = createBaseQueryIssuerInfoRequest();
+    message.issuer = object.issuer ?? "";
+    return message;
+  },
+};
+
+function createBaseQueryIssuerInfoResponse(): QueryIssuerInfoResponse {
+  return { issuerInfo: undefined };
+}
+
+export const QueryIssuerInfoResponse = {
+  encode(message: QueryIssuerInfoResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.issuerInfo !== undefined) {
+      Issuer.encode(message.issuerInfo, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIssuerInfoResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryIssuerInfoResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.issuerInfo = Issuer.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryIssuerInfoResponse {
+    return { issuerInfo: isSet(object.issuerInfo) ? Issuer.fromJSON(object.issuerInfo) : undefined };
+  },
+
+  toJSON(message: QueryIssuerInfoResponse): unknown {
+    const obj: any = {};
+    message.issuerInfo !== undefined
+      && (obj.issuerInfo = message.issuerInfo ? Issuer.toJSON(message.issuerInfo) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryIssuerInfoResponse>, I>>(object: I): QueryIssuerInfoResponse {
+    const message = createBaseQueryIssuerInfoResponse();
+    message.issuerInfo = (object.issuerInfo !== undefined && object.issuerInfo !== null)
+      ? Issuer.fromPartial(object.issuerInfo)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -382,6 +488,8 @@ export interface Query {
   IdentityMembers(request: QueryIdentityMembersRequest): Promise<QueryIdentityMembersResponse>;
   /** Queries a list of Issuers items. */
   Issuers(request: QueryIssuersRequest): Promise<QueryIssuersResponse>;
+  /** Queries a list of IssuerInfo items. */
+  IssuerInfo(request: QueryIssuerInfoRequest): Promise<QueryIssuerInfoResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -391,6 +499,7 @@ export class QueryClientImpl implements Query {
     this.Params = this.Params.bind(this);
     this.IdentityMembers = this.IdentityMembers.bind(this);
     this.Issuers = this.Issuers.bind(this);
+    this.IssuerInfo = this.IssuerInfo.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -408,6 +517,12 @@ export class QueryClientImpl implements Query {
     const data = QueryIssuersRequest.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Query", "Issuers", data);
     return promise.then((data) => QueryIssuersResponse.decode(new _m0.Reader(data)));
+  }
+
+  IssuerInfo(request: QueryIssuerInfoRequest): Promise<QueryIssuerInfoResponse> {
+    const data = QueryIssuerInfoRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Query", "IssuerInfo", data);
+    return promise.then((data) => QueryIssuerInfoResponse.decode(new _m0.Reader(data)));
   }
 }
 

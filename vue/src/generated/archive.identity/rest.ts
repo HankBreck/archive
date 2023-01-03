@@ -14,6 +14,15 @@ export interface IdentityHashEntry {
   hash?: string;
 }
 
+export interface IdentityIssuer {
+  creator?: string;
+  name?: string;
+  more_info_uri?: string;
+
+  /** @format uint64 */
+  cost?: string;
+}
+
 export type IdentityMsgAcceptIdentityResponse = object;
 
 export type IdentityMsgAddIdentityMemberResponse = object;
@@ -49,6 +58,10 @@ export interface IdentityQueryIdentityMembersResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface IdentityQueryIssuerInfoResponse {
+  issuerInfo?: IdentityIssuer;
 }
 
 export interface IdentityQueryIssuersResponse {
@@ -305,6 +318,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/archive/identity/identity_members/${id}/${isPending}`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryIssuerInfo
+   * @summary Queries a list of IssuerInfo items.
+   * @request GET:/archive/identity/issuer_info/{issuer}
+   */
+  queryIssuerInfo = (issuer: string, params: RequestParams = {}) =>
+    this.request<IdentityQueryIssuerInfoResponse, RpcStatus>({
+      path: `/archive/identity/issuer_info/${issuer}`,
+      method: "GET",
       format: "json",
       ...params,
     });

@@ -7,25 +7,19 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgIssueCertificate } from "./types/archive/identity/tx";
-import { MsgRejectIdentity } from "./types/archive/identity/tx";
+import { MsgRevokeIdentity } from "./types/archive/identity/tx";
 import { MsgRenounceIdentity } from "./types/archive/identity/tx";
 import { MsgAddIdentityMember } from "./types/archive/identity/tx";
-import { MsgRevokeIdentity } from "./types/archive/identity/tx";
+import { MsgIssueCertificate } from "./types/archive/identity/tx";
+import { MsgRejectIdentity } from "./types/archive/identity/tx";
 import { MsgAcceptIdentity } from "./types/archive/identity/tx";
 import { MsgRegisterIssuer } from "./types/archive/identity/tx";
 
 
-export { MsgIssueCertificate, MsgRejectIdentity, MsgRenounceIdentity, MsgAddIdentityMember, MsgRevokeIdentity, MsgAcceptIdentity, MsgRegisterIssuer };
+export { MsgRevokeIdentity, MsgRenounceIdentity, MsgAddIdentityMember, MsgIssueCertificate, MsgRejectIdentity, MsgAcceptIdentity, MsgRegisterIssuer };
 
-type sendMsgIssueCertificateParams = {
-  value: MsgIssueCertificate,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgRejectIdentityParams = {
-  value: MsgRejectIdentity,
+type sendMsgRevokeIdentityParams = {
+  value: MsgRevokeIdentity,
   fee?: StdFee,
   memo?: string
 };
@@ -42,8 +36,14 @@ type sendMsgAddIdentityMemberParams = {
   memo?: string
 };
 
-type sendMsgRevokeIdentityParams = {
-  value: MsgRevokeIdentity,
+type sendMsgIssueCertificateParams = {
+  value: MsgIssueCertificate,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRejectIdentityParams = {
+  value: MsgRejectIdentity,
   fee?: StdFee,
   memo?: string
 };
@@ -61,12 +61,8 @@ type sendMsgRegisterIssuerParams = {
 };
 
 
-type msgIssueCertificateParams = {
-  value: MsgIssueCertificate,
-};
-
-type msgRejectIdentityParams = {
-  value: MsgRejectIdentity,
+type msgRevokeIdentityParams = {
+  value: MsgRevokeIdentity,
 };
 
 type msgRenounceIdentityParams = {
@@ -77,8 +73,12 @@ type msgAddIdentityMemberParams = {
   value: MsgAddIdentityMember,
 };
 
-type msgRevokeIdentityParams = {
-  value: MsgRevokeIdentity,
+type msgIssueCertificateParams = {
+  value: MsgIssueCertificate,
+};
+
+type msgRejectIdentityParams = {
+  value: MsgRejectIdentity,
 };
 
 type msgAcceptIdentityParams = {
@@ -107,31 +107,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
+		async sendMsgRevokeIdentity({ value, fee, memo }: sendMsgRevokeIdentityParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRevokeIdentity: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
+				let msg = this.msgRevokeIdentity({ value: MsgRevokeIdentity.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgRejectIdentity({ value, fee, memo }: sendMsgRejectIdentityParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgRejectIdentity: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRejectIdentity({ value: MsgRejectIdentity.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRejectIdentity: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRevokeIdentity: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -163,17 +149,31 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgRevokeIdentity({ value, fee, memo }: sendMsgRevokeIdentityParams): Promise<DeliverTxResponse> {
+		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRevokeIdentity: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRevokeIdentity({ value: MsgRevokeIdentity.fromPartial(value) })
+				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRevokeIdentity: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRejectIdentity({ value, fee, memo }: sendMsgRejectIdentityParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRejectIdentity: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRejectIdentity({ value: MsgRejectIdentity.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRejectIdentity: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -206,19 +206,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
+		msgRevokeIdentity({ value }: msgRevokeIdentityParams): EncodeObject {
 			try {
-				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
+				return { typeUrl: "/archive.identity.MsgRevokeIdentity", value: MsgRevokeIdentity.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgRejectIdentity({ value }: msgRejectIdentityParams): EncodeObject {
-			try {
-				return { typeUrl: "/archive.identity.MsgRejectIdentity", value: MsgRejectIdentity.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgRejectIdentity: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRevokeIdentity: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -238,11 +230,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgRevokeIdentity({ value }: msgRevokeIdentityParams): EncodeObject {
+		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
 			try {
-				return { typeUrl: "/archive.identity.MsgRevokeIdentity", value: MsgRevokeIdentity.fromPartial( value ) }  
+				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRevokeIdentity: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRejectIdentity({ value }: msgRejectIdentityParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.identity.MsgRejectIdentity", value: MsgRejectIdentity.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRejectIdentity: Could not create message: ' + e.message)
 			}
 		},
 		

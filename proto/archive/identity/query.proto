@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "archive/identity/params.proto";
 // this line is used by starport scaffolding # 1
+import "archive/identity/issuer.proto";
 
 option go_package = "archive/x/identity/types";
 
@@ -23,6 +24,11 @@ service Query {
     // Queries a list of Issuers items.
 	rpc Issuers(QueryIssuersRequest) returns (QueryIssuersResponse) {
 		option (google.api.http).get = "/archive/identity/issuers";
+	}
+
+// Queries a list of IssuerInfo items.
+	rpc IssuerInfo(QueryIssuerInfoRequest) returns (QueryIssuerInfoResponse) {
+		option (google.api.http).get = "/archive/identity/issuer_info/{issuer}";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -50,10 +56,16 @@ message QueryIdentityMembersResponse {
 message QueryIssuersRequest {
     cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
-
 message QueryIssuersResponse {
     repeated string issuers = 1;
     cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryIssuerInfoRequest {
+  string issuer = 1;
+}
+message QueryIssuerInfoResponse {
+  Issuer issuerInfo = 1;
 }
 
 // this line is used by starport scaffolding # 3
