@@ -2,6 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 import { PageRequest, PageResponse } from "../../cosmos/base/query/v1beta1/pagination";
+import { Certificate } from "./certificate";
 import { Issuer } from "./issuer";
 import { Params } from "./params";
 
@@ -43,6 +44,14 @@ export interface QueryIssuerInfoRequest {
 
 export interface QueryIssuerInfoResponse {
   issuerInfo: Issuer | undefined;
+}
+
+export interface QueryIdentityRequest {
+  id: number;
+}
+
+export interface QueryIdentityResponse {
+  certificate: Certificate | undefined;
 }
 
 function createBaseQueryParamsRequest(): QueryParamsRequest {
@@ -480,6 +489,103 @@ export const QueryIssuerInfoResponse = {
   },
 };
 
+function createBaseQueryIdentityRequest(): QueryIdentityRequest {
+  return { id: 0 };
+}
+
+export const QueryIdentityRequest = {
+  encode(message: QueryIdentityRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIdentityRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryIdentityRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryIdentityRequest {
+    return { id: isSet(object.id) ? Number(object.id) : 0 };
+  },
+
+  toJSON(message: QueryIdentityRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryIdentityRequest>, I>>(object: I): QueryIdentityRequest {
+    const message = createBaseQueryIdentityRequest();
+    message.id = object.id ?? 0;
+    return message;
+  },
+};
+
+function createBaseQueryIdentityResponse(): QueryIdentityResponse {
+  return { certificate: undefined };
+}
+
+export const QueryIdentityResponse = {
+  encode(message: QueryIdentityResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.certificate !== undefined) {
+      Certificate.encode(message.certificate, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryIdentityResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryIdentityResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.certificate = Certificate.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryIdentityResponse {
+    return { certificate: isSet(object.certificate) ? Certificate.fromJSON(object.certificate) : undefined };
+  },
+
+  toJSON(message: QueryIdentityResponse): unknown {
+    const obj: any = {};
+    message.certificate !== undefined
+      && (obj.certificate = message.certificate ? Certificate.toJSON(message.certificate) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryIdentityResponse>, I>>(object: I): QueryIdentityResponse {
+    const message = createBaseQueryIdentityResponse();
+    message.certificate = (object.certificate !== undefined && object.certificate !== null)
+      ? Certificate.fromPartial(object.certificate)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -490,6 +596,8 @@ export interface Query {
   Issuers(request: QueryIssuersRequest): Promise<QueryIssuersResponse>;
   /** Queries a list of IssuerInfo items. */
   IssuerInfo(request: QueryIssuerInfoRequest): Promise<QueryIssuerInfoResponse>;
+  /** Queries a list of Identity items. */
+  Identity(request: QueryIdentityRequest): Promise<QueryIdentityResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -500,6 +608,7 @@ export class QueryClientImpl implements Query {
     this.IdentityMembers = this.IdentityMembers.bind(this);
     this.Issuers = this.Issuers.bind(this);
     this.IssuerInfo = this.IssuerInfo.bind(this);
+    this.Identity = this.Identity.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -523,6 +632,12 @@ export class QueryClientImpl implements Query {
     const data = QueryIssuerInfoRequest.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Query", "IssuerInfo", data);
     return promise.then((data) => QueryIssuerInfoResponse.decode(new _m0.Reader(data)));
+  }
+
+  Identity(request: QueryIdentityRequest): Promise<QueryIdentityResponse> {
+    const data = QueryIdentityRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Query", "Identity", data);
+    return promise.then((data) => QueryIdentityResponse.decode(new _m0.Reader(data)));
   }
 }
 

@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "archive/identity/params.proto";
 // this line is used by starport scaffolding # 1
+import "archive/identity/certificate.proto";
 import "archive/identity/issuer.proto";
 
 option go_package = "archive/x/identity/types";
@@ -29,7 +30,12 @@ service Query {
 		option (google.api.http).get = "/archive/identity/issuer_info/{issuer}";
 	}
 
-    // this line is used by starport scaffolding # 2
+    // Queries a list of Identity items.
+	rpc Identity(QueryIdentityRequest) returns (QueryIdentityResponse) {
+		option (google.api.http).get = "/archive/identity/identity/{id}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -64,6 +70,14 @@ message QueryIssuerInfoRequest {
 }
 message QueryIssuerInfoResponse {
   Issuer issuer_info = 1 [(gogoproto.customname) = "IssuerInfo"];
+}
+
+message QueryIdentityRequest {
+  uint64 id = 1;
+}
+
+message QueryIdentityResponse {
+  Certificate certificate = 1;
 }
 
 // this line is used by starport scaffolding # 3
