@@ -11,12 +11,12 @@ option go_package = "archive/x/identity/types";
 service Msg {
     rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
     rpc IssueCertificate(MsgIssueCertificate) returns (MsgIssueCertificateResponse);
-      rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
-  rpc RejectIdentity(MsgRejectIdentity) returns (MsgRejectIdentityResponse);
-  rpc RevokeIdentity(MsgRevokeIdentity) returns (MsgRevokeIdentityResponse);
-  rpc RenounceIdentity(MsgRenounceIdentity) returns (MsgRenounceIdentityResponse);
-  rpc AddIdentityMember(MsgAddIdentityMember) returns (MsgAddIdentityMemberResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+    rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
+    rpc RejectIdentity(MsgRejectIdentity) returns (MsgRejectIdentityResponse);
+    rpc RevokeIdentity(MsgRevokeIdentity) returns (MsgRevokeIdentityResponse);
+    rpc RenounceIdentity(MsgRenounceIdentity) returns (MsgRenounceIdentityResponse);
+    rpc AddIdentityMember(MsgAddIdentityMember) returns (MsgAddIdentityMemberResponse);
+    // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRegisterIssuer {
