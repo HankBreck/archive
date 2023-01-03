@@ -65,7 +65,7 @@ message QueryIssuerInfoRequest {
   string issuer = 1;
 }
 message QueryIssuerInfoResponse {
-  Issuer issuerInfo = 1;
+  Issuer issuer_info = 1 [(gogoproto.customname) = "IssuerInfo"];
 }
 
 // this line is used by starport scaffolding # 3
