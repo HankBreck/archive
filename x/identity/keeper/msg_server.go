@@ -249,3 +249,12 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 
 	return &types.MsgRenounceIdentityResponse{}, nil
 }
+
+func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIdentityMember) (*types.MsgAddIdentityMemberResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Handling the message
+	_ = ctx
+
+	return &types.MsgAddIdentityMemberResponse{}, nil
+}
