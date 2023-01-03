@@ -80,11 +80,13 @@ func (k Keeper) Identity(goCtx context.Context, req *types.QueryIdentityRequest)
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	// Fetch certificate from storage
+	cert, err := k.GetCertificate(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.QueryIdentityResponse{}, nil
+	return &types.QueryIdentityResponse{Certificate: cert}, nil
 }
