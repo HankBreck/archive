@@ -75,3 +75,16 @@ func (k Keeper) IssuerInfo(goCtx context.Context, req *types.QueryIssuerInfoRequ
 
 	return &types.QueryIssuerInfoResponse{IssuerInfo: issuer}, nil
 }
+
+func (k Keeper) Identity(goCtx context.Context, req *types.QueryIdentityRequest) (*types.QueryIdentityResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Process the query
+	_ = ctx
+
+	return &types.QueryIdentityResponse{}, nil
+}
