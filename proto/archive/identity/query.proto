@@ -20,18 +20,16 @@ service Query {
     rpc IdentityMembers(QueryIdentityMembersRequest) returns (QueryIdentityMembersResponse) {
         option (google.api.http).get = "/archive/identity/identity_members/{id}/{is_pending}";
     }
-
     // Queries a list of Issuers items.
 	rpc Issuers(QueryIssuersRequest) returns (QueryIssuersResponse) {
 		option (google.api.http).get = "/archive/identity/issuers";
 	}
-
-// Queries a list of IssuerInfo items.
+    // Queries a list of IssuerInfo items.
 	rpc IssuerInfo(QueryIssuerInfoRequest) returns (QueryIssuerInfoResponse) {
 		option (google.api.http).get = "/archive/identity/issuer_info/{issuer}";
 	}
 
-// this line is used by starport scaffolding # 2
+    // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.

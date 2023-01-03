@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"archive/x/identity/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"
@@ -27,7 +28,6 @@ func CmdIssuerInfo() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryIssuerInfoRequest{
-
 				Issuer: reqIssuer,
 			}
 
