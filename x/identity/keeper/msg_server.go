@@ -253,8 +253,43 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIdentityMember) (*types.MsgAddIdentityMemberResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: constrain this to operators
+	if !k.HasMember(ctx, msg.Id, senderAddr) {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("Sender must be an operator of identity %d", msg.Id)
+	}
+
+	// Cannot overwrite existing members
+	// Operator status could be revoked by saving the value 0x0 to the membership key instead of 0x1
+	memberAddr, err := sdk.AccAddressFromBech32(msg.Member)
+	if err != nil {
+		return nil, err
+	}
+	if k.HasMember(ctx, msg.Id, memberAddr) || k.HasPendingMember(ctx, msg.Id, memberAddr) {
+		return nil, types.ErrExistingMember
+	}
+
+	// Add member as pending
+	toAdd := []sdk.AccAddress{memberAddr}
+	toRemove := []sdk.AccAddress{}
+	err = k.UpdatePendingMembers(ctx, msg.Id, toAdd, toRemove)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgAddIdentityMember,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "AddIdentityMember"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+		sdk.NewAttribute("member_address", memberAddr.String()),
+		// sdk.NewAttribute("role", "operator" OR "member"),
+	))
 
 	return &types.MsgAddIdentityMemberResponse{}, nil
 }

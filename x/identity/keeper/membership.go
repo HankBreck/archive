@@ -9,6 +9,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
+// TODO: Add operator support
+
 // CreateMembership stores the first member in the "pending" prefixed store for the given certificateId.
 // Pending memberships need to be approved by the recipient.
 // It assumes that recipient is a valid address, so calling functions must ensure this.
@@ -140,7 +142,7 @@ func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.A
 
 	// Grant membership to each address
 	for _, addr := range toAdd {
-		store.Set(addr.Bytes(), []byte{0})
+		store.Set(addr.Bytes(), []byte{0}) // TODO: add enum for operator status
 	}
 
 	// Revoke membership from each address
