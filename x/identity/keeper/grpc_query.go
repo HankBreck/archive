@@ -59,11 +59,19 @@ func (k Keeper) IssuerInfo(goCtx context.Context, req *types.QueryIssuerInfoRequ
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	// Validate issuer address
+	_, err := sdk.AccAddressFromBech32(req.Issuer)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.QueryIssuerInfoResponse{}, nil
+	// Fetch issuer from storage
+	issuer, err := k.GetIssuer(ctx, req.Issuer)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.QueryIssuerInfoResponse{IssuerInfo: issuer}, nil
 }
