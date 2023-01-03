@@ -10,6 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TODO:
+//		Test IdentityMembers
+//		Test Issuers
+
 func TestParamsQuery(t *testing.T) {
 	keeper, ctx := testkeeper.IdentityKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)

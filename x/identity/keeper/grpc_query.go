@@ -37,3 +37,16 @@ func (k Keeper) IdentityMembers(goCtx context.Context, req *types.QueryIdentityM
 		Pagination: pageRes,
 	}, nil
 }
+
+func (k Keeper) Issuers(goCtx context.Context, req *types.QueryIssuersRequest) (*types.QueryIssuersResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Process the query
+	_ = ctx
+
+	return &types.QueryIssuersResponse{}, nil
+}
