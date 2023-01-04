@@ -74,7 +74,6 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 		return nil, sdkerrors.ErrNotFound.Wrapf("Sender (%s) is not a registered Issuer", creatorAddr.String())
 	}
 
-	// Ensure msg.recipient is a valid account (duplicate of ValidateBasic)
 	recipientAddr, err := sdk.AccAddressFromBech32(msg.Recipient)
 	if err != nil {
 		return nil, err
