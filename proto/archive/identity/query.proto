@@ -35,6 +35,11 @@ service Query {
 		option (google.api.http).get = "/archive/identity/identity/{id}";
 	}
 
+// Queries a list of Operators items.
+	rpc Operators(QueryOperatorsRequest) returns (QueryOperatorsResponse) {
+		option (google.api.http).get = "/archive/identity/operators/{id}";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -78,6 +83,15 @@ message QueryIdentityRequest {
 
 message QueryIdentityResponse {
   Certificate certificate = 1;
+}
+
+message QueryOperatorsRequest {
+  uint64 id = 1;
+cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryOperatorsResponse {
+cosmos.base.query.v1beta1.PageResponse pagination = 1;
 }
 
 // this line is used by starport scaffolding # 3

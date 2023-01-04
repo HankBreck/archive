@@ -54,6 +54,15 @@ export interface QueryIdentityResponse {
   certificate: Certificate | undefined;
 }
 
+export interface QueryOperatorsRequest {
+  id: number;
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryOperatorsResponse {
+  pagination: PageResponse | undefined;
+}
+
 function createBaseQueryParamsRequest(): QueryParamsRequest {
   return {};
 }
@@ -586,6 +595,117 @@ export const QueryIdentityResponse = {
   },
 };
 
+function createBaseQueryOperatorsRequest(): QueryOperatorsRequest {
+  return { id: 0, pagination: undefined };
+}
+
+export const QueryOperatorsRequest = {
+  encode(message: QueryOperatorsRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(18).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryOperatorsRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryOperatorsRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOperatorsRequest {
+    return {
+      id: isSet(object.id) ? Number(object.id) : 0,
+      pagination: isSet(object.pagination) ? PageRequest.fromJSON(object.pagination) : undefined,
+    };
+  },
+
+  toJSON(message: QueryOperatorsRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageRequest.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryOperatorsRequest>, I>>(object: I): QueryOperatorsRequest {
+    const message = createBaseQueryOperatorsRequest();
+    message.id = object.id ?? 0;
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageRequest.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
+function createBaseQueryOperatorsResponse(): QueryOperatorsResponse {
+  return { pagination: undefined };
+}
+
+export const QueryOperatorsResponse = {
+  encode(message: QueryOperatorsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.pagination !== undefined) {
+      PageResponse.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryOperatorsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryOperatorsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryOperatorsResponse {
+    return { pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined };
+  },
+
+  toJSON(message: QueryOperatorsResponse): unknown {
+    const obj: any = {};
+    message.pagination !== undefined
+      && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryOperatorsResponse>, I>>(object: I): QueryOperatorsResponse {
+    const message = createBaseQueryOperatorsResponse();
+    message.pagination = (object.pagination !== undefined && object.pagination !== null)
+      ? PageResponse.fromPartial(object.pagination)
+      : undefined;
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -598,6 +718,8 @@ export interface Query {
   IssuerInfo(request: QueryIssuerInfoRequest): Promise<QueryIssuerInfoResponse>;
   /** Queries a list of Identity items. */
   Identity(request: QueryIdentityRequest): Promise<QueryIdentityResponse>;
+  /** Queries a list of Operators items. */
+  Operators(request: QueryOperatorsRequest): Promise<QueryOperatorsResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -609,6 +731,7 @@ export class QueryClientImpl implements Query {
     this.Issuers = this.Issuers.bind(this);
     this.IssuerInfo = this.IssuerInfo.bind(this);
     this.Identity = this.Identity.bind(this);
+    this.Operators = this.Operators.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -638,6 +761,12 @@ export class QueryClientImpl implements Query {
     const data = QueryIdentityRequest.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Query", "Identity", data);
     return promise.then((data) => QueryIdentityResponse.decode(new _m0.Reader(data)));
+  }
+
+  Operators(request: QueryOperatorsRequest): Promise<QueryOperatorsResponse> {
+    const data = QueryOperatorsRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Query", "Operators", data);
+    return promise.then((data) => QueryOperatorsResponse.decode(new _m0.Reader(data)));
   }
 }
 
