@@ -61,7 +61,7 @@ func (k Keeper) HasIssuerForId(ctx sdk.Context, id uint64, issuer sdk.AccAddress
 	if err != nil {
 		return false, err
 	}
-	return !issuer.Equals(addr), nil
+	return issuer.Equals(addr), nil
 }
 
 // Stores the certificate with a key of certificate.Id. The certificate.Id field must be set by a calling function.
