@@ -10,6 +10,8 @@ import (
 )
 
 // TODO: Add operator support
+//	Modify member store
+//		- when member is removed, ensure not an operator
 
 // CreateMembership stores the first member in the "pending" prefixed store for the given certificateId.
 // Pending memberships need to be approved by the recipient.
