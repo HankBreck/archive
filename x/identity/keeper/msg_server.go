@@ -292,3 +292,12 @@ func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIde
 
 	return &types.MsgAddIdentityMemberResponse{}, nil
 }
+
+func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOperators) (*types.MsgUpdateOperatorsResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Handling the message
+	_ = ctx
+
+	return &types.MsgUpdateOperatorsResponse{}, nil
+}
