@@ -21,7 +21,7 @@ import (
 // Operators must be accepted members, and membership may not be revoked for an account that is currently an operator.
 // This means operators must be demoted before their membership status can be revoked.
 //
-// Returns an error if the certificate doesn't exist or the account is not an accepted member.
+// Returns an error if the certificate doesn't exist or an account is not an accepted member.
 func (k Keeper) SetOperators(ctx sdk.Context, certificateId uint64, operators []sdk.AccAddress) error {
 	// Ensure certificate exists
 	if !k.HasCertificate(ctx, certificateId) {
@@ -68,6 +68,8 @@ func (k Keeper) GetOperators(ctx sdk.Context, certificateId uint64, pageReq *que
 
 // HasMember returns true if the account is an operator of the
 // certificate referenced by certificateId.
+//
+// Returns an error if the certificate does not exist
 func (k Keeper) HasOperator(ctx sdk.Context, certificateId uint64, operator sdk.AccAddress) (bool, error) {
 	if !k.HasCertificate(ctx, certificateId) {
 		return false, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
@@ -76,9 +78,24 @@ func (k Keeper) HasOperator(ctx sdk.Context, certificateId uint64, operator sdk.
 	return store.Has(operator.Bytes()), nil
 }
 
-// RemoveOperator removes the operator from
-func (k Keeper) RemoveOperators(ctx sdk.Context, certificateId uint64, operator sdk.AccAddress) error {
-
+// RemoveOperators removes each operator's address from the address-prefixed operator store.
+//
+// Returns an error if the certificate doesn't exist or an account is not an operator.
+func (k Keeper) RemoveOperators(ctx sdk.Context, certificateId uint64, operators []sdk.AccAddress) error {
+	// Ensure certificate exists
+	if !k.HasCertificate(ctx, certificateId) {
+		return types.ErrNonexistentCertificate.Wrapf("could not find identity %d", certificateId)
+	}
+	store := k.getOperatorStoreForId(ctx, certificateId)
+	for _, op := range operators {
+		// Ensure the account is an operator
+		if !store.Has(op.Bytes()) {
+			return sdkerrors.ErrNotFound.Wrapf("the account (%s) is not an operator of identity (%d)", op.String(), certificateId)
+		}
+		// Remove entry from operator store
+		store.Delete(op.Bytes())
+	}
+	return nil
 }
 
 func (k Keeper) getOperatorStoreForId(ctx sdk.Context, id uint64) prefix.Store {

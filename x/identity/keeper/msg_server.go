@@ -3,6 +3,7 @@ package keeper
 import (
 	"archive/x/identity/types"
 	"context"
+	"fmt"
 	"strconv"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -296,8 +297,58 @@ func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIde
 func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOperators) (*types.MsgUpdateOperatorsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// Ensure sender address is valid
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure sender is an operator (and certificate exists)
+	valid, err := k.HasOperator(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	} else if !valid {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("account (%s) is not an operator of identity (%d)", senderAddr.String(), msg.Id)
+	}
+
+	// Add new operators
+	toAdd := []sdk.AccAddress{}
+	for _, addrStr := range msg.ToAdd {
+		addr, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return nil, err
+		}
+		toAdd = append(toAdd, addr)
+	}
+	err = k.SetOperators(ctx, msg.Id, toAdd)
+	if err != nil {
+		return nil, err
+	}
+
+	// Remove old operators
+	toRemove := []sdk.AccAddress{}
+	for _, addrStr := range msg.ToRemove {
+		addr, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return nil, err
+		}
+		toRemove = append(toRemove, addr)
+	}
+	err = k.RemoveOperators(ctx, msg.Id, toRemove)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgUpdateOperators,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "UpdateOperators"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+		sdk.NewAttribute("num_added", fmt.Sprint(len(toAdd))),
+		sdk.NewAttribute("num_removed", fmt.Sprint(len(toRemove))),
+	))
 
 	return &types.MsgUpdateOperatorsResponse{}, nil
 }
