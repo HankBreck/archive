@@ -93,10 +93,7 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	k.CreateMembership(ctx, id, recipientAddr)
 
 	// Add recipient to operator store
-	err = k.SetOperators(ctx, id, []sdk.AccAddress{recipientAddr})
-	if err != nil {
-		return nil, err
-	}
+	k.SetInitialOperator(ctx, id, recipientAddr)
 
 	// Emit events
 	ctx.EventManager().EmitEvent(sdk.NewEvent(

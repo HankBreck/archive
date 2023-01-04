@@ -39,6 +39,14 @@ func (k Keeper) SetOperators(ctx sdk.Context, certificateId uint64, operators []
 	return nil
 }
 
+// SetInitialOperator stored the operator entry under the recipient's account address. This method assumes
+// that the certificate exists and does not enforce the accepted membership requirement of the SetOperators
+// method. It should only be called from the IssueCertificate msgServer method.
+func (k Keeper) SetInitialOperator(ctx sdk.Context, certificateId uint64, recipient sdk.AccAddress) {
+	store := k.getOperatorStoreForId(ctx, certificateId)
+	store.Set(recipient.Bytes(), []byte{0})
+}
+
 // GetMembers pages through the members for a given identity.
 //
 // Returns a tuple of: the operators found, the page response, and an error.
