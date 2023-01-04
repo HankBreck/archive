@@ -308,14 +308,13 @@ func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIde
 
 func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMembers) (*types.MsgUpdateMembersResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Ensure sender address is valid
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
-	// Ensure sender is an operator (and certificate exists)
-	valid, err := k.HasOperator(ctx, msg.Id, senderAddr)
+
+	// Ensure sender is an operator/issuer (and certificate exists)
+	valid, err := k.hasOperatorOrIssuer(ctx, msg.Id, senderAddr)
 	if err != nil {
 		return nil, err
 	} else if !valid {
@@ -369,15 +368,13 @@ func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMemb
 
 func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOperators) (*types.MsgUpdateOperatorsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Ensure sender address is valid
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure sender is an operator (and certificate exists)
-	valid, err := k.HasOperator(ctx, msg.Id, senderAddr)
+	// Ensure sender is an operator/issuer (and certificate exists)
+	valid, err := k.hasOperatorOrIssuer(ctx, msg.Id, senderAddr)
 	if err != nil {
 		return nil, err
 	} else if !valid {
