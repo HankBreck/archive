@@ -173,30 +173,34 @@ func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIde
 func (k msgServer) RevokeIdentity(goCtx context.Context, msg *types.MsgRevokeIdentity) (*types.MsgRevokeIdentityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
+	// Grab sender and member addresses
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
-
-	// Ensure Id is valid & msg.Creator issued the Certificate
 	memberAddr, err := sdk.AccAddressFromBech32(msg.Member)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ensure issuer created the certificate
+	// Ensure Id is valid & msg.Creator issued the Certificate
 	found, err := k.HasIssuerForId(ctx, msg.Id, senderAddr)
 	if err != nil {
 		return nil, err
-	}
-	if !found {
-		sdkerrors.ErrUnauthorized.Wrapf("Sender is not an issuer for id %d", msg.Id)
+	} else if !found {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("Sender is not an issuer for id %d", msg.Id)
 	}
 
-	// Remove member from both pending and accepted lists
 	toAdd := []sdk.AccAddress{}
 	toRemove := []sdk.AccAddress{memberAddr}
+
+	// Must revoke operator status before revoking membership
+	err = k.RemoveOperators(ctx, msg.Id, toRemove)
+	if err != nil {
+		return nil, err
+	}
+
+	// Revoke membership to both pending and accepted lists
 	err = k.UpdateAcceptedMembers(ctx, msg.Id, toAdd, toRemove)
 	if err != nil {
 		return nil, err

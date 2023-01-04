@@ -80,7 +80,7 @@ func (k Keeper) HasOperator(ctx sdk.Context, certificateId uint64, operator sdk.
 
 // RemoveOperators removes each operator's address from the address-prefixed operator store.
 //
-// Returns an error if the certificate doesn't exist or an account is not an operator.
+// Returns an error if the certificate doesn't exist
 func (k Keeper) RemoveOperators(ctx sdk.Context, certificateId uint64, operators []sdk.AccAddress) error {
 	// Ensure certificate exists
 	if !k.HasCertificate(ctx, certificateId) {
@@ -88,10 +88,6 @@ func (k Keeper) RemoveOperators(ctx sdk.Context, certificateId uint64, operators
 	}
 	store := k.getOperatorStoreForId(ctx, certificateId)
 	for _, op := range operators {
-		// Ensure the account is an operator
-		if !store.Has(op.Bytes()) {
-			return sdkerrors.ErrNotFound.Wrapf("the account (%s) is not an operator of identity (%d)", op.String(), certificateId)
-		}
 		// Remove entry from operator store
 		store.Delete(op.Bytes())
 	}
