@@ -27,6 +27,9 @@ const (
 
 	// MembershipKey defines the prefix under which Membership lists are stored
 	MembershipKey = "id-memberships-"
+
+	// OperatorKey defines the prefix under which Membership lists are stored
+	OperatorKey = "id-operators-"
 )
 
 func MembershipKeyPrefix(id uint64, isPending bool) []byte {
@@ -41,4 +44,10 @@ func MembershipKeyPrefix(id uint64, isPending bool) []byte {
 	}
 
 	return append(prefix, bzId...)
+}
+
+func OperatorKeyPrefix(id uint64) []byte {
+	bzId := make([]byte, 8)
+	binary.BigEndian.PutUint64(bzId, id)
+	return append([]byte(OperatorKey), bzId...)
 }
