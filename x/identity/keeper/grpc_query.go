@@ -90,3 +90,16 @@ func (k Keeper) Identity(goCtx context.Context, req *types.QueryIdentityRequest)
 
 	return &types.QueryIdentityResponse{Certificate: cert}, nil
 }
+
+func (k Keeper) Operators(goCtx context.Context, req *types.QueryOperatorsRequest) (*types.QueryOperatorsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Process the query
+	_ = ctx
+
+	return &types.QueryOperatorsResponse{}, nil
+}
