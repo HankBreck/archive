@@ -120,7 +120,8 @@ func (k Keeper) UpdatePendingMembers(ctx sdk.Context, certificateId uint64, toAd
 // Each address in the toAdd list is granted "accepted" membership, whereas each address in
 // toRemove's list is removed from the "accepted" list.
 //
-// Returns an error if no certificate exists for the given certificateId.
+// Returns an error if no certificate exists for the given certificateId or if an address in
+// toRemove is an operator
 func (k Keeper) UpdateAcceptedMembers(ctx sdk.Context, certificateId uint64, toAdd []sdk.AccAddress, toRemove []sdk.AccAddress) error {
 	// Ensure certId exists
 	if !k.HasCertificate(ctx, certificateId) {
