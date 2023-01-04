@@ -49,7 +49,6 @@ message QueryParamsResponse {
     Params params = 1 [(gogoproto.nullable) = false];
 }
 
-
 message QueryIdentityMembersRequest {
     uint64 id = 1;
     bool is_pending = 2 [(gogoproto.customname) = "IsPending"];
@@ -69,22 +68,22 @@ message QueryIssuersResponse {
 }
 
 message QueryIssuerInfoRequest {
-  string issuer = 1;
+    string issuer = 1;
 }
 message QueryIssuerInfoResponse {
-  Issuer issuer_info = 1 [(gogoproto.customname) = "IssuerInfo"];
+    Issuer issuer_info = 1 [(gogoproto.customname) = "IssuerInfo"];
 }
 
 message QueryIdentityRequest {
-  uint64 id = 1;
+    uint64 id = 1;
 }
 message QueryIdentityResponse {
-  Certificate certificate = 1;
+    Certificate certificate = 1;
 }
 
 message QueryOperatorsRequest {
-  uint64 id = 1;
-cosmos.base.query.v1beta1.PageRequest pagination = 2;
+    uint64 id = 1;
+    cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
 message QueryOperatorsResponse {
     repeated string operators = 1;
