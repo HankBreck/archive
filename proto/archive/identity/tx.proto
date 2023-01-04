@@ -16,7 +16,8 @@ service Msg {
     rpc RevokeIdentity(MsgRevokeIdentity) returns (MsgRevokeIdentityResponse);
     rpc RenounceIdentity(MsgRenounceIdentity) returns (MsgRenounceIdentityResponse);
     rpc AddIdentityMember(MsgAddIdentityMember) returns (MsgAddIdentityMemberResponse);
-    // this line is used by starport scaffolding # proto/tx/rpc
+      rpc UpdateOperators(MsgUpdateOperators) returns (MsgUpdateOperatorsResponse);
+// this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRegisterIssuer {
@@ -79,6 +80,16 @@ message MsgAddIdentityMember {
 }
 
 message MsgAddIdentityMemberResponse {
+}
+
+message MsgUpdateOperators {
+  string creator = 1;
+  uint64 id = 2;
+  repeated string toAdd = 3;
+  repeated string toRemove = 4;
+}
+
+message MsgUpdateOperatorsResponse {
 }
 
 // this line is used by starport scaffolding # proto/tx/message

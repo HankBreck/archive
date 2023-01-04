@@ -69,6 +69,16 @@ export interface MsgAddIdentityMember {
 export interface MsgAddIdentityMemberResponse {
 }
 
+export interface MsgUpdateOperators {
+  creator: string;
+  id: number;
+  toAdd: string[];
+  toRemove: string[];
+}
+
+export interface MsgUpdateOperatorsResponse {
+}
+
 function createBaseMsgRegisterIssuer(): MsgRegisterIssuer {
   return { creator: "", name: "", moreInfoUri: "", cost: 0 };
 }
@@ -823,6 +833,129 @@ export const MsgAddIdentityMemberResponse = {
   },
 };
 
+function createBaseMsgUpdateOperators(): MsgUpdateOperators {
+  return { creator: "", id: 0, toAdd: [], toRemove: [] };
+}
+
+export const MsgUpdateOperators = {
+  encode(message: MsgUpdateOperators, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    for (const v of message.toAdd) {
+      writer.uint32(26).string(v!);
+    }
+    for (const v of message.toRemove) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateOperators {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateOperators();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.toAdd.push(reader.string());
+          break;
+        case 4:
+          message.toRemove.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateOperators {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      toAdd: Array.isArray(object?.toAdd) ? object.toAdd.map((e: any) => String(e)) : [],
+      toRemove: Array.isArray(object?.toRemove) ? object.toRemove.map((e: any) => String(e)) : [],
+    };
+  },
+
+  toJSON(message: MsgUpdateOperators): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    if (message.toAdd) {
+      obj.toAdd = message.toAdd.map((e) => e);
+    } else {
+      obj.toAdd = [];
+    }
+    if (message.toRemove) {
+      obj.toRemove = message.toRemove.map((e) => e);
+    } else {
+      obj.toRemove = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateOperators>, I>>(object: I): MsgUpdateOperators {
+    const message = createBaseMsgUpdateOperators();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.toAdd = object.toAdd?.map((e) => e) || [];
+    message.toRemove = object.toRemove?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseMsgUpdateOperatorsResponse(): MsgUpdateOperatorsResponse {
+  return {};
+}
+
+export const MsgUpdateOperatorsResponse = {
+  encode(_: MsgUpdateOperatorsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateOperatorsResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateOperatorsResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateOperatorsResponse {
+    return {};
+  },
+
+  toJSON(_: MsgUpdateOperatorsResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateOperatorsResponse>, I>>(_: I): MsgUpdateOperatorsResponse {
+    const message = createBaseMsgUpdateOperatorsResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse>;
@@ -831,8 +964,9 @@ export interface Msg {
   RejectIdentity(request: MsgRejectIdentity): Promise<MsgRejectIdentityResponse>;
   RevokeIdentity(request: MsgRevokeIdentity): Promise<MsgRevokeIdentityResponse>;
   RenounceIdentity(request: MsgRenounceIdentity): Promise<MsgRenounceIdentityResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   AddIdentityMember(request: MsgAddIdentityMember): Promise<MsgAddIdentityMemberResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  UpdateOperators(request: MsgUpdateOperators): Promise<MsgUpdateOperatorsResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -846,6 +980,7 @@ export class MsgClientImpl implements Msg {
     this.RevokeIdentity = this.RevokeIdentity.bind(this);
     this.RenounceIdentity = this.RenounceIdentity.bind(this);
     this.AddIdentityMember = this.AddIdentityMember.bind(this);
+    this.UpdateOperators = this.UpdateOperators.bind(this);
   }
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse> {
     const data = MsgRegisterIssuer.encode(request).finish();
@@ -887,6 +1022,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgAddIdentityMember.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Msg", "AddIdentityMember", data);
     return promise.then((data) => MsgAddIdentityMemberResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateOperators(request: MsgUpdateOperators): Promise<MsgUpdateOperatorsResponse> {
+    const data = MsgUpdateOperators.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Msg", "UpdateOperators", data);
+    return promise.then((data) => MsgUpdateOperatorsResponse.decode(new _m0.Reader(data)));
   }
 }
 

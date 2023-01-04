@@ -33114,6 +33114,8 @@ definitions:
     type: object
   archive.identity.MsgRevokeIdentityResponse:
     type: object
+  archive.identity.MsgUpdateOperatorsResponse:
+    type: object
   archive.identity.Params:
     type: object
     description: Params defines the parameters for the module.
