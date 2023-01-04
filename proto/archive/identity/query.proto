@@ -29,18 +29,16 @@ service Query {
 	rpc IssuerInfo(QueryIssuerInfoRequest) returns (QueryIssuerInfoResponse) {
 		option (google.api.http).get = "/archive/identity/issuer_info/{issuer}";
 	}
-
     // Queries a list of Identity items.
 	rpc Identity(QueryIdentityRequest) returns (QueryIdentityResponse) {
 		option (google.api.http).get = "/archive/identity/identity/{id}";
 	}
-
-// Queries a list of Operators items.
+    // Queries a list of Operators items.
 	rpc Operators(QueryOperatorsRequest) returns (QueryOperatorsResponse) {
 		option (google.api.http).get = "/archive/identity/operators/{id}";
 	}
 
-// this line is used by starport scaffolding # 2
+    // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -80,7 +78,6 @@ message QueryIssuerInfoResponse {
 message QueryIdentityRequest {
   uint64 id = 1;
 }
-
 message QueryIdentityResponse {
   Certificate certificate = 1;
 }
@@ -89,9 +86,9 @@ message QueryOperatorsRequest {
   uint64 id = 1;
 cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
-
 message QueryOperatorsResponse {
-cosmos.base.query.v1beta1.PageResponse pagination = 1;
+    repeated string operators = 1;
+    cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // this line is used by starport scaffolding # 3
