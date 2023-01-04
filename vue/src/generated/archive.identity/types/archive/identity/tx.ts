@@ -79,6 +79,16 @@ export interface MsgUpdateOperators {
 export interface MsgUpdateOperatorsResponse {
 }
 
+export interface MsgUpdateMembers {
+  creator: string;
+  id: number;
+  toAdd: string[];
+  toRemove: string[];
+}
+
+export interface MsgUpdateMembersResponse {
+}
+
 function createBaseMsgRegisterIssuer(): MsgRegisterIssuer {
   return { creator: "", name: "", moreInfoUri: "", cost: 0 };
 }
@@ -956,6 +966,129 @@ export const MsgUpdateOperatorsResponse = {
   },
 };
 
+function createBaseMsgUpdateMembers(): MsgUpdateMembers {
+  return { creator: "", id: 0, toAdd: [], toRemove: [] };
+}
+
+export const MsgUpdateMembers = {
+  encode(message: MsgUpdateMembers, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.id !== 0) {
+      writer.uint32(16).uint64(message.id);
+    }
+    for (const v of message.toAdd) {
+      writer.uint32(26).string(v!);
+    }
+    for (const v of message.toRemove) {
+      writer.uint32(34).string(v!);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateMembers {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateMembers();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.toAdd.push(reader.string());
+          break;
+        case 4:
+          message.toRemove.push(reader.string());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgUpdateMembers {
+    return {
+      creator: isSet(object.creator) ? String(object.creator) : "",
+      id: isSet(object.id) ? Number(object.id) : 0,
+      toAdd: Array.isArray(object?.toAdd) ? object.toAdd.map((e: any) => String(e)) : [],
+      toRemove: Array.isArray(object?.toRemove) ? object.toRemove.map((e: any) => String(e)) : [],
+    };
+  },
+
+  toJSON(message: MsgUpdateMembers): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    if (message.toAdd) {
+      obj.toAdd = message.toAdd.map((e) => e);
+    } else {
+      obj.toAdd = [];
+    }
+    if (message.toRemove) {
+      obj.toRemove = message.toRemove.map((e) => e);
+    } else {
+      obj.toRemove = [];
+    }
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateMembers>, I>>(object: I): MsgUpdateMembers {
+    const message = createBaseMsgUpdateMembers();
+    message.creator = object.creator ?? "";
+    message.id = object.id ?? 0;
+    message.toAdd = object.toAdd?.map((e) => e) || [];
+    message.toRemove = object.toRemove?.map((e) => e) || [];
+    return message;
+  },
+};
+
+function createBaseMsgUpdateMembersResponse(): MsgUpdateMembersResponse {
+  return {};
+}
+
+export const MsgUpdateMembersResponse = {
+  encode(_: MsgUpdateMembersResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): MsgUpdateMembersResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseMsgUpdateMembersResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgUpdateMembersResponse {
+    return {};
+  },
+
+  toJSON(_: MsgUpdateMembersResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<MsgUpdateMembersResponse>, I>>(_: I): MsgUpdateMembersResponse {
+    const message = createBaseMsgUpdateMembersResponse();
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse>;
@@ -965,8 +1098,9 @@ export interface Msg {
   RevokeIdentity(request: MsgRevokeIdentity): Promise<MsgRevokeIdentityResponse>;
   RenounceIdentity(request: MsgRenounceIdentity): Promise<MsgRenounceIdentityResponse>;
   AddIdentityMember(request: MsgAddIdentityMember): Promise<MsgAddIdentityMemberResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   UpdateOperators(request: MsgUpdateOperators): Promise<MsgUpdateOperatorsResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  UpdateMembers(request: MsgUpdateMembers): Promise<MsgUpdateMembersResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -981,6 +1115,7 @@ export class MsgClientImpl implements Msg {
     this.RenounceIdentity = this.RenounceIdentity.bind(this);
     this.AddIdentityMember = this.AddIdentityMember.bind(this);
     this.UpdateOperators = this.UpdateOperators.bind(this);
+    this.UpdateMembers = this.UpdateMembers.bind(this);
   }
   RegisterIssuer(request: MsgRegisterIssuer): Promise<MsgRegisterIssuerResponse> {
     const data = MsgRegisterIssuer.encode(request).finish();
@@ -1028,6 +1163,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgUpdateOperators.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Msg", "UpdateOperators", data);
     return promise.then((data) => MsgUpdateOperatorsResponse.decode(new _m0.Reader(data)));
+  }
+
+  UpdateMembers(request: MsgUpdateMembers): Promise<MsgUpdateMembersResponse> {
+    const data = MsgUpdateMembers.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Msg", "UpdateMembers", data);
+    return promise.then((data) => MsgUpdateMembersResponse.decode(new _m0.Reader(data)));
   }
 }
 

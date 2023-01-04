@@ -1718,6 +1718,16 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /archive/identity/issuer_info/{issuer}:
@@ -1873,6 +1883,16 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /archive/identity/operators/{id}:
@@ -1983,6 +2003,16 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -33206,6 +33236,8 @@ definitions:
   archive.identity.MsgRenounceIdentityResponse:
     type: object
   archive.identity.MsgRevokeIdentityResponse:
+    type: object
+  archive.identity.MsgUpdateMembersResponse:
     type: object
   archive.identity.MsgUpdateOperatorsResponse:
     type: object

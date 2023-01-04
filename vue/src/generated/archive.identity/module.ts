@@ -7,26 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgRejectIdentity } from "./types/archive/identity/tx";
-import { MsgUpdateOperators } from "./types/archive/identity/tx";
-import { MsgRenounceIdentity } from "./types/archive/identity/tx";
 import { MsgIssueCertificate } from "./types/archive/identity/tx";
+import { MsgRenounceIdentity } from "./types/archive/identity/tx";
+import { MsgAddIdentityMember } from "./types/archive/identity/tx";
+import { MsgUpdateMembers } from "./types/archive/identity/tx";
+import { MsgUpdateOperators } from "./types/archive/identity/tx";
+import { MsgRejectIdentity } from "./types/archive/identity/tx";
 import { MsgRevokeIdentity } from "./types/archive/identity/tx";
 import { MsgRegisterIssuer } from "./types/archive/identity/tx";
-import { MsgAddIdentityMember } from "./types/archive/identity/tx";
 import { MsgAcceptIdentity } from "./types/archive/identity/tx";
 
 
-export { MsgRejectIdentity, MsgUpdateOperators, MsgRenounceIdentity, MsgIssueCertificate, MsgRevokeIdentity, MsgRegisterIssuer, MsgAddIdentityMember, MsgAcceptIdentity };
+export { MsgIssueCertificate, MsgRenounceIdentity, MsgAddIdentityMember, MsgUpdateMembers, MsgUpdateOperators, MsgRejectIdentity, MsgRevokeIdentity, MsgRegisterIssuer, MsgAcceptIdentity };
 
-type sendMsgRejectIdentityParams = {
-  value: MsgRejectIdentity,
-  fee?: StdFee,
-  memo?: string
-};
-
-type sendMsgUpdateOperatorsParams = {
-  value: MsgUpdateOperators,
+type sendMsgIssueCertificateParams = {
+  value: MsgIssueCertificate,
   fee?: StdFee,
   memo?: string
 };
@@ -37,8 +32,26 @@ type sendMsgRenounceIdentityParams = {
   memo?: string
 };
 
-type sendMsgIssueCertificateParams = {
-  value: MsgIssueCertificate,
+type sendMsgAddIdentityMemberParams = {
+  value: MsgAddIdentityMember,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateMembersParams = {
+  value: MsgUpdateMembers,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgUpdateOperatorsParams = {
+  value: MsgUpdateOperators,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRejectIdentityParams = {
+  value: MsgRejectIdentity,
   fee?: StdFee,
   memo?: string
 };
@@ -55,12 +68,6 @@ type sendMsgRegisterIssuerParams = {
   memo?: string
 };
 
-type sendMsgAddIdentityMemberParams = {
-  value: MsgAddIdentityMember,
-  fee?: StdFee,
-  memo?: string
-};
-
 type sendMsgAcceptIdentityParams = {
   value: MsgAcceptIdentity,
   fee?: StdFee,
@@ -68,20 +75,28 @@ type sendMsgAcceptIdentityParams = {
 };
 
 
-type msgRejectIdentityParams = {
-  value: MsgRejectIdentity,
-};
-
-type msgUpdateOperatorsParams = {
-  value: MsgUpdateOperators,
+type msgIssueCertificateParams = {
+  value: MsgIssueCertificate,
 };
 
 type msgRenounceIdentityParams = {
   value: MsgRenounceIdentity,
 };
 
-type msgIssueCertificateParams = {
-  value: MsgIssueCertificate,
+type msgAddIdentityMemberParams = {
+  value: MsgAddIdentityMember,
+};
+
+type msgUpdateMembersParams = {
+  value: MsgUpdateMembers,
+};
+
+type msgUpdateOperatorsParams = {
+  value: MsgUpdateOperators,
+};
+
+type msgRejectIdentityParams = {
+  value: MsgRejectIdentity,
 };
 
 type msgRevokeIdentityParams = {
@@ -90,10 +105,6 @@ type msgRevokeIdentityParams = {
 
 type msgRegisterIssuerParams = {
   value: MsgRegisterIssuer,
-};
-
-type msgAddIdentityMemberParams = {
-  value: MsgAddIdentityMember,
 };
 
 type msgAcceptIdentityParams = {
@@ -118,31 +129,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgRejectIdentity({ value, fee, memo }: sendMsgRejectIdentityParams): Promise<DeliverTxResponse> {
+		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRejectIdentity: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRejectIdentity({ value: MsgRejectIdentity.fromPartial(value) })
+				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRejectIdentity: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
-		async sendMsgUpdateOperators({ value, fee, memo }: sendMsgUpdateOperatorsParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgUpdateOperators: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgUpdateOperators({ value: MsgUpdateOperators.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgUpdateOperators: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -160,17 +157,59 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgIssueCertificate({ value, fee, memo }: sendMsgIssueCertificateParams): Promise<DeliverTxResponse> {
+		async sendMsgAddIdentityMember({ value, fee, memo }: sendMsgAddIdentityMemberParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgIssueCertificate: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgAddIdentityMember: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgIssueCertificate({ value: MsgIssueCertificate.fromPartial(value) })
+				let msg = this.msgAddIdentityMember({ value: MsgAddIdentityMember.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgIssueCertificate: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgAddIdentityMember: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateMembers({ value, fee, memo }: sendMsgUpdateMembersParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateMembers: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateMembers({ value: MsgUpdateMembers.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateMembers: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgUpdateOperators({ value, fee, memo }: sendMsgUpdateOperatorsParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgUpdateOperators: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgUpdateOperators({ value: MsgUpdateOperators.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgUpdateOperators: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRejectIdentity({ value, fee, memo }: sendMsgRejectIdentityParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRejectIdentity: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRejectIdentity({ value: MsgRejectIdentity.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRejectIdentity: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -202,20 +241,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgAddIdentityMember({ value, fee, memo }: sendMsgAddIdentityMemberParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgAddIdentityMember: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgAddIdentityMember({ value: MsgAddIdentityMember.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgAddIdentityMember: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgAcceptIdentity({ value, fee, memo }: sendMsgAcceptIdentityParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgAcceptIdentity: Unable to sign Tx. Signer is not present.')
@@ -231,19 +256,11 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 		},
 		
 		
-		msgRejectIdentity({ value }: msgRejectIdentityParams): EncodeObject {
+		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
 			try {
-				return { typeUrl: "/archive.identity.MsgRejectIdentity", value: MsgRejectIdentity.fromPartial( value ) }  
+				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRejectIdentity: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgUpdateOperators({ value }: msgUpdateOperatorsParams): EncodeObject {
-			try {
-				return { typeUrl: "/archive.identity.MsgUpdateOperators", value: MsgUpdateOperators.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgUpdateOperators: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -255,11 +272,35 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgIssueCertificate({ value }: msgIssueCertificateParams): EncodeObject {
+		msgAddIdentityMember({ value }: msgAddIdentityMemberParams): EncodeObject {
 			try {
-				return { typeUrl: "/archive.identity.MsgIssueCertificate", value: MsgIssueCertificate.fromPartial( value ) }  
+				return { typeUrl: "/archive.identity.MsgAddIdentityMember", value: MsgAddIdentityMember.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgIssueCertificate: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgAddIdentityMember: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateMembers({ value }: msgUpdateMembersParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.identity.MsgUpdateMembers", value: MsgUpdateMembers.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateMembers: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgUpdateOperators({ value }: msgUpdateOperatorsParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.identity.MsgUpdateOperators", value: MsgUpdateOperators.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgUpdateOperators: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRejectIdentity({ value }: msgRejectIdentityParams): EncodeObject {
+			try {
+				return { typeUrl: "/archive.identity.MsgRejectIdentity", value: MsgRejectIdentity.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRejectIdentity: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -276,14 +317,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 				return { typeUrl: "/archive.identity.MsgRegisterIssuer", value: MsgRegisterIssuer.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgRegisterIssuer: Could not create message: ' + e.message)
-			}
-		},
-		
-		msgAddIdentityMember({ value }: msgAddIdentityMemberParams): EncodeObject {
-			try {
-				return { typeUrl: "/archive.identity.MsgAddIdentityMember", value: MsgAddIdentityMember.fromPartial( value ) }  
-			} catch (e: any) {
-				throw new Error('TxClient:MsgAddIdentityMember: Could not create message: ' + e.message)
 			}
 		},
 		
