@@ -306,6 +306,15 @@ func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIde
 	return &types.MsgAddIdentityMemberResponse{}, nil
 }
 
+func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMembers) (*types.MsgUpdateMembersResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// TODO: Handling the message
+	_ = ctx
+
+	return &types.MsgUpdateMembersResponse{}, nil
+}
+
 func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOperators) (*types.MsgUpdateOperatorsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
