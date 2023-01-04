@@ -13,4 +13,5 @@ var (
 	ErrExistingIssuer         = sdkerrors.Register(ModuleName, 4, "an issuer already exists for this address")
 	ErrExistingMember         = sdkerrors.Register(ModuleName, 5, "a member already exists for this id, address combination")
 	ErrNonexistentCertificate = sdkerrors.Register(ModuleName, 6, "the specified certificate does not exist")
+	ErrExistingOperator       = sdkerrors.Register(ModuleName, 7, "address is an operator")
 )

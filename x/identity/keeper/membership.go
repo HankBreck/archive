@@ -127,6 +127,17 @@ func (k Keeper) UpdateAcceptedMembers(ctx sdk.Context, certificateId uint64, toA
 		return types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
 	}
 
+	// Ensure no members in toRemove are operators
+	for _, addr := range toRemove {
+		hasOp, err := k.HasOperator(ctx, certificateId, addr)
+		if err != nil {
+			return err
+		}
+		if hasOp {
+			return types.ErrExistingOperator.Wrapf("address (%s) must be demoted from operator before it can be removed as a member")
+		}
+	}
+
 	// Perform update
 	k.uncheckedUpdateMembers(ctx, certificateId, toAdd, toRemove, false)
 	return nil
