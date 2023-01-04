@@ -4,12 +4,13 @@ import (
 	"strconv"
 
 	"archive/x/identity/types"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var _ = strconv.Itoa(0)
@@ -24,8 +25,22 @@ func CmdUpdateMembers() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			// Parse addresses from user input
+			toAdd := []string{}
 			argToAdd := strings.Split(args[1], listSeparator)
+			for _, addr := range argToAdd {
+				if strings.TrimSpace(addr) != "" {
+					toAdd = append(toAdd, addr)
+				}
+			}
+			toRemove := []string{}
 			argToRemove := strings.Split(args[2], listSeparator)
+			for _, addr := range argToRemove {
+				if strings.TrimSpace(addr) != "" {
+					toRemove = append(toRemove, addr)
+				}
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -35,8 +50,8 @@ func CmdUpdateMembers() *cobra.Command {
 			msg := types.NewMsgUpdateMembers(
 				clientCtx.GetFromAddress().String(),
 				argId,
-				argToAdd,
-				argToRemove,
+				toAdd,
+				toRemove,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
