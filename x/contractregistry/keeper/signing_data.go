@@ -12,7 +12,7 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v5"
 )
 
-// Stores signingData with a key of id. The most recent contract stored must have a contract.Id == id.
+// SetSigningData stores signingData with a key of id. The most recent contract stored must have a contract.Id == id.
 // This function should only be called from RegisterContract.
 //
 // Panics on any id that is not equal to the current contract count - 1.
