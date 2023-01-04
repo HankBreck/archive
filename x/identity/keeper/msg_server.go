@@ -139,17 +139,23 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 
 func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIdentity) (*types.MsgRejectIdentityResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
-	// Ensure msg.Creator is a registered Issuer (duplicate of ValidateBasic)
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
 	}
 
-	// Add sender to the accepted membership list
+	// Remove sender from the pending membership list
 	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, false)
 	if err != nil {
 		return nil, err
+	}
+
+	// Remove operator status if sender was the initial recipient
+	hasOp, err := k.HasOperator(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	} else if hasOp {
+		k.RemoveOperators(ctx, msg.Id, []sdk.AccAddress{senderAddr})
 	}
 
 	// Emit events
