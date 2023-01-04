@@ -135,7 +135,7 @@ func (k Keeper) UpdateAcceptedMembers(ctx sdk.Context, certificateId uint64, toA
 			return err
 		}
 		if hasOp {
-			return types.ErrExistingOperator.Wrapf("address (%s) must be demoted from operator before it can be removed as a member")
+			return types.ErrExistingOperator.Wrapf("address (%s) must be demoted from operator before it can be removed as a member", addr.String())
 		}
 	}
 
