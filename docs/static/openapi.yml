@@ -1885,6 +1885,10 @@ paths:
           schema:
             type: object
             properties:
+              operators:
+                type: array
+                items:
+                  type: string
               pagination:
                 type: object
                 properties:
@@ -33318,6 +33322,10 @@ definitions:
   archive.identity.QueryOperatorsResponse:
     type: object
     properties:
+      operators:
+        type: array
+        items:
+          type: string
       pagination:
         type: object
         properties:

@@ -60,6 +60,7 @@ export interface QueryOperatorsRequest {
 }
 
 export interface QueryOperatorsResponse {
+  operators: string[];
   pagination: PageResponse | undefined;
 }
 
@@ -657,13 +658,16 @@ export const QueryOperatorsRequest = {
 };
 
 function createBaseQueryOperatorsResponse(): QueryOperatorsResponse {
-  return { pagination: undefined };
+  return { operators: [], pagination: undefined };
 }
 
 export const QueryOperatorsResponse = {
   encode(message: QueryOperatorsResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    for (const v of message.operators) {
+      writer.uint32(10).string(v!);
+    }
     if (message.pagination !== undefined) {
-      PageResponse.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+      PageResponse.encode(message.pagination, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
@@ -676,6 +680,9 @@ export const QueryOperatorsResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
+          message.operators.push(reader.string());
+          break;
+        case 2:
           message.pagination = PageResponse.decode(reader, reader.uint32());
           break;
         default:
@@ -687,11 +694,19 @@ export const QueryOperatorsResponse = {
   },
 
   fromJSON(object: any): QueryOperatorsResponse {
-    return { pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined };
+    return {
+      operators: Array.isArray(object?.operators) ? object.operators.map((e: any) => String(e)) : [],
+      pagination: isSet(object.pagination) ? PageResponse.fromJSON(object.pagination) : undefined,
+    };
   },
 
   toJSON(message: QueryOperatorsResponse): unknown {
     const obj: any = {};
+    if (message.operators) {
+      obj.operators = message.operators.map((e) => e);
+    } else {
+      obj.operators = [];
+    }
     message.pagination !== undefined
       && (obj.pagination = message.pagination ? PageResponse.toJSON(message.pagination) : undefined);
     return obj;
@@ -699,6 +714,7 @@ export const QueryOperatorsResponse = {
 
   fromPartial<I extends Exact<DeepPartial<QueryOperatorsResponse>, I>>(object: I): QueryOperatorsResponse {
     const message = createBaseQueryOperatorsResponse();
+    message.operators = object.operators?.map((e) => e) || [];
     message.pagination = (object.pagination !== undefined && object.pagination !== null)
       ? PageResponse.fromPartial(object.pagination)
       : undefined;
