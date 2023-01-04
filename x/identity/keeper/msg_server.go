@@ -309,8 +309,60 @@ func (k msgServer) AddIdentityMember(goCtx context.Context, msg *types.MsgAddIde
 func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMembers) (*types.MsgUpdateMembersResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	// Ensure sender address is valid
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+	// Ensure sender is an operator (and certificate exists)
+	valid, err := k.HasOperator(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	} else if !valid {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("account (%s) is not an operator of identity (%d)", senderAddr.String(), msg.Id)
+	}
+
+	// Convert msg.ToAdd from []string to []sdk.AccAddress
+	toAdd := []sdk.AccAddress{}
+	for _, addrStr := range msg.ToAdd {
+		addr, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return nil, err
+		}
+		toAdd = append(toAdd, addr)
+	}
+	// Convert msg.ToRemove from []string to []sdk.AccAddress
+	toRemove := []sdk.AccAddress{}
+	for _, addrStr := range msg.ToRemove {
+		addr, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return nil, err
+		}
+
+		toRemove = append(toRemove, addr)
+	}
+
+	// Update pending members
+	err = k.UpdatePendingMembers(ctx, msg.Id, toAdd, toRemove)
+	if err != nil {
+		return nil, err
+	}
+	// Update accepted members (do not directly add to AcceptedMembers)
+	err = k.UpdateAcceptedMembers(ctx, msg.Id, []sdk.AccAddress{}, toRemove)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit Events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgUpdateMembers,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "UpdateMembers"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+		sdk.NewAttribute("num_added", fmt.Sprint(len(toAdd))),
+		sdk.NewAttribute("num_removed", fmt.Sprint(len(toRemove))),
+	))
 
 	return &types.MsgUpdateMembersResponse{}, nil
 }
