@@ -95,11 +95,15 @@ func (k Keeper) Operators(goCtx context.Context, req *types.QueryOperatorsReques
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	operators, pageRes, err := k.GetOperators(ctx, req.Id, req.Pagination)
+	if err != nil {
+		return nil, err
+	}
 
-	return &types.QueryOperatorsResponse{}, nil
+	return &types.QueryOperatorsResponse{
+		Operators:  operators,
+		Pagination: pageRes,
+	}, nil
 }
