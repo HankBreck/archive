@@ -124,17 +124,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 		identitysimulation.SimulateMsgRejectIdentity(am.accountKeeper, am.keeper),
 	))
 
-	var weightMsgRevokeIdentity int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRevokeIdentity, &weightMsgRevokeIdentity, nil,
-		func(_ *rand.Rand) {
-			weightMsgRevokeIdentity = defaultWeightMsgRevokeIdentity
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgRevokeIdentity,
-		identitysimulation.SimulateMsgRevokeIdentity(am.accountKeeper, am.keeper),
-	))
-
 	var weightMsgRenounceIdentity int
 	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgRenounceIdentity, &weightMsgRenounceIdentity, nil,
 		func(_ *rand.Rand) {
@@ -144,17 +133,6 @@ func (am AppModule) WeightedOperations(simState module.SimulationState) []simtyp
 	operations = append(operations, simulation.NewWeightedOperation(
 		weightMsgRenounceIdentity,
 		identitysimulation.SimulateMsgRenounceIdentity(am.accountKeeper, am.keeper),
-	))
-
-	var weightMsgAddIdentityMember int
-	simState.AppParams.GetOrGenerate(simState.Cdc, opWeightMsgAddIdentityMember, &weightMsgAddIdentityMember, nil,
-		func(_ *rand.Rand) {
-			weightMsgAddIdentityMember = defaultWeightMsgAddIdentityMember
-		},
-	)
-	operations = append(operations, simulation.NewWeightedOperation(
-		weightMsgAddIdentityMember,
-		identitysimulation.SimulateMsgAddIdentityMember(am.accountKeeper, am.keeper),
 	))
 
 	var weightMsgUpdateOperators int
