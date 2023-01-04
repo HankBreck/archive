@@ -16,24 +16,26 @@ import (
 // 		- RemoveOperator
 //			- operator (or issuer) can remove an operator
 
-// SetOperator stores an operator entry under the account's address. Operators are stored
+// SetOperators stores the operator entries under each account's address. Operators are stored
 // in their own prefixed storage.
 // Operators must be accepted members, and membership may not be revoked for an account that is currently an operator.
 // This means operators must be demoted before their membership status can be revoked.
 //
 // Returns an error if the certificate doesn't exist or the account is not an accepted member.
-func (k Keeper) SetOperator(ctx sdk.Context, certificateId uint64, operator sdk.AccAddress) error {
+func (k Keeper) SetOperators(ctx sdk.Context, certificateId uint64, operators []sdk.AccAddress) error {
 	// Ensure certificate exists
 	if !k.HasCertificate(ctx, certificateId) {
 		return types.ErrNonexistentCertificate.Wrapf("could not find identity %d", certificateId)
 	}
-	// Ensure new operator is an accepted member of the identity
-	if !k.HasMember(ctx, certificateId, operator) {
-		return sdkerrors.ErrNotFound.Wrapf("new operator is not a member of identity %d", certificateId)
-	}
-	// Set value in operator store
 	store := k.getOperatorStoreForId(ctx, certificateId)
-	store.Set(operator.Bytes(), []byte{0})
+	for _, op := range operators {
+		// Ensure new operator is an accepted member of the identity
+		if !k.HasMember(ctx, certificateId, op) {
+			return sdkerrors.ErrNotFound.Wrapf("new operator is not a member of identity %d", certificateId)
+		}
+		// Set value in operator store
+		store.Set(op.Bytes(), []byte{0})
+	}
 	return nil
 }
 
@@ -72,6 +74,11 @@ func (k Keeper) HasOperator(ctx sdk.Context, certificateId uint64, operator sdk.
 	}
 	store := k.getOperatorStoreForId(ctx, certificateId)
 	return store.Has(operator.Bytes()), nil
+}
+
+// RemoveOperator removes the operator from
+func (k Keeper) RemoveOperators(ctx sdk.Context, certificateId uint64, operator sdk.AccAddress) error {
+
 }
 
 func (k Keeper) getOperatorStoreForId(ctx sdk.Context, id uint64) prefix.Store {
