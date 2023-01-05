@@ -6,6 +6,7 @@ import (
 	"archive/x/identity/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -112,11 +113,35 @@ func (k Keeper) MemberRole(goCtx context.Context, req *types.QueryMemberRoleRequ
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
-
 	ctx := sdk.UnwrapSDKContext(goCtx)
+	memberAddr, err := sdk.AccAddressFromBech32(req.Member)
+	if err != nil {
+		return nil, err
+	}
 
-	// TODO: Process the query
-	_ = ctx
+	// Check if member is an operator
+	hasOp, err := k.HasOperator(ctx, req.Id, memberAddr)
+	if err != nil {
+		return nil, err
+	} else if hasOp {
+		return &types.QueryMemberRoleResponse{Role: "operator"}, nil
+	}
 
-	return &types.QueryMemberRoleResponse{}, nil
+	// Check if member is an accepted member
+	hasAccepted, err := k.HasMember(ctx, req.Id, memberAddr)
+	if err != nil {
+		return nil, err
+	} else if hasAccepted {
+		return &types.QueryMemberRoleResponse{Role: "member"}, nil
+	}
+
+	// Check if member is a pending member
+	hasPending, err := k.HasMember(ctx, req.Id, memberAddr)
+	if err != nil {
+		return nil, err
+	} else if hasPending {
+		return &types.QueryMemberRoleResponse{Role: "pending-member"}, nil
+	}
+
+	return nil, sdkerrors.ErrNotFound.Wrapf("account (%s) is not a member of identity %d", memberAddr.String(), req.Id)
 }
