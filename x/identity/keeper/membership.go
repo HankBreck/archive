@@ -23,11 +23,6 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 		panic(types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId))
 	}
 
-	// Ensure membership for this ID does not exist (i.e. this is the initialization of the membership)
-	if k.HasMember(ctx, certificateId, recipient) || k.HasPendingMember(ctx, certificateId, recipient) {
-		panic(types.ErrExistingMember.Wrapf("certificateId: %d, address: %s", certificateId, recipient.String()))
-	}
-
 	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{recipient}, []sdk.AccAddress{}, true)
 }
 
@@ -62,16 +57,32 @@ func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool
 
 // HasMember returns true if the member is an "accepted" member of the
 // certificate referenced by certificateId.
-func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
+//
+// Returns an error if the certificate does not exist
+func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) (bool, error) {
+	// Ensure certificate exists
+	if !k.HasCertificate(ctx, certificateId) {
+		return false, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
+	}
+
+	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, false)
-	return store.Has(member.Bytes())
+	return store.Has(member.Bytes()), nil
 }
 
 // HasMember returns true if the member is a "pending" member of the
 // certificate referenced by certificateId.
-func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) bool {
+//
+// Returns an error if the certificate does not exist
+func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member sdk.AccAddress) (bool, error) {
+	// Ensure certificate exists
+	if !k.HasCertificate(ctx, certificateId) {
+		return false, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
+	}
+
+	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, true)
-	return store.Has(member.Bytes())
+	return store.Has(member.Bytes()), nil
 }
 
 // UpdateMembershipStatus transitions the state of the identity to accept or reject membership invitations.
@@ -85,7 +96,10 @@ func (k Keeper) UpdateMembershipStatus(ctx sdk.Context, certificateId uint64, me
 	}
 
 	// Ensure membership is in the pending state
-	if !k.HasPendingMember(ctx, certificateId, member) {
+	hasPending, err := k.HasPendingMember(ctx, certificateId, member)
+	if err != nil {
+		return err
+	} else if !hasPending {
 		return sdkerrors.ErrNotFound.Wrapf("member %s is not in the pending state", member.String())
 	}
 

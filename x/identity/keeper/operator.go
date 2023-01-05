@@ -30,7 +30,10 @@ func (k Keeper) SetOperators(ctx sdk.Context, certificateId uint64, operators []
 	store := k.getOperatorStoreForId(ctx, certificateId)
 	for _, op := range operators {
 		// Ensure new operator is an accepted member of the identity
-		if !k.HasMember(ctx, certificateId, op) {
+		hasMember, err := k.HasMember(ctx, certificateId, op)
+		if err != nil {
+			return err
+		} else if !hasMember {
 			return sdkerrors.ErrNotFound.Wrapf("new operator is not a member of identity %d", certificateId)
 		}
 		// Set value in operator store

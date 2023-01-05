@@ -181,7 +181,10 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 	}
 
 	// Ensure sender is a member of the identity
-	if !k.HasMember(ctx, msg.Id, addr) {
+	hasAccepted, err := k.HasMember(ctx, msg.Id, addr)
+	if err != nil {
+		return nil, err
+	} else if !hasAccepted {
 		return nil, sdkerrors.ErrNotFound.Wrapf("The sender is not a member identity %d", msg.Id)
 	}
 
