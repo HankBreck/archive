@@ -38,7 +38,12 @@ service Query {
 		option (google.api.http).get = "/archive/identity/operators/{id}";
 	}
 
-    // this line is used by starport scaffolding # 2
+    // Queries a list of MemberRole items.
+	rpc MemberRole(QueryMemberRoleRequest) returns (QueryMemberRoleResponse) {
+		option (google.api.http).get = "/archive/identity/member_role/{id}/{member}";
+	}
+
+// this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -88,6 +93,15 @@ message QueryOperatorsRequest {
 message QueryOperatorsResponse {
     repeated string operators = 1;
     cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryMemberRoleRequest {
+  uint64 id = 1;
+  string member = 2;
+}
+
+message QueryMemberRoleResponse {
+  string role = 1;
 }
 
 // this line is used by starport scaffolding # 3

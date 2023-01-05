@@ -1895,6 +1895,48 @@ paths:
           type: boolean
       tags:
         - Query
+  /archive/identity/member_role/{id}/{member}:
+    get:
+      summary: Queries a list of MemberRole items.
+      operationId: ArchiveIdentityMemberRole
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              role:
+                type: string
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          format: uint64
+        - name: member
+          in: path
+          required: true
+          type: string
+      tags:
+        - Query
   /archive/identity/operators/{id}:
     get:
       summary: Queries a list of Operators items.
@@ -33221,8 +33263,6 @@ definitions:
         format: uint64
   archive.identity.MsgAcceptIdentityResponse:
     type: object
-  archive.identity.MsgAddIdentityMemberResponse:
-    type: object
   archive.identity.MsgIssueCertificateResponse:
     type: object
     properties:
@@ -33234,8 +33274,6 @@ definitions:
   archive.identity.MsgRejectIdentityResponse:
     type: object
   archive.identity.MsgRenounceIdentityResponse:
-    type: object
-  archive.identity.MsgRevokeIdentityResponse:
     type: object
   archive.identity.MsgUpdateMembersResponse:
     type: object
@@ -33351,6 +33389,11 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
+  archive.identity.QueryMemberRoleResponse:
+    type: object
+    properties:
+      role:
+        type: string
   archive.identity.QueryOperatorsResponse:
     type: object
     properties:

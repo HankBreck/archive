@@ -64,6 +64,15 @@ export interface QueryOperatorsResponse {
   pagination: PageResponse | undefined;
 }
 
+export interface QueryMemberRoleRequest {
+  id: number;
+  member: string;
+}
+
+export interface QueryMemberRoleResponse {
+  role: string;
+}
+
 function createBaseQueryParamsRequest(): QueryParamsRequest {
   return {};
 }
@@ -722,6 +731,108 @@ export const QueryOperatorsResponse = {
   },
 };
 
+function createBaseQueryMemberRoleRequest(): QueryMemberRoleRequest {
+  return { id: 0, member: "" };
+}
+
+export const QueryMemberRoleRequest = {
+  encode(message: QueryMemberRoleRequest, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    if (message.member !== "") {
+      writer.uint32(18).string(message.member);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryMemberRoleRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryMemberRoleRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.member = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMemberRoleRequest {
+    return { id: isSet(object.id) ? Number(object.id) : 0, member: isSet(object.member) ? String(object.member) : "" };
+  },
+
+  toJSON(message: QueryMemberRoleRequest): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = Math.round(message.id));
+    message.member !== undefined && (obj.member = message.member);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryMemberRoleRequest>, I>>(object: I): QueryMemberRoleRequest {
+    const message = createBaseQueryMemberRoleRequest();
+    message.id = object.id ?? 0;
+    message.member = object.member ?? "";
+    return message;
+  },
+};
+
+function createBaseQueryMemberRoleResponse(): QueryMemberRoleResponse {
+  return { role: "" };
+}
+
+export const QueryMemberRoleResponse = {
+  encode(message: QueryMemberRoleResponse, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
+    if (message.role !== "") {
+      writer.uint32(10).string(message.role);
+    }
+    return writer;
+  },
+
+  decode(input: _m0.Reader | Uint8Array, length?: number): QueryMemberRoleResponse {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseQueryMemberRoleResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.role = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryMemberRoleResponse {
+    return { role: isSet(object.role) ? String(object.role) : "" };
+  },
+
+  toJSON(message: QueryMemberRoleResponse): unknown {
+    const obj: any = {};
+    message.role !== undefined && (obj.role = message.role);
+    return obj;
+  },
+
+  fromPartial<I extends Exact<DeepPartial<QueryMemberRoleResponse>, I>>(object: I): QueryMemberRoleResponse {
+    const message = createBaseQueryMemberRoleResponse();
+    message.role = object.role ?? "";
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -736,6 +847,8 @@ export interface Query {
   Identity(request: QueryIdentityRequest): Promise<QueryIdentityResponse>;
   /** Queries a list of Operators items. */
   Operators(request: QueryOperatorsRequest): Promise<QueryOperatorsResponse>;
+  /** Queries a list of MemberRole items. */
+  MemberRole(request: QueryMemberRoleRequest): Promise<QueryMemberRoleResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -748,6 +861,7 @@ export class QueryClientImpl implements Query {
     this.IssuerInfo = this.IssuerInfo.bind(this);
     this.Identity = this.Identity.bind(this);
     this.Operators = this.Operators.bind(this);
+    this.MemberRole = this.MemberRole.bind(this);
   }
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
@@ -783,6 +897,12 @@ export class QueryClientImpl implements Query {
     const data = QueryOperatorsRequest.encode(request).finish();
     const promise = this.rpc.request("archive.identity.Query", "Operators", data);
     return promise.then((data) => QueryOperatorsResponse.decode(new _m0.Reader(data)));
+  }
+
+  MemberRole(request: QueryMemberRoleRequest): Promise<QueryMemberRoleResponse> {
+    const data = QueryMemberRoleRequest.encode(request).finish();
+    const promise = this.rpc.request("archive.identity.Query", "MemberRole", data);
+    return promise.then((data) => QueryMemberRoleResponse.decode(new _m0.Reader(data)));
   }
 }
 

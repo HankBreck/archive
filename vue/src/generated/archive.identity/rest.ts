@@ -34,8 +34,6 @@ export interface IdentityIssuer {
 
 export type IdentityMsgAcceptIdentityResponse = object;
 
-export type IdentityMsgAddIdentityMemberResponse = object;
-
 export interface IdentityMsgIssueCertificateResponse {
   /** @format uint64 */
   id?: string;
@@ -46,8 +44,6 @@ export type IdentityMsgRegisterIssuerResponse = object;
 export type IdentityMsgRejectIdentityResponse = object;
 
 export type IdentityMsgRenounceIdentityResponse = object;
-
-export type IdentityMsgRevokeIdentityResponse = object;
 
 export type IdentityMsgUpdateMembersResponse = object;
 
@@ -94,6 +90,10 @@ export interface IdentityQueryIssuersResponse {
    *  }
    */
   pagination?: V1Beta1PageResponse;
+}
+
+export interface IdentityQueryMemberRoleResponse {
+  role?: string;
 }
 
 export interface IdentityQueryOperatorsResponse {
@@ -408,6 +408,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/archive/identity/issuers`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryMemberRole
+   * @summary Queries a list of MemberRole items.
+   * @request GET:/archive/identity/member_role/{id}/{member}
+   */
+  queryMemberRole = (id: string, member: string, params: RequestParams = {}) =>
+    this.request<IdentityQueryMemberRoleResponse, RpcStatus>({
+      path: `/archive/identity/member_role/${id}/${member}`,
+      method: "GET",
       format: "json",
       ...params,
     });
