@@ -57,6 +57,7 @@ EXPOSE 26656
 EXPOSE 26657
 EXPOSE 1317
 
-ENTRYPOINT ["archived"]
+ENTRYPOINT ["archived", "--home", "$HOME/.archive"]
+CMD ["archived", "start"]
 
 

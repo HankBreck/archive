@@ -11,12 +11,11 @@ services:
         RUNNER_IMAGE: alpine:3.16
         GO_VERSION: 1.18
     volumes:
-      #- ${PWD}/scripts/:/archive/scripts/
-      - $HOME/.archived-local/:/archive/.archived/
+      - $HOME/.archived-local/:/archive/.archive/
         #entrypoint:
-      #- /archive/scripts/setup.sh
+        #- /setup.sh
     command:
-      - $STATE
+      - start
     ports:
       - 26657:26657
       - 1317:1317
