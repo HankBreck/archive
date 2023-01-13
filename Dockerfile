@@ -51,13 +51,13 @@ ENV HOME /archive
 WORKDIR $HOME
 
 COPY /tests/localarchive/scripts/setup.sh /archive/setup.sh
-RUN ./setup.sh
+#RUN ./setup.sh
 
 EXPOSE 26656
 EXPOSE 26657
 EXPOSE 1317
 
-ENTRYPOINT ["archived", "--home", "$HOME/.archive"]
-CMD ["archived", "start"]
+ENTRYPOINT ["archived"]
+#CMD ["archived", "start", "--home", "$HOME/.archived/"]
 
 

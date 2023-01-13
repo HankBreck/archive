@@ -31,4 +31,8 @@ then
     edit_genesis
 fi
 
-#archived start --home $ARCHIVE_HOME
+echo "Starting blockchain!"
+
+archived start --home $ARCHIVE_HOME --rpc.laddr tcp://0.0.0.0:26657 &
+
+wait

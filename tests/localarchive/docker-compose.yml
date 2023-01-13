@@ -12,10 +12,10 @@ services:
         GO_VERSION: 1.18
     volumes:
       - $HOME/.archived-local/:/archive/.archive/
-        #entrypoint:
-        #- /setup.sh
+    entrypoint:
+      - /archive/setup.sh
     command:
-      - start
+      - $STATE
     ports:
       - 26657:26657
       - 1317:1317

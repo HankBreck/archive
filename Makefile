@@ -71,7 +71,7 @@ localnet-build:
 	@DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f tests/localarchive/docker-compose.yml build
 
 localnet-start:
-	@STATE="start" docker-compose -f tests/localarchive/docker-compose.yml up
+	@STATE="" docker-compose -f tests/localarchive/docker-compose.yml up
 
 localnet-clean:
 	@rm -rf $(HOME)/.archived-local/
