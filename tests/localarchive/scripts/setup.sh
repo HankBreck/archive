@@ -33,6 +33,7 @@ fi
 
 echo "Starting blockchain!"
 
-archived start --home $ARCHIVE_HOME --rpc.laddr tcp://0.0.0.0:26657 &
+# TODO: Move this to config like here: https://github.com/osmosis-labs/osmosis/blob/main/tests/localosmosis/scripts/setup.sh#L90
+archived start --home $ARCHIVE_HOME --rpc.laddr tcp://0.0.0.0:26657 & 
 
 wait
