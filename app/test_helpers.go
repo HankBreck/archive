@@ -3,15 +3,16 @@ package app
 import (
 	"encoding/json"
 
+	appparams "archive/app/params"
+
 	"github.com/cosmos/cosmos-sdk/simapp"
-	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	dbm "github.com/tendermint/tm-db"
 )
 
 var defaultGenesisBz []byte
-var defaultEncodingConfig = cosmoscmd.MakeEncodingConfig(ModuleBasics)
+var defaultEncodingConfig = appparams.MakeEncodingConfig()
 
 func getDefaultGenesisStateBytes() []byte {
 	if len(defaultGenesisBz) == 0 {

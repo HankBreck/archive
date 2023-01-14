@@ -91,7 +91,6 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 
 	monitoringp "github.com/tendermint/spn/x/monitoringp"
@@ -182,9 +181,8 @@ var (
 )
 
 var (
-	cmdApp cosmoscmd.App           = (*App)(nil)
-	_      servertypes.Application = (*App)(nil)
-	_      simapp.App              = (*App)(nil)
+	_ servertypes.Application = (*App)(nil)
+	_ simapp.App              = (*App)(nil)
 )
 
 func init() {
