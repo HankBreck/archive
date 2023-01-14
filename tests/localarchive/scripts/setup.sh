@@ -14,14 +14,14 @@ edit_genesis() {
 	GENESIS=$CONFIG_FOLDER/genesis.json
 
 	# Fund initial validator
-        archived add-genesis-account archive12smx2wdlyttvyzvzg54y2vnqwq2qjatekl5jhc 5000000000token,1000000000stake --home $ARCHIVE_HOME
+    archived add-genesis-account archive12smx2wdlyttvyzvzg54y2vnqwq2qjatekl5jhc 5000000000token,1000000000stake --home $ARCHIVE_HOME
 
-        # Create initial validator
-        echo $MNEMONIC | archived keys add $MONIKER --recover --keyring-backend=test --home $ARCHIVE_HOME
-        archived gentx $MONIKER 100000000stake --keyring-backend=test --chain-id=$CHAIN_ID --home $ARCHIVE_HOME
+    # Create initial validator
+    echo $MNEMONIC | archived keys add $MONIKER --recover --keyring-backend=test --home $ARCHIVE_HOME
+    archived gentx $MONIKER 100000000stake --keyring-backend=test --chain-id=$CHAIN_ID --home $ARCHIVE_HOME
 
-        # Create initial genesis file
-        archived collect-gentxs --home $ARCHIVE_HOME
+    # Create initial genesis file
+    archived collect-gentxs --home $ARCHIVE_HOME
 }
 
 if [[ ! -d $CONFIG_FOLDER ]]
