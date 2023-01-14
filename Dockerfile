@@ -45,19 +45,17 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 FROM ${RUNNER_IMAGE}
 
-COPY --from=builder /archive/build/arch1ved /bin/archived
+COPY --from=builder /archive/build/archived /bin/archived
 
 ENV HOME /archive
 WORKDIR $HOME
 
 COPY /tests/localarchive/scripts/setup.sh /archive/setup.sh
-#RUN ./setup.sh
 
 EXPOSE 26656
 EXPOSE 26657
 EXPOSE 1317
 
 ENTRYPOINT ["archived"]
-#CMD ["archived", "start", "--home", "$HOME/.archived/"]
 
 
