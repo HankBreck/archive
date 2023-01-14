@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "archive/testutil/keeper"
-	"archive/x/cda/types"
+	testkeeper "github.com/HankBreck/archive/testutil/keeper"
+	"github.com/HankBreck/archive/x/cda/types"
 	"github.com/stretchr/testify/require"
 )
 

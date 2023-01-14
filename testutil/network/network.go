@@ -17,8 +17,9 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmdb "github.com/tendermint/tm-db"
 
-	"archive/app"
-	appparams "archive/app/params"
+	appparams "github.com/HankBreck/archive/app/params"
+
+	"github.com/HankBreck/archive/app"
 )
 
 type (

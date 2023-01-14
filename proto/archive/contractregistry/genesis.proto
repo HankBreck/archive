@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "contractregistry/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "archive/x/contractregistry/types";
+option go_package = "github.com/HankBreck/archive/x/contractregistry/types";
 
 // GenesisState defines the contractregistry module's genesis state.
 message GenesisState {

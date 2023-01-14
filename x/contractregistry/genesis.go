@@ -1,8 +1,8 @@
 package contractregistry
 
 import (
-	"archive/x/contractregistry/keeper"
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/keeper"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

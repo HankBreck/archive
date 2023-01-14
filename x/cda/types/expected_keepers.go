@@ -1,7 +1,7 @@
 package types
 
 import (
-	crtypes "archive/x/contractregistry/types"
+	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

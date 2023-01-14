@@ -3,10 +3,13 @@ package keeper
 import (
 	"testing"
 
-	"archive/x/cda/keeper"
-	"archive/x/cda/types"
-	crkeeper "archive/x/contractregistry/keeper"
-	crtypes "archive/x/contractregistry/types"
+	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	crkeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
+
+	"github.com/HankBreck/archive/x/cda/types"
+
+	"github.com/HankBreck/archive/x/cda/keeper"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

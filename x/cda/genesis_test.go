@@ -3,10 +3,13 @@ package cda_test
 import (
 	"testing"
 
-	keepertest "archive/testutil/keeper"
-	"archive/testutil/nullify"
-	"archive/x/cda"
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
+
+	"github.com/HankBreck/archive/x/cda"
+
+	"github.com/HankBreck/archive/testutil/nullify"
+
+	keepertest "github.com/HankBreck/archive/testutil/keeper"
 	"github.com/stretchr/testify/require"
 )
 

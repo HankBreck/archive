@@ -5,8 +5,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"archive/app"
-	"archive/app/params"
+	"github.com/HankBreck/archive/app/params"
+
+	"github.com/HankBreck/archive/app"
 
 	"github.com/pkg/errors"
 	tmcli "github.com/tendermint/tendermint/libs/cli"

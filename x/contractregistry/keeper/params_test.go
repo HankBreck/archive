@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "archive/testutil/keeper"
-	"archive/x/contractregistry/types"
+	testkeeper "github.com/HankBreck/archive/testutil/keeper"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	"github.com/stretchr/testify/require"
 )
 

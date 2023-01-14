@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
 	"github.com/stretchr/testify/require"
 )
 

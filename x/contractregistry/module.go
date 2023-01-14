@@ -13,9 +13,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"archive/x/contractregistry/client/cli"
-	"archive/x/contractregistry/keeper"
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/client/cli"
+	"github.com/HankBreck/archive/x/contractregistry/keeper"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

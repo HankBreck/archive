@@ -3,7 +3,7 @@ package app
 import (
 	"encoding/json"
 
-	appparams "archive/app/params"
+	appparams "github.com/HankBreck/archive/app/params"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
 	abci "github.com/tendermint/tendermint/abci/types"

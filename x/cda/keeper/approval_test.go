@@ -1,8 +1,9 @@
 package keeper_test
 
 import (
-	"archive/x/cda/types"
-	crtypes "archive/x/contractregistry/types"
+	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	"github.com/HankBreck/archive/x/cda/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

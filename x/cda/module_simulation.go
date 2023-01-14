@@ -3,9 +3,11 @@ package cda
 import (
 	"math/rand"
 
-	"archive/testutil/sample"
-	cdasimulation "archive/x/cda/simulation"
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
+
+	cdasimulation "github.com/HankBreck/archive/x/cda/simulation"
+
+	"github.com/HankBreck/archive/testutil/sample"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"

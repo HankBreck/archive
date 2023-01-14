@@ -1,10 +1,11 @@
 package keeper
 
 import (
-	"archive/x/contractregistry/types"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+
+	"github.com/HankBreck/archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"

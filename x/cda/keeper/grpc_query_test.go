@@ -1,11 +1,13 @@
 package keeper_test
 
 import (
-	testkeeper "archive/testutil/keeper"
-	"archive/x/cda/types"
 	"context"
 	"encoding/binary"
 	"testing"
+
+	"github.com/HankBreck/archive/x/cda/types"
+
+	testkeeper "github.com/HankBreck/archive/testutil/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"

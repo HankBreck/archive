@@ -4,7 +4,7 @@
 package types
 
 import (
-	archive_x_contractregistry_types "archive/x/contractregistry/types"
+	archive_x_contractregistry_types "github.com/HankBreck/archive/x/contractregistry/types"
 	context "context"
 	fmt "fmt"
 	_ "github.com/cosmos/cosmos-sdk/codec/types"

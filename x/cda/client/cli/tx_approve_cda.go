@@ -3,8 +3,9 @@ package cli
 import (
 	"strconv"
 
-	"archive/x/cda/types"
-	crtypes "archive/x/contractregistry/types"
+	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

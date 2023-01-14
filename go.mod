@@ -1,4 +1,4 @@
-module archive
+module github.com/HankBreck/archive
 
 go 1.18
 

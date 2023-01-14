@@ -3,8 +3,8 @@ package simulation
 import (
 	"math/rand"
 
-	"archive/x/cda/keeper"
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/keeper"
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

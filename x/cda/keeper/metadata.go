@@ -1,9 +1,11 @@
 package keeper
 
 import (
-	"archive/x/cda/types"
-	crtypes "archive/x/contractregistry/types"
 	"encoding/binary"
+
+	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"

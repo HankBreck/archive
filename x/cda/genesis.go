@@ -1,8 +1,9 @@
 package cda
 
 import (
-	"archive/x/cda/keeper"
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
+
+	"github.com/HankBreck/archive/x/cda/keeper"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

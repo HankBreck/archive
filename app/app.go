@@ -97,19 +97,23 @@ import (
 	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
 	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
 
-	"archive/docs"
+	"github.com/HankBreck/archive/docs"
 
-	cdamodule "archive/x/cda"
-	cdamodulekeeper "archive/x/cda/keeper"
-	cdamoduletypes "archive/x/cda/types"
+	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
 
-	contractregistrymodule "archive/x/contractregistry"
-	contractregistrymodulekeeper "archive/x/contractregistry/keeper"
-	contractregistrymoduletypes "archive/x/contractregistry/types"
+	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
+
+	cdamodule "github.com/HankBreck/archive/x/cda"
+
+	contractregistrymoduletypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	contractregistrymodulekeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
+
+	contractregistrymodule "github.com/HankBreck/archive/x/contractregistry"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "archive/app/params"
+	appparams "github.com/HankBreck/archive/app/params"
 )
 
 const (
