@@ -62,6 +62,43 @@ build-reproducible-arm64: go.sum $(BUILDDIR)/
 	$(DOCKER) rm -f arcbinary
 
 ###############################################################################
+###                                  Proto                                  ###
+###############################################################################
+
+proto-all: proto-format proto-gen
+
+proto:
+	@echo
+	@echo "=========== Generate Message ============"
+	@echo
+	./scripts/protocgen.sh
+	@echo
+	@echo "=========== Generate Complete ============"
+	@echo
+
+protoVer=v0.8
+protoImageName=hankbreck/archive-proto-gen:$(protoVer)
+containerProtoGen=cosmos-sdk-proto-gen-$(protoVer)
+containerProtoFmt=cosmos-sdk-proto-fmt-$(protoVer)
+
+proto-gen:
+	@echo "Generating Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoGen}$$"; then docker start -a $(containerProtoGen); else docker run --name $(containerProtoGen) -v $(CURDIR):/workspace --workdir /workspace $(protoImageName) \
+		sh ./scripts/protocgen.sh; fi
+
+proto-format:
+	@echo "Formatting Protobuf files"
+	@if docker ps -a --format '{{.Names}}' | grep -Eq "^${containerProtoFmt}$$"; then docker start -a $(containerProtoFmt); else docker run --name $(containerProtoFmt) -v $(CURDIR):/workspace --workdir /workspace tendermintdev/docker-build-proto \
+		find ./ -not -path "./third_party/*" -name "*.proto" -exec clang-format -i {} \; ; fi
+
+proto-image-build:
+	@DOCKER_BUILDKIT=1 docker build -t $(protoImageName) -f ./proto/Dockerfile ./proto
+
+proto-image-push:
+	docker push $(protoImageName)
+
+
+###############################################################################
 ###                                  Localnet                               ###
 ###############################################################################
 
