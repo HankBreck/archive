@@ -2,40 +2,29 @@
 
 set -eo pipefail
 
-# move the vendor folder to a temp dir so that go list works properly
-temp_dir="f29ea6aa861dc4b083e8e48f67cce"
-if [ -d vendor ]; then
-  mv ./vendor ./$temp_dir
-fi
+protoc_gen_gocosmos() {
+  if ! grep "github.com/gogo/protobuf => github.com/regen-network/protobuf" go.mod &>/dev/null ; then
+    echo -e "\tPlease run this command from somewhere inside the gaia folder."
+    return 1
+  fi
 
-# Get the path of the cosmos-sdk repo from go/pkg/mod
-cosmos_sdk_dir=$(go list -f '{{ .Dir }}' -m github.com/cosmos/cosmos-sdk)
+  go get github.com/regen-network/cosmos-proto/protoc-gen-gocosmos@latest 2>/dev/null
+}
 
-# move the vendor folder back to ./vendor
-if [ -d $temp_dir ]; then
-  mv ./$temp_dir ./vendor
-fi
+protoc_gen_gocosmos
 
-proto_dirs=$(find . \( -path ./third_party -o -path ./vendor \) -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
-
+proto_dirs=$(find ./proto -path -prune -o -name '*.proto' -print0 | xargs -0 -n1 dirname | sort | uniq)
 for dir in $proto_dirs; do
-  # generate protobuf bind
   protoc \
   -I "proto" \
-  -I "$cosmos_sdk_dir/third_party/proto" \
-  -I "$cosmos_sdk_dir/proto" \
+  -I "third_party/proto" \
   --gocosmos_out=plugins=interfacetype+grpc,\
 Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:. \
-  $(find "${dir}" -name '*.proto')
-
-  # generate grpc gateway
-  protoc \
-  -I "proto" \
-  -I "$cosmos_sdk_dir/third_party/proto" \
-  -I "$cosmos_sdk_dir/proto" \
   --grpc-gateway_out=logtostderr=true:. \
   $(find "${dir}" -maxdepth 1 -name '*.proto')
+
 done
 
-cp -r ./github.com/osmosis-labs/osmosis/* ./
-rm -rf ./github.com
+# move proto files to the right places
+cp -r github.com/HankBreck/archive/x/* x/
+rm -rf github.com
