@@ -2,7 +2,7 @@ syntax = "proto3";
 package archive.cda;
 
 import "gogoproto/gogo.proto";
-import "cda/params.proto";
+import "archive/cda/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
 option go_package = "github.com/HankBreck/archive/x/cda/types";
