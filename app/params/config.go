@@ -7,6 +7,12 @@ import (
 )
 
 const (
+	HumanCoinUnit = "hive"
+	BaseCoinUnit  = "uhive"
+	HiveExponent  = 6
+
+	DefaultBondDenom = BaseCoinUnit
+
 	Bech32PrefixAccAddr = "archive"
 	AppName             = "archive"
 )
@@ -27,9 +33,22 @@ var (
 )
 
 // Careful! Executed on all imports of "params" pkg
-// func init() {
-// 	SetAddressPrefixes()
-// }
+func init() {
+	SetAddressPrefixes()
+	RegisterDenoms()
+}
+
+func RegisterDenoms() {
+	err := sdk.RegisterDenom(HumanCoinUnit, sdk.OneDec())
+	if err != nil {
+		panic(err)
+	}
+
+	err = sdk.RegisterDenom(BaseCoinUnit, sdk.NewDecWithPrec(1, HiveExponent))
+	if err != nil {
+		panic(err)
+	}
+}
 
 // SetAddressPrefixes loads the Cosmos SDK's config and sets bech32 prefix for account, validator, and consensus
 func SetAddressPrefixes() {
