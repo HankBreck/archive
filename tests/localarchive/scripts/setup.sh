@@ -11,9 +11,9 @@ STATE='false'
 MNEMONIC="bottom loan skill merry east cradle onion journey palm apology verb edit desert impose absurd oil bubble sweet glove shallow size build burst effort"
 
 edit_genesis() {
-	GENESIS=$CONFIG_FOLDER/genesis.json
+    GENESIS=$CONFIG_FOLDER/genesis.json
 
-	# Fund initial validator
+    # Fund initial validator
     archived add-genesis-account archive12smx2wdlyttvyzvzg54y2vnqwq2qjatekl5jhc 5000000000token,1000000000stake --home $ARCHIVE_HOME
 
     # Create initial validator
