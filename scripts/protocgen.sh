@@ -20,6 +20,4 @@ cd ..
 cp -r github.com/HankBreck/archive/* ./
 rm -rf github.com
 
-echo "4"
-
 go mod tidy -compat=1.18
