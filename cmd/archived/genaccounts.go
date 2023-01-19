@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
@@ -18,6 +16,7 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
+	"github.com/spf13/cobra"
 )
 
 const (
@@ -71,6 +70,12 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 				}
 
 				addr = info.GetAddress()
+				if addr.Empty() {
+					return fmt.Errorf("failed to get address from Keybase: %w", err)
+				}
+				// if err != nil {
+				// 	return fmt.Errorf("failed to get address from Keybase: %w", err)
+				// }
 			}
 
 			vestingStart, err := cmd.Flags().GetInt64(flagVestingStart)
