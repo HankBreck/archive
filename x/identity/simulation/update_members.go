@@ -3,8 +3,8 @@ package simulation
 import (
 	"math/rand"
 
-	"archive/x/identity/keeper"
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/keeper"
+	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

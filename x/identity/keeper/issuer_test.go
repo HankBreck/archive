@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
 )
 
 // TODO:

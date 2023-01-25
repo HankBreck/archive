@@ -13,9 +13,9 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"archive/x/identity/client/cli"
-	"archive/x/identity/keeper"
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/client/cli"
+	"github.com/HankBreck/archive/x/identity/keeper"
+	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"

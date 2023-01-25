@@ -1,9 +1,10 @@
 package keeper
 
 import (
-	"archive/x/identity/keeper"
-	"archive/x/identity/types"
 	"testing"
+
+	"github.com/HankBreck/archive/x/identity/keeper"
+	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"

@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
 	"github.com/stretchr/testify/require"
 )
 

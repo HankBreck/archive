@@ -3,10 +3,10 @@ package identity_test
 import (
 	"testing"
 
-	keepertest "archive/testutil/keeper"
-	"archive/testutil/nullify"
-	"archive/x/identity"
-	"archive/x/identity/types"
+	keepertest "github.com/HankBreck/archive/testutil/keeper"
+	"github.com/HankBreck/archive/testutil/nullify"
+	"github.com/HankBreck/archive/x/identity"
+	"github.com/HankBreck/archive/x/identity/types"
 	"github.com/stretchr/testify/require"
 )
 

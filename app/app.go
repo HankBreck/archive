@@ -111,9 +111,9 @@ import (
 
 	contractregistrymodule "github.com/HankBreck/archive/x/contractregistry"
 
-	identitymodule "archive/x/identity"
-	identitymodulekeeper "archive/x/identity/keeper"
-	identitymoduletypes "archive/x/identity/types"
+	identitymodule "github.com/HankBreck/archive/x/identity"
+	identitymodulekeeper "github.com/HankBreck/archive/x/identity/keeper"
+	identitymoduletypes "github.com/HankBreck/archive/x/identity/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 

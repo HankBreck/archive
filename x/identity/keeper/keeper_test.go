@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/suite"
 
-	"archive/app/apptesting"
-	"archive/x/identity/keeper"
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/app/apptesting"
+	"github.com/HankBreck/archive/x/identity/keeper"
+	"github.com/HankBreck/archive/x/identity/types"
 )
 
 type KeeperTestSuite struct {

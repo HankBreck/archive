@@ -3,8 +3,8 @@ package keeper_test
 import (
 	"testing"
 
-	testkeeper "archive/testutil/keeper"
-	"archive/x/identity/types"
+	testkeeper "github.com/HankBreck/archive/testutil/keeper"
+	"github.com/HankBreck/archive/x/identity/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

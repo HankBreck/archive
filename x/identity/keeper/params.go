@@ -1,7 +1,7 @@
 package keeper
 
 import (
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 

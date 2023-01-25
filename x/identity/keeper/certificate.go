@@ -1,8 +1,9 @@
 package keeper
 
 import (
-	"archive/x/identity/types"
 	"encoding/binary"
+
+	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"

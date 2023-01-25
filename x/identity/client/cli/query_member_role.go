@@ -3,7 +3,7 @@ package cli
 import (
 	"strconv"
 
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cast"

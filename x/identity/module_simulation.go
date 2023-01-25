@@ -3,9 +3,10 @@ package identity
 import (
 	"math/rand"
 
-	"archive/testutil/sample"
-	identitysimulation "archive/x/identity/simulation"
-	"archive/x/identity/types"
+	"github.com/HankBreck/archive/x/identity/types"
+
+	"github.com/HankBreck/archive/testutil/sample"
+	identitysimulation "github.com/HankBreck/archive/x/identity/simulation"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"

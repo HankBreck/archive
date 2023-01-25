@@ -6,9 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/HankBreck/archive/x/identity/types"
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	"archive/x/identity/types"
 )
 
 var (

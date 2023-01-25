@@ -3,8 +3,9 @@ package cli
 import (
 	"strconv"
 
-	"archive/x/identity/types"
 	"strings"
+
+	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
