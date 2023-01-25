@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"archive/testutil/sample"
+	"github.com/HankBreck/archive/testutil/sample"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"

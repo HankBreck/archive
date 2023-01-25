@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
 )
 
 // AppendCDA stores cda in with the CDAKey ("CDA-value-") and increments the count

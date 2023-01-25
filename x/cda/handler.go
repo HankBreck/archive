@@ -3,8 +3,9 @@ package cda
 import (
 	"fmt"
 
-	"archive/x/cda/keeper"
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
+
+	"github.com/HankBreck/archive/x/cda/keeper"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"

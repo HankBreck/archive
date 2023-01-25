@@ -91,26 +91,29 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 
 	monitoringp "github.com/tendermint/spn/x/monitoringp"
 	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
 	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
 
-	"archive/docs"
+	"github.com/HankBreck/archive/docs"
 
-	cdamodule "archive/x/cda"
-	cdamodulekeeper "archive/x/cda/keeper"
-	cdamoduletypes "archive/x/cda/types"
+	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
 
-	contractregistrymodule "archive/x/contractregistry"
-	contractregistrymodulekeeper "archive/x/contractregistry/keeper"
-	contractregistrymoduletypes "archive/x/contractregistry/types"
+	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
+
+	cdamodule "github.com/HankBreck/archive/x/cda"
+
+	contractregistrymoduletypes "github.com/HankBreck/archive/x/contractregistry/types"
+
+	contractregistrymodulekeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
+
+	contractregistrymodule "github.com/HankBreck/archive/x/contractregistry"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	appparams "archive/app/params"
+	appparams "github.com/HankBreck/archive/app/params"
 )
 
 const (
@@ -182,9 +185,8 @@ var (
 )
 
 var (
-	cmdApp cosmoscmd.App           = (*App)(nil)
-	_      servertypes.Application = (*App)(nil)
-	_      simapp.App              = (*App)(nil)
+	_ servertypes.Application = (*App)(nil)
+	_ simapp.App              = (*App)(nil)
 )
 
 func init() {
@@ -194,9 +196,6 @@ func init() {
 	}
 
 	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
-
-	// Set address prefixes
-	appparams.SetAddressPrefixes()
 }
 
 // App extends an ABCI application, but with most of its parameters exported.
@@ -261,7 +260,7 @@ func New(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig cosmoscmd.EncodingConfig,
+	encodingConfig appparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *App {

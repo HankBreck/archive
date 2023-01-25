@@ -3,7 +3,7 @@ package archive.contractregistry;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "archive/x/contractregistry/types";
+option go_package = "github.com/HankBreck/archive/x/contractregistry/types";
 
 message Contract {
 	uint64 id = 1;

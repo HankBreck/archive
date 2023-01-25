@@ -3,7 +3,7 @@ package types_test
 import (
 	"testing"
 
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	"github.com/stretchr/testify/require"
 )
 

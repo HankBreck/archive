@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 )
 
 func (suite *KeeperTestSuite) TestAppendContract() {

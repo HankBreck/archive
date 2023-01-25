@@ -3,7 +3,7 @@ package cli
 import (
 	"strconv"
 
-	"archive/x/cda/types"
+	"github.com/HankBreck/archive/x/cda/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/spf13/cobra"

@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  archived:
+    image: local:archive
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+      args:
+        RUNNER_IMAGE: alpine:3.16
+        GO_VERSION: 1.18
+    volumes:
+      - $HOME/.archived-local/:/archive/.archive/
+    entrypoint:
+      - /archive/setup.sh
+    command:
+      - $STATE
+    ports:
+      - 26657:26657
+      - 1317:1317
+      - 9090:9090
+      - 9091:9091

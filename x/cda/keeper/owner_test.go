@@ -1,9 +1,10 @@
 package keeper_test
 
 import (
-	testkeeper "archive/testutil/keeper"
-	sample "archive/testutil/sample"
 	"testing"
+
+	testkeeper "github.com/HankBreck/archive/testutil/keeper"
+	sample "github.com/HankBreck/archive/testutil/sample"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"

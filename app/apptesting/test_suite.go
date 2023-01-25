@@ -3,7 +3,7 @@ package apptesting
 import (
 	"time"
 
-	"archive/app"
+	"github.com/HankBreck/archive/app"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"

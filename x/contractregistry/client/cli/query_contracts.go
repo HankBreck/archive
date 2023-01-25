@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"strconv"
 
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"

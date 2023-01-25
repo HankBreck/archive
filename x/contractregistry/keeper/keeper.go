@@ -3,7 +3,7 @@ package keeper
 import (
 	"fmt"
 
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"

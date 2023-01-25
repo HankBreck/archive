@@ -3,10 +3,10 @@ package contractregistry_test
 import (
 	"testing"
 
-	keepertest "archive/testutil/keeper"
-	"archive/testutil/nullify"
-	"archive/x/contractregistry"
-	"archive/x/contractregistry/types"
+	keepertest "github.com/HankBreck/archive/testutil/keeper"
+	"github.com/HankBreck/archive/testutil/nullify"
+	"github.com/HankBreck/archive/x/contractregistry"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	"github.com/stretchr/testify/require"
 )
 

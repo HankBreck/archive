@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"archive/testutil/sample"
+	"github.com/HankBreck/archive/testutil/sample"
 )
 
 // TODO: Test the new fields

@@ -3,9 +3,9 @@ package contractregistry
 import (
 	"math/rand"
 
-	"archive/testutil/sample"
-	contractregistrysimulation "archive/x/contractregistry/simulation"
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/testutil/sample"
+	contractregistrysimulation "github.com/HankBreck/archive/x/contractregistry/simulation"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	sdk "github.com/cosmos/cosmos-sdk/types"

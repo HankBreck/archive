@@ -7,7 +7,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module

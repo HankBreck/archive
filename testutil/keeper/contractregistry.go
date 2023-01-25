@@ -3,8 +3,9 @@ package keeper
 import (
 	"testing"
 
-	"archive/x/contractregistry/keeper"
-	"archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/contractregistry/types"
+
+	"github.com/HankBreck/archive/x/contractregistry/keeper"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
