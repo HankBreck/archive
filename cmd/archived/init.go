@@ -100,8 +100,13 @@ func InitCmd(mbm module.BasicManager, defaultNodeHome string) *cobra.Command {
 				tmConfig.P2P.Seeds = strings.Join(seeds, ",")
 			}
 
+			tmConfig.P2P.AllowDuplicateIP = true
+			tmConfig.P2P.AddrBookStrict = false
+			tmConfig.P2P.SeedMode = false
+			tmConfig.P2P.PexReactor = true // careful! don't set true on validator node
 			tmConfig.P2P.MaxNumInboundPeers = 320
 			tmConfig.P2P.MaxNumOutboundPeers = 40
+
 			tmConfig.Mempool.Size = 10000
 			tmConfig.StateSync.TrustPeriod = 112 * time.Hour
 			tmConfig.FastSync.Version = "v0"

@@ -51,6 +51,7 @@ ENV HOME /archive
 WORKDIR $HOME
 
 COPY /tests/localarchive/scripts/setup.sh /archive/setup.sh
+COPY /tests/testnet/scripts/testnet-setup.sh /archive/testnet-setup.sh
 
 EXPOSE 26656
 EXPOSE 26657

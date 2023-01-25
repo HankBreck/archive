@@ -46,6 +46,10 @@ build-reproducible-amd64: go.sum $(BUILDDIR)/
 		-t archive-amd64 \
 		--load \
 		-f Dockerfile .
+	$(DOCKER) rm -f arcbinary || true
+	$(DOCKER) create -ti --name arcbinary archive-amd64
+	$(DOCKER) cp arcbinary:/bin/archived $(BUILDDIR)/archived-linux-amd64
+	$(DOCKER) rm -f arcbinary
 
 build-reproducible-arm64: go.sum $(BUILDDIR)/
 	$(DOCKER) buildx create --name arcbuilder || true
@@ -113,3 +117,19 @@ localnet-start:
 localnet-clean:
 	@rm -rf $(HOME)/.archived-local/
 
+###############################################################################
+###                                 Testnet                                 ###
+###############################################################################
+
+testnet-init: testnet-clean testnet-build
+
+testnet-build:
+	@DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f tests/testnet/docker-compose.yml build
+
+testnet-start:
+	docker-compose -f tests/testnet/docker-compose.yml up
+
+testnet-clean:
+	@rm -rf $(HOME)/.archived-local-0/
+	@rm -rf $(HOME)/.archived-local-1/
+	@rm -rf $(HOME)/.archived-local-2/

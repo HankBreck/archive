@@ -36,7 +36,7 @@ Examples include:
 	- Setting module initial params
 	- Setting denom metadata
 Example:
-	osmosisd prepare-genesis mainnet osmosis-1
+	archived prepare-genesis mainnet casper-1
 	- Check input genesis:
 		file is at ~/.archive/config/genesis.json
 `,
@@ -208,22 +208,22 @@ func MainnetGenesisParams() GenesisParams {
 			Base:    appparams.BaseCoinUnit,
 			Display: appparams.HumanCoinUnit,
 		},
-		{
-			DenomUnits: []*banktypes.DenomUnit{
-				{
-					Denom:    "uion",
-					Exponent: 0,
-					Aliases:  nil,
-				},
-				{
-					Denom:    "ion",
-					Exponent: 6,
-					Aliases:  nil,
-				},
-			},
-			Base:    "uion",
-			Display: "ion",
-		},
+		// {
+		// 	DenomUnits: []*banktypes.DenomUnit{
+		// 		{
+		// 			Denom:    "uion",
+		// 			Exponent: 0,
+		// 			Aliases:  nil,
+		// 		},
+		// 		{
+		// 			Denom:    "ion",
+		// 			Exponent: 6,
+		// 			Aliases:  nil,
+		// 		},
+		// 	},
+		// 	Base:    "uion",
+		// 	Display: "ion",
+		// },
 	}
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
@@ -284,7 +284,7 @@ func MainnetGenesisParams() GenesisParams {
 func TestnetGenesisParams() GenesisParams {
 	genParams := MainnetGenesisParams()
 
-	genParams.GenesisTime = time.Now()
+	genParams.GenesisTime = time.Date(2023, 1, 23, 19, 0, 0, 0, time.UTC) // Jun 18, 2021 - 17:00 UTC
 
 	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
 

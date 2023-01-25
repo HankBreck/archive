@@ -1,7 +1,6 @@
 version: "3"
 
 services:
-
   archived:
     image: local:archive
     build:
@@ -21,4 +20,3 @@ services:
       - 1317:1317
       - 9090:9090
       - 9091:9091
-
