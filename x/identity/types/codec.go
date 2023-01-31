@@ -20,25 +20,13 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRegisterIssuer{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgAcceptIdentity{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRejectIdentity{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgRenounceIdentity{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgUpdateOperators{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgUpdateMembers{},
 	)
 	// this line is used by starport scaffolding # 3
-
-	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
