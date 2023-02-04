@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "archive/identity/params.proto";
 // this line is used by starport scaffolding # genesis/proto/import
 
-option go_package = "archive/x/identity/types";
+option go_package = "github.com/HankBreck/archive/x/identity/types";
 
 // GenesisState defines the identity module's genesis state.
 message GenesisState {

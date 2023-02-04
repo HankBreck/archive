@@ -3,7 +3,7 @@ package archive.identity;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "archive/x/identity/types";
+option go_package = "github.com/HankBreck/archive/x/identity/types";
 
 // Params defines the parameters for the module.
 message Params {

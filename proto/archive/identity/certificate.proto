@@ -3,7 +3,7 @@ package archive.identity;
 
 import "gogoproto/gogo.proto";
 
-option go_package = "archive/x/identity/types";
+option go_package = "github.com/HankBreck/archive/x/identity/types";
 
 // HashEntry is a record of a field: hash mapping used in Certificates
 message HashEntry {
