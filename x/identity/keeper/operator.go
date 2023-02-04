@@ -29,6 +29,12 @@ func (k Keeper) SetOperators(ctx sdk.Context, certificateId uint64, operators []
 	}
 	store := k.getOperatorStoreForId(ctx, certificateId)
 	for _, op := range operators {
+		hasOp, err := k.HasOperator(ctx, certificateId, op)
+		if err != nil {
+			return err
+		} else if hasOp {
+			return types.ErrExistingOperator.Wrapf("%s is already an operator", op.String())
+		}
 		// Ensure new operator is an accepted member of the identity
 		hasMember, err := k.HasMember(ctx, certificateId, op)
 		if err != nil {
