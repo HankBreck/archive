@@ -29,7 +29,7 @@ func (s *KeeperTestHelper) Setup() {
 		GRPCQueryRouter: s.App.GRPCQueryRouter(),
 		Ctx:             s.Ctx,
 	}
-	s.TestAccs = CreateRandomAccounts(10)
+	s.TestAccs = CreateRandomAccounts(30)
 }
 
 func CreateRandomAccounts(num int) []sdk.AccAddress {
