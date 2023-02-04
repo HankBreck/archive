@@ -11,36 +11,34 @@ option go_package = "github.com/HankBreck/archive/x/cda/types";
 
 // Msg defines the Msg service.
 service Msg {
-    rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
-    rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
-    rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
+  rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
+  rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
+  // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgCreateCda {
-	string creator = 1;
-	repeated string signing_parties = 2;
-	uint64 contract_id = 3;
-	string legal_metadata_uri = 4;
-    bytes signing_data = 5 [
-        (gogoproto.customname) = "SigningData",
-		(gogoproto.casttype) = "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
-    ];
-	google.protobuf.Timestamp utc_expire_time = 6 [
-        (gogoproto.stdtime) = true,
-        (gogoproto.nullable) = false
-    ];
+  string creator = 1;
+  repeated string signing_parties = 2;
+  uint64 contract_id = 3;
+  string legal_metadata_uri = 4;
+  bytes signing_data = 5 [
+    (gogoproto.customname) = "SigningData",
+    (gogoproto.casttype) =
+        "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
+  ];
+  google.protobuf.Timestamp utc_expire_time = 6
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
 }
 
-message MsgCreateCdaResponse {
-  uint64 id = 1;
-}
+message MsgCreateCdaResponse { uint64 id = 1; }
 
 message MsgApproveCda {
   string creator = 1;
   uint64 cda_id = 2;
   bytes signing_data = 3 [
-    (gogoproto.casttype) = "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
+    (gogoproto.casttype) =
+        "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
   ];
 }
 

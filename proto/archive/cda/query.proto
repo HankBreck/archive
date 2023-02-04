@@ -17,26 +17,26 @@ service Query {
     option (google.api.http).get = "/archive/cda/params";
   }
   // Queries a list of Cda items.
-	rpc Cda(QueryCdaRequest) returns (QueryCdaResponse) {
-		option (google.api.http).get = "/archive/cda/cda/{id}";
-	}
+  rpc Cda(QueryCdaRequest) returns (QueryCdaResponse) {
+    option (google.api.http).get = "/archive/cda/cda/{id}";
+  }
 
-// Queries a list of Cdas items.
-	rpc Cdas(QueryCdasRequest) returns (QueryCdasResponse) {
-		option (google.api.http).get = "/archive/cda/cdas";
-	}
+  // Queries a list of Cdas items.
+  rpc Cdas(QueryCdasRequest) returns (QueryCdasResponse) {
+    option (google.api.http).get = "/archive/cda/cdas";
+  }
 
-// Queries a list of CdasOwned items.
-	rpc CdasOwned(QueryCdasOwnedRequest) returns (QueryCdasOwnedResponse) {
-		option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
-	}
+  // Queries a list of CdasOwned items.
+  rpc CdasOwned(QueryCdasOwnedRequest) returns (QueryCdasOwnedResponse) {
+    option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
+  }
 
-// Queries a list of Approvals items.
-	rpc Approval(QueryApprovalRequest) returns (QueryApprovalResponse) {
-		option (google.api.http).get = "/archive/cda/approval/{cdaId}";
-	}
+  // Queries a list of Approvals items.
+  rpc Approval(QueryApprovalRequest) returns (QueryApprovalResponse) {
+    option (google.api.http).get = "/archive/cda/approval/{cdaId}";
+  }
 
-// this line is used by starport scaffolding # 2
+  // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -45,16 +45,12 @@ message QueryParamsRequest {}
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
-  Params params = 1 [(gogoproto.nullable) = false];
+  Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
-message QueryCdaRequest {
-  uint64 id = 1;
-}
+message QueryCdaRequest { uint64 id = 1; }
 
-message QueryCdaResponse {
-  CDA cda = 1;
-}
+message QueryCdaResponse { CDA cda = 1; }
 
 message QueryCdasRequest {
   // Pagination to view all CDAs
@@ -88,13 +84,11 @@ message QueryCdasOwnedResponse {
 message QueryApprovalRequest {
   // The id of the CDA to check
   uint64 cdaId = 1;
-  
+
   // The wallet address of the owner to check
   string owner = 2;
 }
 
-message QueryApprovalResponse {
-  bool approved = 1;
-}
+message QueryApprovalResponse { bool approved = 1; }
 
 // this line is used by starport scaffolding # 3

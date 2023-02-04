@@ -789,19 +789,19 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"archive", "identity", "params"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"archive", "identity", "params"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_IdentityMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"archive", "identity", "identity_members", "id", "is_pending"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_IdentityMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"archive", "identity", "identity_members", "id", "is_pending"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Issuers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"archive", "identity", "issuers"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Issuers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"archive", "identity", "issuers"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_IssuerInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"archive", "identity", "issuer_info", "issuer"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_IssuerInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"archive", "identity", "issuer_info", "issuer"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Identity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"archive", "identity", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Identity_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"archive", "identity", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_Operators_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"archive", "identity", "operators", "id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Operators_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"archive", "identity", "operators", "id"}, "", runtime.AssumeColonVerbOpt(false)))
 
-	pattern_Query_MemberRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"archive", "identity", "member_role", "id", "member"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_MemberRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"archive", "identity", "member_role", "id", "member"}, "", runtime.AssumeColonVerbOpt(false)))
 )
 
 var (

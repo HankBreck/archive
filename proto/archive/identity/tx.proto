@@ -9,54 +9,52 @@ option go_package = "github.com/HankBreck/archive/x/identity/types";
 
 // Msg defines the Msg service.
 service Msg {
-    rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
-    rpc IssueCertificate(MsgIssueCertificate) returns (MsgIssueCertificateResponse);
-    rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
-    rpc RejectIdentity(MsgRejectIdentity) returns (MsgRejectIdentityResponse);
-    rpc RenounceIdentity(MsgRenounceIdentity) returns (MsgRenounceIdentityResponse);
-    rpc UpdateOperators(MsgUpdateOperators) returns (MsgUpdateOperatorsResponse);
-    rpc UpdateMembers(MsgUpdateMembers) returns (MsgUpdateMembersResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  rpc RegisterIssuer(MsgRegisterIssuer) returns (MsgRegisterIssuerResponse);
+  rpc IssueCertificate(MsgIssueCertificate)
+      returns (MsgIssueCertificateResponse);
+  rpc AcceptIdentity(MsgAcceptIdentity) returns (MsgAcceptIdentityResponse);
+  rpc RejectIdentity(MsgRejectIdentity) returns (MsgRejectIdentityResponse);
+  rpc RenounceIdentity(MsgRenounceIdentity)
+      returns (MsgRenounceIdentityResponse);
+  rpc UpdateOperators(MsgUpdateOperators) returns (MsgUpdateOperatorsResponse);
+  rpc UpdateMembers(MsgUpdateMembers) returns (MsgUpdateMembersResponse);
+  // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgRegisterIssuer {
-    string creator = 1;
-    string name = 2;
-    string more_info_uri = 3 [ (gogoproto.customname) = "MoreInfoUri"];
-    uint64 cost = 4;
+  string creator = 1;
+  string name = 2;
+  string more_info_uri = 3 [ (gogoproto.customname) = "MoreInfoUri" ];
+  uint64 cost = 4;
 }
 message MsgRegisterIssuerResponse {}
 
 message MsgIssueCertificate {
-    string creator = 1;
-    string recipient = 2;
-    string salt = 3;
-    string metadata_schema_uri = 4 [(gogoproto.customname) = "MetadataSchemaUri"];
-    repeated HashEntry hashes = 5;
+  string creator = 1;
+  string recipient = 2;
+  string salt = 3;
+  string metadata_schema_uri = 4
+      [ (gogoproto.customname) = "MetadataSchemaUri" ];
+  repeated HashEntry hashes = 5;
 }
-message MsgIssueCertificateResponse {
-    uint64 id = 1;
-}
+message MsgIssueCertificateResponse { uint64 id = 1; }
 message MsgAcceptIdentity {
   string creator = 1;
   uint64 id = 2;
 }
-message MsgAcceptIdentityResponse {
-}
+message MsgAcceptIdentityResponse {}
 
 message MsgRejectIdentity {
   string creator = 1;
   uint64 id = 2;
 }
-message MsgRejectIdentityResponse {
-}
+message MsgRejectIdentityResponse {}
 
 message MsgRenounceIdentity {
   string creator = 1;
   uint64 id = 2;
 }
-message MsgRenounceIdentityResponse {
-}
+message MsgRenounceIdentityResponse {}
 
 message MsgUpdateOperators {
   string creator = 1;
@@ -64,8 +62,7 @@ message MsgUpdateOperators {
   repeated string toAdd = 3;
   repeated string toRemove = 4;
 }
-message MsgUpdateOperatorsResponse {
-}
+message MsgUpdateOperatorsResponse {}
 
 message MsgUpdateMembers {
   string creator = 1;
@@ -73,7 +70,6 @@ message MsgUpdateMembers {
   repeated string toAdd = 3;
   repeated string toRemove = 4;
 }
-message MsgUpdateMembersResponse {
-}
+message MsgUpdateMembersResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message

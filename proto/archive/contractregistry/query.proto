@@ -34,44 +34,42 @@ message QueryParamsRequest {}
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
-  Params params = 1 [(gogoproto.nullable) = false];
+  Params params = 1 [ (gogoproto.nullable) = false ];
 }
 
 // QueryContractRequest is the request type for the Query/Contract RPC method.
-message QueryContractRequest {
-    uint64 id = 1;
-}
+message QueryContractRequest { uint64 id = 1; }
 
-// QueryContractResponse is the response type for the Query/Contracts RPC method.
+// QueryContractResponse is the response type for the Query/Contracts RPC
+// method.
 message QueryContractResponse {
-    Contract contract = 1 [(gogoproto.nullable) = false];
+  Contract contract = 1 [ (gogoproto.nullable) = false ];
 }
 
 // QueryContractsRequest is the request type for the Query/Contracts RPC method.
 message QueryContractsRequest {
-    // pagination defines an optional pagination for the request.
-    cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
 
-// QueryContractsResponse is the response type for the Query/Contracts RPC method.
+// QueryContractsResponse is the response type for the Query/Contracts RPC
+// method.
 message QueryContractsResponse {
-    // the ids of the contracts registered
-    repeated Contract contracts = 1 [(gogoproto.nullable) = false];
-    
-    // pagination defines the pagination in the response.
-    cosmos.base.query.v1beta1.PageResponse pagination = 2;
+  // the ids of the contracts registered
+  repeated Contract contracts = 1 [ (gogoproto.nullable) = false ];
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QuerySigningDataRequest is the request type for the Query/SigningData RPC method
-message QuerySigningDataRequest {
-    uint64 id = 1;
-}
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC
+// method
+message QuerySigningDataRequest { uint64 id = 1; }
 
-// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC method
+// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
+// method
 message QuerySigningDataResponse {
-    bytes signing_data = 1 [
-		(gogoproto.casttype) = "RawSigningData"
-	];
+  bytes signing_data = 1 [ (gogoproto.casttype) = "RawSigningData" ];
 }
 
 // this line is used by starport scaffolding # 3

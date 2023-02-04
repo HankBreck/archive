@@ -6,25 +6,22 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/HankBreck/archive/x/contractregistry/types";
 
 message Contract {
-	uint64 id = 1;
-	string description = 2;
-	repeated string authors = 3;
-	ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo"];
-	string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
-	string template_uri = 6 [ 
-		(gogoproto.customname) = "TemplateUri"
-	];
-	string template_schema_uri = 7 [
-		(gogoproto.customname) = "TemplateSchemaUri"
-	];
+  uint64 id = 1;
+  string description = 2;
+  repeated string authors = 3;
+  ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
+  string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
+  string template_uri = 6 [ (gogoproto.customname) = "TemplateUri" ];
+  string template_schema_uri = 7
+      [ (gogoproto.customname) = "TemplateSchemaUri" ];
 }
 
 message ContactInfo {
-	ContactMethod method = 1;
-	string value = 2;
+  ContactMethod method = 1;
+  string value = 2;
 }
 
 enum ContactMethod {
-	Phone = 0; // People won't want to publish their phone number on here
-	Email = 1;
+  Phone = 0; // People won't want to publish their phone number on here
+  Email = 1;
 }

@@ -7,8 +7,8 @@ import "gogoproto/gogo.proto";
 option go_package = "github.com/HankBreck/archive/x/identity/types";
 
 message Issuer {
-    string creator = 1;
-	string name = 2;
-	string more_info_uri = 3 [(gogoproto.customname) = "MoreInfoUri"];
-	uint64 cost = 4;
+  string creator = 1;
+  string name = 2;
+  string more_info_uri = 3 [ (gogoproto.customname) = "MoreInfoUri" ];
+  uint64 cost = 4;
 }
