@@ -13,6 +13,10 @@ import (
 // TODO:
 //		Test IdentityMembers
 //		Test Issuers
+//		Test IssuerInfo
+//		Test Identity
+//		Test Operators
+// 		Test MemberRole
 
 func TestParamsQuery(t *testing.T) {
 	keeper, ctx := testkeeper.IdentityKeeper(t)
