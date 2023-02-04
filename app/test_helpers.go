@@ -37,7 +37,7 @@ func Setup(isCheckTx bool) *App {
 		map[int64]bool{},
 		DefaultNodeHome,
 		5,
-		defaultEncodingConfig,
+		GetEncodingConfig(),
 		simapp.EmptyAppOptions{},
 	)
 	if !isCheckTx {
