@@ -50,8 +50,13 @@ func (k Keeper) Issuers(goCtx context.Context, req *types.QueryIssuersRequest) (
 		return nil, err
 	}
 
+	issuersResult := []string{}
+	for _, issuer := range issuers {
+		issuersResult = append(issuersResult, issuer.String())
+	}
+
 	return &types.QueryIssuersResponse{
-		Issuers:    issuers,
+		Issuers:    issuersResult,
 		Pagination: pageRes,
 	}, nil
 }
@@ -63,13 +68,13 @@ func (k Keeper) IssuerInfo(goCtx context.Context, req *types.QueryIssuerInfoRequ
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Validate issuer address
-	_, err := sdk.AccAddressFromBech32(req.Issuer)
+	issuerAddr, err := sdk.AccAddressFromBech32(req.Issuer)
 	if err != nil {
 		return nil, err
 	}
 
 	// Fetch issuer from storage
-	issuer, err := k.GetIssuer(ctx, req.Issuer)
+	issuer, err := k.GetIssuer(ctx, issuerAddr)
 	if err != nil {
 		return nil, err
 	}

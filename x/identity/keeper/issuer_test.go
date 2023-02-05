@@ -37,9 +37,9 @@ func (suite *KeeperTestSuite) TestSetIssuer_DuplicateIssuer() {
 func (suite *KeeperTestSuite) TestGetIssuer() {
 	// Prepare state
 	k := suite.App.IdentityKeeper
-	creator := suite.TestAccs[0].String()
+	creator := suite.TestAccs[0]
 	expectedIssuer := types.Issuer{
-		Creator:     creator,
+		Creator:     creator.String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
 	}
@@ -54,14 +54,14 @@ func (suite *KeeperTestSuite) TestGetIssuer() {
 func (suite *KeeperTestSuite) TestHasIssuer() {
 	// Prepare state
 	k := suite.App.IdentityKeeper
-	creator := suite.TestAccs[0].String()
+	creator := suite.TestAccs[0]
 	expectedIssuer := types.Issuer{
-		Creator:     creator,
+		Creator:     creator.String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
 	}
 	k.SetIssuer(suite.Ctx, expectedIssuer)
 
 	suite.True(k.HasIssuer(suite.Ctx, creator))
-	suite.False(k.HasIssuer(suite.Ctx, suite.TestAccs[1].String()))
+	suite.False(k.HasIssuer(suite.Ctx, suite.TestAccs[1]))
 }

@@ -70,7 +70,7 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 	if err != nil {
 		return nil, err
 	}
-	if !k.HasIssuer(ctx, creatorAddr.String()) {
+	if !k.HasIssuer(ctx, creatorAddr) {
 		return nil, sdkerrors.ErrNotFound.Wrapf("Sender (%s) is not a registered Issuer", creatorAddr.String())
 	}
 

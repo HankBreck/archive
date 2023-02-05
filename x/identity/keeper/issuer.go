@@ -12,19 +12,23 @@ import (
 // SetIssuer stores the Issuer object under the creator's account address.
 // Returns an error if the creator address has already created an Issuer.
 func (k Keeper) SetIssuer(ctx sdk.Context, issuer types.Issuer) error {
-	if k.HasIssuer(ctx, issuer.Creator) {
+	creator, err := sdk.AccAddressFromBech32(issuer.Creator)
+	if err != nil {
+		return err
+	}
+	if k.HasIssuer(ctx, creator) {
 		return types.ErrExistingIssuer
 	}
-	k.uncheckedSetIssuer(ctx, issuer)
+	k.uncheckedSetIssuer(ctx, issuer, creator)
 	return nil
 }
 
 // GetIssuer returns the Issuer object created by creator.
 // Returns an error if the creator has not created an issuer
-func (k Keeper) GetIssuer(ctx sdk.Context, creator string) (*types.Issuer, error) {
+func (k Keeper) GetIssuer(ctx sdk.Context, creator sdk.AccAddress) (*types.Issuer, error) {
 	// Fetch Issuer from store
 	store := k.getIssuerStore(ctx)
-	bzIssuer := store.Get([]byte(creator))
+	bzIssuer := store.Get(creator.Bytes())
 
 	// Check if Issuer exists
 	if len(bzIssuer) == 0 {
@@ -44,17 +48,18 @@ func (k Keeper) GetIssuer(ctx sdk.Context, creator string) (*types.Issuer, error
 // GetIssuers pages through all registered issuers.
 //
 // Returns a tuple of: the issuers found, the page response, and an error.
-func (k Keeper) GetIssuers(ctx sdk.Context, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
+func (k Keeper) GetIssuers(ctx sdk.Context, pageReq *query.PageRequest) ([]sdk.AccAddress, *query.PageResponse, error) {
 	store := k.getIssuerStore(ctx)
-	var issuers []string
+	var issuers []sdk.AccAddress
 
 	// Unmarshal each key into the bech32 address
 	pageRes, err := query.Paginate(store, pageReq, func(key []byte, _ []byte) error {
-		issuerAddr, err := sdk.AccAddressFromBech32(string(key))
+		var issuerAddr sdk.AccAddress
+		err := issuerAddr.Unmarshal(key)
 		if err != nil {
 			return err
 		}
-		issuers = append(issuers, issuerAddr.String())
+		issuers = append(issuers, issuerAddr)
 		return nil
 	})
 	if err != nil {
@@ -65,17 +70,17 @@ func (k Keeper) GetIssuers(ctx sdk.Context, pageReq *query.PageRequest) ([]strin
 }
 
 // HasIssuer returns true if a issuer is stored under the creator's address, else false
-func (k Keeper) HasIssuer(ctx sdk.Context, creator string) bool {
+func (k Keeper) HasIssuer(ctx sdk.Context, creator sdk.AccAddress) bool {
 	store := k.getIssuerStore(ctx)
-	return store.Has([]byte(creator))
+	return store.Has(creator.Bytes())
 }
 
 // Stores the issuer with a key of issuer.Creator.
 // The issuer passed as an argument is assumed to be valid, so calling functions must assure this.
-func (k Keeper) uncheckedSetIssuer(ctx sdk.Context, issuer types.Issuer) {
+func (k Keeper) uncheckedSetIssuer(ctx sdk.Context, issuer types.Issuer, creatorAddr sdk.AccAddress) {
 	store := k.getIssuerStore(ctx)
 	bzContract := k.cdc.MustMarshal(&issuer)
-	store.Set([]byte(issuer.Creator), bzContract)
+	store.Set(creatorAddr.Bytes(), bzContract)
 }
 
 func (k Keeper) getIssuerStore(ctx sdk.Context) prefix.Store {
