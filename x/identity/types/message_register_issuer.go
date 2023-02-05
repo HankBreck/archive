@@ -11,12 +11,11 @@ const TypeMsgRegisterIssuer = "register_issuer"
 
 var _ sdk.Msg = &MsgRegisterIssuer{}
 
-func NewMsgRegisterIssuer(creator string, name string, moreInfoUri string, cost uint64) *MsgRegisterIssuer {
+func NewMsgRegisterIssuer(creator string, name string, moreInfoUri string) *MsgRegisterIssuer {
 	return &MsgRegisterIssuer{
 		Creator:     creator,
 		Name:        name,
 		MoreInfoUri: moreInfoUri,
-		Cost:        cost,
 	}
 }
 

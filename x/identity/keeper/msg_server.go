@@ -41,7 +41,6 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 		Creator:     addr.String(),
 		Name:        msg.Name,
 		MoreInfoUri: msg.MoreInfoUri,
-		Cost:        msg.Cost,
 	}
 	err = k.SetIssuer(ctx, issuer)
 	if err != nil {

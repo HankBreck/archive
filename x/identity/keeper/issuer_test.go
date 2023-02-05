@@ -13,7 +13,6 @@ func (suite *KeeperTestSuite) TestSetIssuer() {
 		Creator:     suite.TestAccs[0].String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	}
 	err := k.SetIssuer(suite.Ctx, issuer)
 	suite.NoError(err)
@@ -25,7 +24,6 @@ func (suite *KeeperTestSuite) TestSetIssuer_DuplicateIssuer() {
 		Creator:     suite.TestAccs[0].String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	}
 	// First time setting works
 	err := k.SetIssuer(suite.Ctx, issuer)
@@ -44,7 +42,6 @@ func (suite *KeeperTestSuite) TestGetIssuer() {
 		Creator:     creator,
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	}
 	k.SetIssuer(suite.Ctx, expectedIssuer)
 
@@ -62,7 +59,6 @@ func (suite *KeeperTestSuite) TestHasIssuer() {
 		Creator:     creator,
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	}
 	k.SetIssuer(suite.Ctx, expectedIssuer)
 

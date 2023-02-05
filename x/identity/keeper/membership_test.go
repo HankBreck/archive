@@ -15,7 +15,6 @@ func (suite *KeeperTestSuite) TestCreateMembership() {
 		Creator:     suite.TestAccs[0].String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	}
 	defaultCert := types.Certificate{
 		IssuerAddress:     defaultIssuer.Creator,
