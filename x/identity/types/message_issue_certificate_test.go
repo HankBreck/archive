@@ -18,13 +18,19 @@ func TestMsgIssueCertificate_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgIssueCertificate{
-				Creator: "invalid_address",
+				Creator:           "invalid_address",
+				Recipient:         sample.AccAddress(),
+				MetadataSchemaUri: "google.com",
+				Hashes:            []*HashEntry{{Field: "foo", Hash: "bar"}},
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgIssueCertificate{
-				Creator: sample.AccAddress(),
+				Creator:           sample.AccAddress(),
+				Recipient:         sample.AccAddress(),
+				MetadataSchemaUri: "google.com",
+				Hashes:            []*HashEntry{{Field: "foo", Hash: "bar"}},
 			},
 		},
 	}

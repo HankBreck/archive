@@ -17,13 +17,17 @@ func TestMsgRegisterIssuer_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: MsgRegisterIssuer{
-				Creator: "invalid_address",
+				Creator:     "invalid_address",
+				Name:        "test",
+				MoreInfoUri: "google.com",
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
 			name: "valid address",
 			msg: MsgRegisterIssuer{
-				Creator: sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				Name:        "test",
+				MoreInfoUri: "google.com",
 			},
 		},
 	}
