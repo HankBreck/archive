@@ -116,7 +116,7 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 		return nil, err
 	}
 
-	// Ensure send is in the pending membership state
+	// Ensure sender is in the pending membership state
 	hasPending, err := k.HasPendingMember(ctx, msg.Id, senderAddr)
 	if err != nil {
 		return nil, err
@@ -200,6 +200,7 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 	}
 
 	// Ensure the certificate exists
+	// TODO: remove (duplicate of HasMember)
 	if !k.HasCertificate(ctx, msg.Id) {
 		return nil, types.ErrNonexistentCertificate.Wrapf("No identity found for ID %d", msg.Id)
 	}
