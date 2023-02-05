@@ -17,7 +17,6 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 		Creator:     issuer.String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
-		Cost:        0,
 	})
 	if err != nil {
 		return 0, err
