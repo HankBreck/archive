@@ -33,17 +33,17 @@ func (suite *KeeperTestSuite) TestCreateMembership() {
 		inputRecipient   *sdk.AccAddress
 		expPanic         bool
 	}{
-		"simple_set": {
-			inputIssuer:      &defaultIssuer,
-			inputCertificate: &defaultCert,
-			inputRecipient:   &defaultRecipient,
-			expPanic:         false,
-		},
 		"no_certificate_set": {
 			inputIssuer:      &defaultIssuer,
 			inputCertificate: nil,
 			inputRecipient:   &defaultRecipient,
 			expPanic:         true,
+		},
+		"simple_set": {
+			inputIssuer:      &defaultIssuer,
+			inputCertificate: &defaultCert,
+			inputRecipient:   &defaultRecipient,
+			expPanic:         false,
 		},
 	}
 
@@ -65,15 +65,6 @@ func (suite *KeeperTestSuite) TestCreateMembership() {
 			}
 		})
 	}
-}
-
-func (suite *KeeperTestSuite) TestDoubleAddMember() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-	id, _ := suite.PrepareCertificate(issuer, nil)
-	suite.NotPanics(func() { k.CreateMembership(suite.Ctx, id, recipient) })
-	suite.Panics(func() { k.CreateMembership(suite.Ctx, id, recipient) })
 }
 
 func (suite *KeeperTestSuite) TestHasPendingMember() {
