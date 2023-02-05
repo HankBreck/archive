@@ -116,8 +116,23 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 		return nil, err
 	}
 
+	// Ensure send is in the pending membership state
+	hasPending, err := k.HasPendingMember(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPending {
+		return nil, sdkerrors.ErrNotFound.Wrapf("sender must be a pending member")
+	}
+
 	// Add sender to the accepted membership list
-	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, true)
+	err = k.UpdateAcceptedMembers(ctx, msg.Id, []sdk.AccAddress{senderAddr}, []sdk.AccAddress{})
+	if err != nil {
+		return nil, err
+	}
+
+	// Remove sender from the pending membership list
+	err = k.UpdatePendingMembers(ctx, msg.Id, []sdk.AccAddress{}, []sdk.AccAddress{senderAddr})
 	if err != nil {
 		return nil, err
 	}
@@ -141,8 +156,17 @@ func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIde
 		return nil, err
 	}
 
+	// Ensure send is in the pending membership state
+	hasPending, err := k.HasPendingMember(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	}
+	if !hasPending {
+		return nil, sdkerrors.ErrNotFound.Wrapf("sender must be a pending member")
+	}
+
 	// Remove sender from the pending membership list
-	err = k.UpdateMembershipStatus(ctx, msg.Id, senderAddr, false)
+	err = k.UpdatePendingMembers(ctx, msg.Id, []sdk.AccAddress{}, []sdk.AccAddress{senderAddr})
 	if err != nil {
 		return nil, err
 	}
