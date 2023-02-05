@@ -120,3 +120,33 @@ func (suite *KeeperTestSuite) TestGetOperators_WithLimit() {
 	suite.NoError(err)
 	suite.Len(operAddrs, 10)
 }
+
+func (suite *KeeperTestSuite) TestHasOperator() {
+	suite.SetupTest()
+	k := suite.App.IdentityKeeper
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	operator := suite.TestAccs[2]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+
+	// Test unset operator
+	hasOp, err := k.HasOperator(suite.Ctx, id, operator)
+	suite.NoError(err)
+	suite.False(hasOp)
+
+	// Test set operator
+	suite.AddOperators(id, []sdk.AccAddress{operator})
+	hasOp, err = k.HasOperator(suite.Ctx, id, operator)
+	suite.NoError(err)
+	suite.True(hasOp)
+}
+
+func (suite *KeeperTestSuite) TestHasOperator_NoCertificate() {
+	suite.SetupTest()
+	k := suite.App.IdentityKeeper
+	operator := suite.TestAccs[2]
+	invalidId := uint64(100)
+	hasOp, err := k.HasOperator(suite.Ctx, invalidId, operator)
+	suite.Error(err)
+	suite.False(hasOp)
+}
