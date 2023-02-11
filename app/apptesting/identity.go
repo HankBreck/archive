@@ -38,6 +38,8 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 		k.CreateMembership(s.Ctx, id, *recipient)
 	}
 
+	k.SetInitialOperator(s.Ctx, id, *recipient)
+
 	return id, nil
 }
 
@@ -52,6 +54,12 @@ func (s *KeeperTestHelper) SetMembers(certificateId uint64, members []sdk.AccAdd
 
 	// Add members as accepted
 	err = k.UpdateAcceptedMembers(s.Ctx, certificateId, members, []sdk.AccAddress{})
+	if err != nil {
+		return err
+	}
+
+	// Removing members from pending
+	err = k.UpdatePendingMembers(s.Ctx, certificateId, []sdk.AccAddress{}, members)
 	if err != nil {
 		return err
 	}

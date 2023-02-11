@@ -58,6 +58,7 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 	return &types.MsgRegisterIssuerResponse{}, nil
 }
 
+// TODO: WHY IS THIS KEEPER INSTEAD OF MSGSERVER????
 func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
 	// Handle message and context
 	if msg == nil {
@@ -109,6 +110,10 @@ func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCerti
 }
 
 func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIdentity) (*types.MsgAcceptIdentityResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgAcceptIdentity cannot be nil.")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -150,7 +155,12 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 }
 
 func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIdentity) (*types.MsgRejectIdentityResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgRejectIdentity cannot be nil.")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
@@ -192,6 +202,10 @@ func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIde
 }
 
 func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounceIdentity) (*types.MsgRenounceIdentityResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgRenounceIdentity cannot be nil.")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	addr, err := sdk.AccAddressFromBech32(msg.Creator)
@@ -238,7 +252,12 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 }
 
 func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMembers) (*types.MsgUpdateMembersResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgUpdateMembers cannot be nil.")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
@@ -298,7 +317,12 @@ func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMemb
 }
 
 func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOperators) (*types.MsgUpdateOperatorsResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgUpdateOperators cannot be nil.")
+	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
+
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
