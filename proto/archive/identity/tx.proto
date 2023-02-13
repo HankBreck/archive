@@ -73,8 +73,8 @@ message MsgUpdateMembers {
 message MsgUpdateMembersResponse {}
 
 message MsgFreezeIdentity {
-    string creator = 1;
-    uint64 id = 2;
+  string creator = 1;
+  uint64 id = 2;
 }
 message MsgFreezeIdentityResponse {}
 
