@@ -83,7 +83,15 @@ func (s *KeeperTestHelper) AddOperators(certificateId uint64, opers []sdk.AccAdd
 
 func (s *KeeperTestHelper) AcceptMembership(certificateId uint64, member sdk.AccAddress) error {
 	k := s.App.IdentityKeeper
+	toAdd := []sdk.AccAddress{member}
 
-	err := k.UpdateMembershipStatus(s.Ctx, certificateId, member, true)
+	// Add member to accepted list
+	err := k.UpdateAcceptedMembers(s.Ctx, certificateId, toAdd, []sdk.AccAddress{})
+	if err != nil {
+		return err
+	}
+
+	// Remove member from pending list (expected by tests)
+	err = k.UpdatePendingMembers(s.Ctx, certificateId, []sdk.AccAddress{}, toAdd)
 	return err
 }

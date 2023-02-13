@@ -81,7 +81,7 @@ func (suite *KeeperTestSuite) TestHasMember() {
 	issuer := suite.TestAccs[0]
 	recipient := suite.TestAccs[1]
 	id, _ := suite.PrepareCertificate(issuer, &recipient)
-	k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
+	suite.SetMembers(id, []sdk.AccAddress{recipient})
 
 	suite.True(k.HasMember(suite.Ctx, id, recipient))
 	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
@@ -174,81 +174,5 @@ func (suite *KeeperTestSuite) TestUpdateAcceptedMembers_NonexistentCert() {
 	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
 	toRemove := []sdk.AccAddress{recipient}
 	err := k.UpdateAcceptedMembers(suite.Ctx, uint64(10), toAdd, toRemove)
-	suite.Error(err)
-}
-
-func (suite *KeeperTestSuite) TestUpdateMembershipStatus() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
-
-	suite.False(k.HasMember(suite.Ctx, id, recipient))
-	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
-
-	err := k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
-	suite.NoError(err)
-
-	suite.True(k.HasMember(suite.Ctx, id, recipient))
-	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
-}
-
-func (suite *KeeperTestSuite) TestUpdateMembershipStatus_RejectRemovesFromPending() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
-
-	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
-
-	err := k.UpdateMembershipStatus(suite.Ctx, id, recipient, false)
-	suite.NoError(err)
-
-	suite.False(k.HasMember(suite.Ctx, id, recipient))
-	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
-}
-
-func (suite *KeeperTestSuite) TestUpdateMembershipStatus_NoDoubleAccept() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
-
-	err := k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
-	suite.NoError(err)
-
-	err = k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
-	suite.Error(err)
-}
-
-func (suite *KeeperTestSuite) TestUpdateMembershipStatus_NonexistentCert() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
-
-	err := k.UpdateMembershipStatus(suite.Ctx, id+1, recipient, true)
-	suite.Error(err)
-}
-
-func (suite *KeeperTestSuite) TestUpdateMembershipStatus_NotPendingMember() {
-	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
-	recipient := suite.TestAccs[1]
-	notMember := suite.TestAccs[2]
-
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
-
-	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
-	suite.False(k.HasPendingMember(suite.Ctx, id, notMember))
-
-	err := k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
-	suite.NoError(err)
-
-	err = k.UpdateMembershipStatus(suite.Ctx, id, recipient, true)
 	suite.Error(err)
 }

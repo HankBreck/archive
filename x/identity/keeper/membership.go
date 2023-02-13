@@ -85,35 +85,6 @@ func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member s
 	return store.Has(member.Bytes()), nil
 }
 
-// UpdateMembershipStatus transitions the state of the identity to accept or reject membership invitations.
-// Returns an error if the certificate does not exist or the address is not a pending member.
-//
-// TODO: Refactor this away to use UpdateAcceptedMembers
-func (k Keeper) UpdateMembershipStatus(ctx sdk.Context, certificateId uint64, member sdk.AccAddress, isAccept bool) error {
-	// Ensure the certificate of ID exists
-	if !k.HasCertificate(ctx, certificateId) {
-		return types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", certificateId)
-	}
-
-	// Ensure membership is in the pending state
-	hasPending, err := k.HasPendingMember(ctx, certificateId, member)
-	if err != nil {
-		return err
-	} else if !hasPending {
-		return sdkerrors.ErrNotFound.Wrapf("member %s is not in the pending state", member.String())
-	}
-
-	if isAccept {
-		// Add to accepted
-		k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{member}, []sdk.AccAddress{}, false)
-	}
-
-	// Remove from pending
-	k.uncheckedUpdateMembers(ctx, certificateId, []sdk.AccAddress{}, []sdk.AccAddress{member}, true)
-
-	return nil
-}
-
 // UpdateMembers updates the pending membership list for the certificate referenced by id.
 // Each address in the toAdd list is granted "pending" membership, whereas each address in
 // toRemove's list is removed from the "pending" list.
