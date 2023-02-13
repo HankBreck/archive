@@ -3,6 +3,7 @@ package keeper_test
 import (
 	"github.com/HankBreck/archive/x/identity/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // Register Issuer
@@ -543,8 +544,6 @@ func (suite *KeeperTestSuite) TestRenounceIdentity_StillOperator() {
 }
 
 // Update Members
-//
-//	TODO: Think about add / remove order
 func (suite *KeeperTestSuite) TestUpdateMembers() {
 	issuer := suite.TestAccs[0]
 	recipient := suite.TestAccs[1]
@@ -765,12 +764,6 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 		ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 	}
 
-	// TODO:
-	//		Implement "inputMembers" functionality that adds the addresses as accepted members
-	//			This is needed to promote an operator
-	//			This should be checked as well prior to the test (like 0 events)
-	// 		Define expected output for failure and success cases
-
 	defaultInputMembers := []sdk.AccAddress{suite.TestAccs[2], suite.TestAccs[3]}
 	defaultInputOperators := []sdk.AccAddress{suite.TestAccs[8], suite.TestAccs[9], suite.TestAccs[10]}
 	tests := map[string]struct {
@@ -808,14 +801,14 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputMembers:   defaultInputMembers,
 			inputOperators: defaultInputOperators,
 			inputMsg: &types.MsgUpdateOperators{
-				Creator:  suite.TestAccs[8].String(), // member but not operator
+				Creator:  suite.TestAccs[12].String(), // non-operator account
 				Id:       uint64(0),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
 			expErr: true,
 		},
-		"remove_operator": {
+		"duplicate_toAdd": {
 			inputIssuer:    &issuer,
 			inputRecipient: &recipient,
 			inputMembers:   defaultInputMembers,
@@ -823,8 +816,8 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputMsg: &types.MsgUpdateOperators{
 				Creator:  issuer.String(),
 				Id:       uint64(0),
-				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
-				ToRemove: []string{recipient.String()}, // fail to remove operator
+				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[2].String()},
+				ToRemove: []string{},
 			},
 			expErr: true,
 		},
@@ -860,8 +853,8 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			id, _ := suite.PrepareCertificate(*test.inputIssuer, test.inputRecipient)
 
 			// Mock existing identity operators (to be demoted)
-			existingOperators := append(test.inputOperators, *test.inputRecipient)
-			err := suite.AddOperators(id, existingOperators)
+			// existingOperators := append(test.inputOperators)
+			err := suite.AddOperators(id, test.inputOperators)
 			suite.NoError(err)
 
 			// Mock existing identity members (to be added)
@@ -894,8 +887,8 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 				suite.Error(err)
 				suite.AssertEventEmitted(ctx, types.TypeMsgUpdateOperators, 0)
 				// Ensure operator status is unaffected by the failed call
-				hasMember, _ := k.HasMember(ctx, id, *test.inputRecipient)
-				suite.True(hasMember)
+				hasOperator, _ := k.HasOperator(ctx, id, *test.inputRecipient)
+				suite.True(hasOperator)
 			} else {
 				suite.NoError(err)
 				suite.AssertEventEmitted(ctx, types.TypeMsgUpdateOperators, 1)
@@ -917,13 +910,97 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 	}
 }
 
-//		nil message
-//		Invalid creator address
-//		Invalid cert ID
-//		Fail if sender not an operator or issuer
-//		Fail if one of toAdd addrs invalid
-//		Fail if one of toRemove addrs invalid
-//		Fail when adding duplicate operators
-//		Fail when adding an operator that is not an accepted member
-//		Success adds and removed members correctly
-//		Think about add / remove order
+func (suite *KeeperTestSuite) TestUpdateOperators_InvalidCertificateId() {
+	suite.SetupTest()
+	msgServer := suite.msgServer
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	existingMembers := suite.TestAccs[2:5]
+	existingOperators := suite.TestAccs[5:8]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	suite.SetMembers(id, existingMembers)
+	suite.AddOperators(id, existingOperators)
+
+	toAdd := []string{suite.TestAccs[2].String(), suite.TestAccs[3].String(), suite.TestAccs[4].String()}
+	toRemove := []string{suite.TestAccs[5].String(), suite.TestAccs[6].String(), suite.TestAccs[7].String()}
+	invalidId := id + 1
+	msg := &types.MsgUpdateOperators{
+		Creator:  recipient.String(),
+		Id:       invalidId,
+		ToAdd:    toAdd,
+		ToRemove: toRemove,
+	}
+	res, err := msgServer.UpdateOperators(sdk.WrapSDKContext(suite.Ctx), msg)
+	errorString := types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", invalidId).Error()
+	suite.EqualError(err, errorString)
+	suite.Nil(res)
+}
+
+func (suite *KeeperTestSuite) TestUpdateOperators_InvalidToAdd() {
+	suite.SetupTest()
+	msgServer := suite.msgServer
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	existingMembers := suite.TestAccs[2:5]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	suite.SetMembers(id, existingMembers) // needed to promote to operator
+
+	toAdd := []string{suite.TestAccs[2].String(), "invalid address", suite.TestAccs[4].String()}
+	toRemove := []string{}
+	msg := &types.MsgUpdateOperators{
+		Creator:  recipient.String(),
+		Id:       id,
+		ToAdd:    toAdd,
+		ToRemove: toRemove,
+	}
+	res, err := msgServer.UpdateOperators(sdk.WrapSDKContext(suite.Ctx), msg)
+	errorString := "decoding bech32 failed: invalid character in string: ' '"
+	suite.EqualError(err, errorString)
+	suite.Nil(res)
+}
+
+func (suite *KeeperTestSuite) TestUpdateOperators_InvalidToRemove() {
+	suite.SetupTest()
+	msgServer := suite.msgServer
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	existingOperators := suite.TestAccs[5:8]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	suite.AddOperators(id, existingOperators)
+
+	toAdd := []string{}
+	toRemove := []string{suite.TestAccs[5].String(), "invalid address", suite.TestAccs[7].String()}
+	msg := &types.MsgUpdateOperators{
+		Creator:  recipient.String(),
+		Id:       id,
+		ToAdd:    toAdd,
+		ToRemove: toRemove,
+	}
+	res, err := msgServer.UpdateOperators(sdk.WrapSDKContext(suite.Ctx), msg)
+	errorString := "decoding bech32 failed: invalid character in string: ' '"
+	suite.EqualError(err, errorString)
+	suite.Nil(res)
+}
+
+func (suite *KeeperTestSuite) TestUpdateOperators_NotAMember() {
+	suite.SetupTest()
+	msgServer := suite.msgServer
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	existingMembers := suite.TestAccs[5:8]
+	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	suite.SetMembers(id, existingMembers)
+
+	toAdd := []string{string(suite.TestAccs[3].String())} // nonexisting member
+	toRemove := []string{}
+	msg := &types.MsgUpdateOperators{
+		Creator:  recipient.String(),
+		Id:       id,
+		ToAdd:    toAdd,
+		ToRemove: toRemove,
+	}
+	res, err := msgServer.UpdateOperators(sdk.WrapSDKContext(suite.Ctx), msg)
+	errorString := sdkerrors.ErrNotFound.Wrapf("new operator is not a member of identity %d", id).Error()
+	suite.EqualError(err, errorString)
+	suite.Nil(res)
+}

@@ -148,17 +148,24 @@ func (suite *KeeperTestSuite) TestUpdateAcceptedMembers() {
 	recipient := suite.TestAccs[1]
 	id, _ := suite.PrepareCertificate(issuer, &recipient)
 	suite.AcceptMembership(id, recipient)
+	// remove operator status so recipient can be removed
+	k.RemoveOperators(suite.Ctx, id, []sdk.AccAddress{recipient})
 
-	// Assert initial member is present
-	suite.True(k.HasMember(suite.Ctx, id, recipient))
+	// Assert initial state
+	hasInitialMember, _ := k.HasMember(suite.Ctx, id, recipient)
+	hasInitialOperator, _ := k.HasOperator(suite.Ctx, id, recipient)
+	suite.True(hasInitialMember)
+	suite.False(hasInitialOperator)
 
 	// Test add & remove members
 	toAdd := []sdk.AccAddress{suite.TestAccs[2]}
 	toRemove := []sdk.AccAddress{recipient}
 	err := k.UpdateAcceptedMembers(suite.Ctx, id, toAdd, toRemove)
 	suite.NoError(err)
-	suite.False(k.HasMember(suite.Ctx, id, recipient))
-	suite.True(k.HasMember(suite.Ctx, id, toAdd[0]))
+	hasRecipient, _ := k.HasMember(suite.Ctx, id, recipient)
+	hasNew, _ := k.HasMember(suite.Ctx, id, toAdd[0])
+	suite.False(hasRecipient)
+	suite.True(hasNew)
 }
 
 func (suite *KeeperTestSuite) TestUpdateAcceptedMembers_NonexistentCert() {

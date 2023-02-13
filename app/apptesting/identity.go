@@ -36,9 +36,8 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 
 	if recipient != nil {
 		k.CreateMembership(s.Ctx, id, *recipient)
+		k.SetInitialOperator(s.Ctx, id, *recipient)
 	}
-
-	k.SetInitialOperator(s.Ctx, id, *recipient)
 
 	return id, nil
 }

@@ -82,7 +82,8 @@ func (suite *KeeperTestSuite) TestRemoveOperators() {
 	opers := suite.TestAccs[2:4]
 	id := setupRemoveOpers(suite, opers)
 
-	err := k.RemoveOperators(suite.Ctx, id, opers)
+	// Remove opers and recipient
+	err := k.RemoveOperators(suite.Ctx, id, append(opers, suite.TestAccs[1]))
 	suite.NoError(err)
 
 	// Ensure operators were correctly updated
