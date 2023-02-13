@@ -668,15 +668,19 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 				suite.NoError(err)
 				suite.AssertEventEmitted(ctx, types.TypeMsgUpdateMembers, 1)
 				suite.NotNil(res)
-				// Ensure each toRemove address is no longer an accepted member
+				// Ensure each toRemove address has no privilages
 				for _, addr := range test.inputMsg.ToRemove {
 					hasMember, _ := k.HasMember(ctx, id, sdk.MustAccAddressFromBech32(addr))
 					suite.False(hasMember)
 				}
-				// Ensure each toAdd address is no longer an accepted member
+				// Ensure each toAdd address is only a pending member
 				for _, addr := range test.inputMsg.ToAdd {
 					hasPending, _ := k.HasPendingMember(ctx, id, sdk.MustAccAddressFromBech32(addr))
 					suite.True(hasPending)
+					hasAccepted, _ := k.HasMember(ctx, id, sdk.MustAccAddressFromBech32(addr))
+					hasOperator, _ := k.HasOperator(ctx, id, sdk.MustAccAddressFromBech32(addr))
+					suite.False(hasAccepted)
+					suite.False(hasOperator)
 				}
 			}
 		})
