@@ -18,6 +18,7 @@ service Msg {
       returns (MsgRenounceIdentityResponse);
   rpc UpdateOperators(MsgUpdateOperators) returns (MsgUpdateOperatorsResponse);
   rpc UpdateMembers(MsgUpdateMembers) returns (MsgUpdateMembersResponse);
+  rpc FreezeIdentity(MsgFreezeIdentity) returns (MsgFreezeIdentityResponse);
   // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -70,5 +71,11 @@ message MsgUpdateMembers {
   repeated string toRemove = 4;
 }
 message MsgUpdateMembersResponse {}
+
+message MsgFreezeIdentity {
+    string creator = 1;
+    uint64 id = 2;
+}
+message MsgFreezeIdentityResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
