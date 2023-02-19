@@ -47,7 +47,7 @@ service Query {
   // Queries an Identity to see if it is frozen
   rpc IsFrozen(QueryIsFrozenRequest) returns (QueryIsFrozenResponse) {
     option (google.api.http).get =
-        "/archive/identity/is_frozen/{id}/";
+        "/archive/identity/is_frozen/{id}";
   }
 
   // this line is used by starport scaffolding # 2
