@@ -150,3 +150,19 @@ func (k Keeper) MemberRole(goCtx context.Context, req *types.QueryMemberRoleRequ
 
 	return nil, sdkerrors.ErrNotFound.Wrapf("account (%s) is not a member of identity %d", memberAddr.String(), req.Id)
 }
+
+func (k Keeper) IsFrozen(goCtx context.Context, req *types.QueryIsFrozenRequest) (*types.QueryIsFrozenResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Respond with error if the certificate does not exist
+	if !k.HasCertificate(ctx, req.Id) {
+		return nil, types.ErrNonexistentCertificate
+	}
+
+	// Check if the identity is frozen
+	isFrozen := k.HasFrozen(ctx, req.Id)
+	return &types.QueryIsFrozenResponse{IsFrozen: isFrozen}, nil
+}

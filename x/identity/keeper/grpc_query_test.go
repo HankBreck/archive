@@ -17,6 +17,7 @@ import (
 //		Test Identity
 //		Test Operators
 // 		Test MemberRole
+// 		Test IsFrozen
 
 func TestParamsQuery(t *testing.T) {
 	keeper, ctx := testkeeper.IdentityKeeper(t)
