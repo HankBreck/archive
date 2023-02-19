@@ -1008,3 +1008,80 @@ func (suite *KeeperTestSuite) TestUpdateOperators_NotAMember() {
 	suite.EqualError(err, errorString)
 	suite.Nil(res)
 }
+
+func (suite *KeeperTestSuite) TestFreezeIdentity() {
+	issuer := suite.TestAccs[0]
+	recipient := suite.TestAccs[1]
+	defaultMsg := types.MsgFreezeIdentity{
+		Creator: issuer.String(),
+		Id:      uint64(0),
+	}
+
+	tests := map[string]struct {
+		inputIssuer    *sdk.AccAddress
+		inputRecipient *sdk.AccAddress
+		inputMsg       *types.MsgFreezeIdentity
+		expErr         bool
+	}{
+		"nil_message": {
+			inputIssuer:    &issuer,
+			inputRecipient: &recipient,
+			inputMsg:       nil,
+			expErr:         true,
+		},
+		"invalid_creator": {
+			inputIssuer:    &issuer,
+			inputRecipient: &recipient,
+			inputMsg: &types.MsgFreezeIdentity{
+				Creator: "creator",
+				Id:      uint64(0),
+			},
+			expErr: true,
+		},
+		"unauthorized_sender": {
+			inputIssuer:    &issuer,
+			inputRecipient: &recipient,
+			inputMsg: &types.MsgFreezeIdentity{
+				Creator: recipient.String(), // recipient cannot freeze
+				Id:      uint64(0),
+			},
+			expErr: true,
+		},
+		"issuer_freeze": {
+			inputIssuer:    &issuer,
+			inputRecipient: &recipient,
+			inputMsg:       &defaultMsg,
+			expErr:         false,
+		},
+	}
+
+	for name, test := range tests {
+		suite.Run(name, func() {
+			suite.SetupTest()
+			k := suite.App.IdentityKeeper
+			msgServer := suite.msgServer
+			ctx := suite.Ctx
+			id, _ := suite.PrepareCertificate(*test.inputIssuer, test.inputRecipient)
+			if test.inputMsg != nil {
+				test.inputMsg.Id = id
+			}
+
+			// Reset event manager
+			ctx = ctx.WithEventManager(sdk.NewEventManager())
+			suite.Equal(0, len(ctx.EventManager().Events()))
+
+			// Test UpdateOperators
+			res, err := msgServer.FreezeIdentity(sdk.WrapSDKContext(ctx), test.inputMsg)
+			if test.expErr {
+				suite.Error(err)
+				suite.AssertEventEmitted(ctx, types.TypeMsgFreezeIdentity, 0)
+			} else {
+				suite.NoError(err)
+				suite.AssertEventEmitted(ctx, types.TypeMsgFreezeIdentity, 1)
+				suite.NotNil(res)
+				// Ensure state was correctly updated
+				suite.True(k.IsFrozen(ctx, test.inputMsg.Id))
+			}
+		})
+	}
+}

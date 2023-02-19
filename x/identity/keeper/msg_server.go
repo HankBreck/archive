@@ -409,5 +409,14 @@ func (k msgServer) FreezeIdentity(goCtx context.Context, msg *types.MsgFreezeIde
 		return nil, err
 	}
 
+	// Emit events
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgFreezeIdentity,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(sdk.AttributeKeyAction, "FreezeIdentity"),
+		sdk.NewAttribute("certificate_id", strconv.FormatUint(msg.Id, 10)),
+	))
+
 	return &types.MsgFreezeIdentityResponse{}, nil
 }
