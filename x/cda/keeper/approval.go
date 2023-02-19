@@ -73,7 +73,7 @@ func (k Keeper) HasApproval(ctx sdk.Context, cdaId uint64, signer sdk.AccAddress
 
 func (k Keeper) uncheckedSetApproval(ctx sdk.Context, cdaId uint64, signer sdk.AccAddress) {
 	store := k.getApprovalStore(ctx, cdaId)
-	store.Set(signer.Bytes(), []byte("x"))
+	store.Set(signer.Bytes(), []byte("x")) // TODO: make this a single byte
 }
 
 func (k Keeper) getApprovalStore(ctx sdk.Context, cdaId uint64) prefix.Store {

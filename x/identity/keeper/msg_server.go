@@ -227,13 +227,7 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
 	}
 
-	// Ensure the certificate exists
-	// TODO: remove (duplicate of HasMember)
-	if !k.HasCertificate(ctx, msg.Id) {
-		return nil, types.ErrNonexistentCertificate.Wrapf("No identity found for ID %d", msg.Id)
-	}
-
-	// Ensure sender is a member of the identity
+	// Ensure sender is a member of the identity (and certificate exists)
 	hasAccepted, err := k.HasMember(ctx, msg.Id, addr)
 	if err != nil {
 		return nil, err
