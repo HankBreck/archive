@@ -7,14 +7,18 @@ import (
 func (suite *KeeperTestSuite) TestAppendCertificate() {
 	k := suite.App.IdentityKeeper
 
-	// Setup default values
-	defaultIssuer := types.Issuer{
+	// Register the issuer
+	issuer := types.Issuer{
 		Creator:     suite.TestAccs[0].String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
 	}
-	defaultCert := types.Certificate{
-		IssuerAddress:     defaultIssuer.Creator,
+	k.SetIssuer(suite.Ctx, issuer)
+
+	// Add new certificate
+	certificate := types.Certificate{
+		Id:                0,
+		IssuerAddress:     issuer.Creator,
 		Salt:              "salt",
 		MetadataSchemaUri: "google.com/metadata-schema",
 		Hashes: []*types.HashEntry{
@@ -22,70 +26,38 @@ func (suite *KeeperTestSuite) TestAppendCertificate() {
 			{Field: "field2", Hash: "hash2"},
 		},
 	}
+	id := k.AppendCertificate(suite.Ctx, certificate)
 
-	tests := map[string]struct {
-		inputIssuer      *types.Issuer
-		inputCertificate *types.Certificate
-		expPanic         bool
-		expCertificate   types.Certificate
-	}{
-		"simple_set": {
-			inputIssuer:      &defaultIssuer,
-			inputCertificate: &defaultCert,
-			expPanic:         false,
-			expCertificate: types.Certificate{
-				Id:                uint64(0),
-				IssuerAddress:     defaultIssuer.Creator,
-				Salt:              "salt",
-				MetadataSchemaUri: "google.com/metadata-schema",
-				Hashes: []*types.HashEntry{
-					{Field: "field1", Hash: "hash1"},
-					{Field: "field2", Hash: "hash2"},
-				},
-			},
-		},
-		"overwrite_preset_id": {
-			inputIssuer: &defaultIssuer,
-			inputCertificate: &types.Certificate{
-				Id:                uint64(10),
-				IssuerAddress:     defaultIssuer.Creator,
-				Salt:              "salt",
-				MetadataSchemaUri: "google.com/metadata-schema",
-				Hashes: []*types.HashEntry{
-					{Field: "field1", Hash: "hash1"},
-					{Field: "field2", Hash: "hash2"},
-				},
-			},
-			expPanic: false,
-			expCertificate: types.Certificate{
-				Id:                uint64(1), // sequential IDs
-				IssuerAddress:     defaultIssuer.Creator,
-				Salt:              "salt",
-				MetadataSchemaUri: "google.com/metadata-schema",
-				Hashes: []*types.HashEntry{
-					{Field: "field1", Hash: "hash1"},
-					{Field: "field2", Hash: "hash2"},
-				},
-			},
+	// Assert the expected certificate is written to state
+	actual, _ := k.GetCertificate(suite.Ctx, id)
+	suite.Equal(certificate, *actual)
+}
+
+func (suite *KeeperTestSuite) TestAppendCertificate_OverwritePresetId() {
+	k := suite.App.IdentityKeeper
+
+	// Register the issuer
+	issuer := types.Issuer{
+		Creator:     suite.TestAccs[0].String(),
+		Name:        "Test Issuer",
+		MoreInfoUri: "google.com/more-info",
+	}
+	k.SetIssuer(suite.Ctx, issuer)
+
+	// Add new certificate
+	certificate := types.Certificate{
+		Id:                10, // should be overwritten
+		IssuerAddress:     issuer.Creator,
+		Salt:              "salt",
+		MetadataSchemaUri: "google.com/metadata-schema",
+		Hashes: []*types.HashEntry{
+			{Field: "field1", Hash: "hash1"},
+			{Field: "field2", Hash: "hash2"},
 		},
 	}
-
-	for name, test := range tests {
-		suite.Run(name, func() {
-			// Register the issuer
-			k.SetIssuer(suite.Ctx, *test.inputIssuer)
-
-			if test.expPanic {
-				suite.Panics(func() { k.AppendCertificate(suite.Ctx, *test.inputCertificate) })
-			} else {
-				id := k.AppendCertificate(suite.Ctx, *test.inputCertificate)
-
-				// Assert the expected certificate is written to state
-				actual, _ := k.GetCertificate(suite.Ctx, id)
-				suite.Equal(test.expCertificate, *actual)
-			}
-		})
-	}
+	id := k.AppendCertificate(suite.Ctx, certificate)
+	suite.NotEqual(certificate.Id, id)
+	suite.Equal(id, 0)
 }
 
 func (suite *KeeperTestSuite) TestGetCertificate() {
