@@ -58,8 +58,7 @@ func (k msgServer) RegisterIssuer(goCtx context.Context, msg *types.MsgRegisterI
 	return &types.MsgRegisterIssuerResponse{}, nil
 }
 
-// TODO: WHY IS THIS KEEPER INSTEAD OF MSGSERVER????
-func (k Keeper) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
+func (k msgServer) IssueCertificate(goCtx context.Context, msg *types.MsgIssueCertificate) (*types.MsgIssueCertificateResponse, error) {
 	// Handle message and context
 	if msg == nil {
 		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
