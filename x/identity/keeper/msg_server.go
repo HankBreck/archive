@@ -120,6 +120,11 @@ func (k msgServer) AcceptIdentity(goCtx context.Context, msg *types.MsgAcceptIde
 		return nil, err
 	}
 
+	// Ensure the identity has not been frozen
+	if k.HasFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
+	}
+
 	// Ensure sender is in the pending membership state
 	hasPending, err := k.HasPendingMember(ctx, msg.Id, senderAddr)
 	if err != nil {
@@ -163,6 +168,11 @@ func (k msgServer) RejectIdentity(goCtx context.Context, msg *types.MsgRejectIde
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
+	}
+
+	// Ensure the identity has not been frozen
+	if k.HasFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
 	}
 
 	// Ensure send is in the pending membership state
@@ -210,6 +220,11 @@ func (k msgServer) RenounceIdentity(goCtx context.Context, msg *types.MsgRenounc
 	addr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
+	}
+
+	// Ensure the identity has not been frozen
+	if k.HasFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
 	}
 
 	// Ensure the certificate exists
@@ -260,6 +275,11 @@ func (k msgServer) UpdateMembers(goCtx context.Context, msg *types.MsgUpdateMemb
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
+	}
+
+	// Ensure the identity has not been frozen
+	if k.HasFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
 	}
 
 	// Ensure sender is an operator/issuer (and certificate exists)
@@ -325,6 +345,11 @@ func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOp
 	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return nil, err
+	}
+
+	// Ensure the identity has not been frozen
+	if k.HasFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("cannot accept a frozen identity")
 	}
 
 	// Ensure sender is an operator/issuer (and certificate exists)
