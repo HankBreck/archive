@@ -27,7 +27,7 @@ func (k Keeper) Freeze(ctx sdk.Context, certificateId uint64) error {
 	return nil
 }
 
-func (k Keeper) IsFrozen(ctx sdk.Context, certificateId uint64) bool {
+func (k Keeper) HasFrozen(ctx sdk.Context, certificateId uint64) bool {
 	store := k.getFreezeStore(ctx, certificateId)
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, certificateId)

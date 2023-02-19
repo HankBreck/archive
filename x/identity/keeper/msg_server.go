@@ -399,7 +399,7 @@ func (k msgServer) FreezeIdentity(goCtx context.Context, msg *types.MsgFreezeIde
 	}
 
 	// Ensure an identity can only be frozen once
-	if k.IsFrozen(ctx, msg.Id) {
+	if k.HasFrozen(ctx, msg.Id) {
 		return nil, types.ErrFrozenIdentity.Wrapf("identity %d is already frozen", msg.Id)
 	}
 

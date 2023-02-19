@@ -1080,7 +1080,7 @@ func (suite *KeeperTestSuite) TestFreezeIdentity() {
 				suite.AssertEventEmitted(ctx, types.TypeMsgFreezeIdentity, 1)
 				suite.NotNil(res)
 				// Ensure state was correctly updated
-				suite.True(k.IsFrozen(ctx, test.inputMsg.Id))
+				suite.True(k.HasFrozen(ctx, test.inputMsg.Id))
 			}
 		})
 	}
