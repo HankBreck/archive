@@ -25,6 +25,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgRenounceIdentity{},
 		&MsgUpdateOperators{},
 		&MsgUpdateMembers{},
+		&MsgFreezeIdentity{},
 	)
 	// this line is used by starport scaffolding # 3
 

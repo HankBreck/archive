@@ -30,6 +30,9 @@ const (
 
 	// OperatorKey defines the prefix under which Membership lists are stored
 	OperatorKey = "id-operators-"
+
+	// FreezeKey defines the prefix under which frozen identity IDs are stored
+	FreezeKey = "id-frozen-"
 )
 
 func MembershipKeyPrefix(id uint64, isPending bool) []byte {

@@ -377,3 +377,37 @@ func (k msgServer) UpdateOperators(goCtx context.Context, msg *types.MsgUpdateOp
 
 	return &types.MsgUpdateOperatorsResponse{}, nil
 }
+
+func (k msgServer) FreezeIdentity(goCtx context.Context, msg *types.MsgFreezeIdentity) (*types.MsgFreezeIdentityResponse, error) {
+	// Handle message and context
+	if msg == nil {
+		return nil, types.ErrInvalid.Wrap("Type MsgUpdateOperators cannot be nil.")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	senderAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the sender is the issuer for this identity
+	hasIssuer, err := k.HasIssuerForId(ctx, msg.Id, senderAddr)
+	if err != nil {
+		return nil, err
+	} else if !hasIssuer {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("Sender must be the issuer of identity %d", msg.Id)
+	}
+
+	// Ensure an identity can only be frozen once
+	if k.IsFrozen(ctx, msg.Id) {
+		return nil, types.ErrFrozenIdentity.Wrapf("identity %d is already frozen", msg.Id)
+	}
+
+	// Freeze identity using keeper methods
+	err = k.Freeze(ctx, msg.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgFreezeIdentityResponse{}, nil
+}
