@@ -39,11 +39,15 @@ service Query {
   rpc Operators(QueryOperatorsRequest) returns (QueryOperatorsResponse) {
     option (google.api.http).get = "/archive/identity/operators/{id}";
   }
-
   // Queries a list of MemberRole items.
   rpc MemberRole(QueryMemberRoleRequest) returns (QueryMemberRoleResponse) {
     option (google.api.http).get =
         "/archive/identity/member_role/{id}/{member}";
+  }
+  // Queries an Identity to see if it is frozen
+  rpc IsFrozen(QueryIsFrozenRequest) returns (QueryIsFrozenResponse) {
+    option (google.api.http).get =
+        "/archive/identity/is_frozen/{id}/";
   }
 
   // this line is used by starport scaffolding # 2
@@ -96,7 +100,13 @@ message QueryMemberRoleRequest {
   uint64 id = 1;
   string member = 2;
 }
-
 message QueryMemberRoleResponse { string role = 1; }
+
+message QueryIsFrozenRequest {
+    uint64 id = 1;
+}
+message QueryIsFrozenResponse {
+    bool is_frozen = 1 [ (gogoproto.customname) = "IsFrozen" ];
+}
 
 // this line is used by starport scaffolding # 3
