@@ -520,7 +520,7 @@ func (suite *KeeperTestSuite) TestRenounceIdentity_InvalidCertificateId() {
 		Id:      invalidId,
 	}
 	res, err := msgServer.RenounceIdentity(sdk.WrapSDKContext(suite.Ctx), msg)
-	suite.EqualError(err, types.ErrNonexistentCertificate.Wrapf("No identity found for ID %d", msg.Id).Error())
+	suite.EqualError(err, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", msg.Id).Error())
 	suite.Nil(res)
 }
 

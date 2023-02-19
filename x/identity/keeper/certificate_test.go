@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestAppendCertificate_OverwritePresetId() {
 	}
 	id := k.AppendCertificate(suite.Ctx, certificate)
 	suite.NotEqual(certificate.Id, id)
-	suite.Equal(id, 0)
+	suite.Equal(uint64(0), id)
 }
 
 func (suite *KeeperTestSuite) TestGetCertificate() {

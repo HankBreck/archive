@@ -9,15 +9,17 @@ import (
 
 func (suite *KeeperTestSuite) TestCreateMembership() {
 	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[0]
 
-	// Setup default values
-	defaultIssuer := types.Issuer{
+	// Mock the certificate creation step
+	issuer := types.Issuer{
 		Creator:     suite.TestAccs[0].String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
 	}
-	defaultCert := types.Certificate{
-		IssuerAddress:     defaultIssuer.Creator,
+	k.SetIssuer(suite.Ctx, issuer)
+	certificate := types.Certificate{
+		IssuerAddress:     issuer.Creator,
 		Salt:              "salt",
 		MetadataSchemaUri: "google.com/metadata-schema",
 		Hashes: []*types.HashEntry{
@@ -25,46 +27,26 @@ func (suite *KeeperTestSuite) TestCreateMembership() {
 			{Field: "field2", Hash: "hash2"},
 		},
 	}
-	defaultRecipient := suite.TestAccs[1]
+	id := k.AppendCertificate(suite.Ctx, certificate)
 
-	tests := map[string]struct {
-		inputIssuer      *types.Issuer
-		inputCertificate *types.Certificate
-		inputRecipient   *sdk.AccAddress
-		expPanic         bool
-	}{
-		"no_certificate_set": {
-			inputIssuer:      &defaultIssuer,
-			inputCertificate: nil,
-			inputRecipient:   &defaultRecipient,
-			expPanic:         true,
-		},
-		"simple_set": {
-			inputIssuer:      &defaultIssuer,
-			inputCertificate: &defaultCert,
-			inputRecipient:   &defaultRecipient,
-			expPanic:         false,
-		},
-	}
+	// Test creation of membership
+	suite.NotPanics(func() { k.CreateMembership(suite.Ctx, id, recipient) })
 
-	for name, test := range tests {
-		suite.Run(name, func() {
-			id := uint64(0)
+	// Ensure recipient was added as a pending member
+	hasRecipient, err := k.HasPendingMember(suite.Ctx, id, recipient)
+	suite.NoError(err)
+	suite.True(hasRecipient)
+}
 
-			// Mock the certificate creation step
-			k.SetIssuer(suite.Ctx, *test.inputIssuer)
-			if test.inputCertificate != nil {
-				id = k.AppendCertificate(suite.Ctx, *test.inputCertificate)
-			}
+func (suite *KeeperTestSuite) TestCreateMembership_NilCertificate() {
+	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[0]
 
-			// Test creation of membership
-			if !test.expPanic {
-				suite.NotPanics(func() { k.CreateMembership(suite.Ctx, id, *test.inputRecipient) })
-			} else {
-				suite.Panics(func() { k.CreateMembership(suite.Ctx, id, *test.inputRecipient) })
-			}
-		})
-	}
+	// Skip certificate creation
+	invalidId := uint64(10)
+
+	// Test creation of membership
+	suite.Panics(func() { k.CreateMembership(suite.Ctx, invalidId, recipient) })
 }
 
 func (suite *KeeperTestSuite) TestHasPendingMember() {
