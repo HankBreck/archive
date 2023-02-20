@@ -158,7 +158,8 @@ func (m *QueryContractRequest) GetId() uint64 {
 	return 0
 }
 
-// QueryContractResponse is the response type for the Query/Contracts RPC method.
+// QueryContractResponse is the response type for the Query/Contracts RPC
+// method.
 type QueryContractResponse struct {
 	Contract Contract `protobuf:"bytes,1,opt,name=contract,proto3" json:"contract"`
 }
@@ -249,7 +250,8 @@ func (m *QueryContractsRequest) GetPagination() *query.PageRequest {
 	return nil
 }
 
-// QueryContractsResponse is the response type for the Query/Contracts RPC method.
+// QueryContractsResponse is the response type for the Query/Contracts RPC
+// method.
 type QueryContractsResponse struct {
 	// the ids of the contracts registered
 	Contracts []Contract `protobuf:"bytes,1,rep,name=contracts,proto3" json:"contracts"`
@@ -304,7 +306,8 @@ func (m *QueryContractsResponse) GetPagination() *query.PageResponse {
 	return nil
 }
 
-// QuerySigningDataRequest is the request type for the Query/SigningData RPC method
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC
+// method
 type QuerySigningDataRequest struct {
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
@@ -349,7 +352,8 @@ func (m *QuerySigningDataRequest) GetId() uint64 {
 	return 0
 }
 
-// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC method
+// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
+// method
 type QuerySigningDataResponse struct {
 	SigningData RawSigningData `protobuf:"bytes,1,opt,name=signing_data,json=signingData,proto3,casttype=RawSigningData" json:"signing_data,omitempty"`
 }

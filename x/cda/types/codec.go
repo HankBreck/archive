@@ -17,11 +17,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgCreateCda{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgApproveCda{},
-	)
-	registry.RegisterImplementations((*sdk.Msg)(nil),
 		&MsgFinalizeCda{},
 	)
 	// this line is used by starport scaffolding # 3

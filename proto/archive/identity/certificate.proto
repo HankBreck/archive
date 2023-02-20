@@ -1,0 +1,22 @@
+syntax = "proto3";
+package archive.identity;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/HankBreck/archive/x/identity/types";
+
+// HashEntry is a record of a field: hash mapping used in Certificates
+message HashEntry {
+  string field = 1;
+  string hash = 2;
+}
+
+// Certificate is the structure of an identity certificate
+message Certificate {
+  uint64 id = 1;
+  string issuer_address = 2 [ (gogoproto.customname) = "IssuerAddress" ];
+  string salt = 3;
+  string metadata_schema_uri = 4
+      [ (gogoproto.customname) = "MetadataSchemaUri" ];
+  repeated HashEntry hashes = 5;
+}

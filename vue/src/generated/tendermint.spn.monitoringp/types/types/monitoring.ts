@@ -1,6 +1,6 @@
 /* eslint-disable */
-import * as Long from "long";
-import { util, configure, Writer, Reader } from "protobufjs/minimal";
+import Long from "long";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "tendermint.spn.types";
 
@@ -11,7 +11,8 @@ export interface MonitoringPacketData {
 }
 
 /** MonitoringPacketAck defines a struct for the packet acknowledgment */
-export interface MonitoringPacketAck {}
+export interface MonitoringPacketAck {
+}
 
 /** MonitoringPacket is the packet sent over IBC that contains all the signature counts */
 export interface MonitoringPacket {
@@ -34,34 +35,27 @@ export interface SignatureCount {
   RelativeSignatures: string;
 }
 
-const baseMonitoringPacketData: object = {};
+function createBaseMonitoringPacketData(): MonitoringPacketData {
+  return { monitoringPacket: undefined };
+}
 
 export const MonitoringPacketData = {
-  encode(
-    message: MonitoringPacketData,
-    writer: Writer = Writer.create()
-  ): Writer {
+  encode(message: MonitoringPacketData, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.monitoringPacket !== undefined) {
-      MonitoringPacket.encode(
-        message.monitoringPacket,
-        writer.uint32(10).fork()
-      ).ldelim();
+      MonitoringPacket.encode(message.monitoringPacket, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MonitoringPacketData {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MonitoringPacketData {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMonitoringPacketData } as MonitoringPacketData;
+    const message = createBaseMonitoringPacketData();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.monitoringPacket = MonitoringPacket.decode(
-            reader,
-            reader.uint32()
-          );
+          message.monitoringPacket = MonitoringPacket.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -72,56 +66,41 @@ export const MonitoringPacketData = {
   },
 
   fromJSON(object: any): MonitoringPacketData {
-    const message = { ...baseMonitoringPacketData } as MonitoringPacketData;
-    if (
-      object.monitoringPacket !== undefined &&
-      object.monitoringPacket !== null
-    ) {
-      message.monitoringPacket = MonitoringPacket.fromJSON(
-        object.monitoringPacket
-      );
-    } else {
-      message.monitoringPacket = undefined;
-    }
-    return message;
+    return {
+      monitoringPacket: isSet(object.monitoringPacket) ? MonitoringPacket.fromJSON(object.monitoringPacket) : undefined,
+    };
   },
 
   toJSON(message: MonitoringPacketData): unknown {
     const obj: any = {};
-    message.monitoringPacket !== undefined &&
-      (obj.monitoringPacket = message.monitoringPacket
-        ? MonitoringPacket.toJSON(message.monitoringPacket)
-        : undefined);
+    message.monitoringPacket !== undefined && (obj.monitoringPacket = message.monitoringPacket
+      ? MonitoringPacket.toJSON(message.monitoringPacket)
+      : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MonitoringPacketData>): MonitoringPacketData {
-    const message = { ...baseMonitoringPacketData } as MonitoringPacketData;
-    if (
-      object.monitoringPacket !== undefined &&
-      object.monitoringPacket !== null
-    ) {
-      message.monitoringPacket = MonitoringPacket.fromPartial(
-        object.monitoringPacket
-      );
-    } else {
-      message.monitoringPacket = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<MonitoringPacketData>, I>>(object: I): MonitoringPacketData {
+    const message = createBaseMonitoringPacketData();
+    message.monitoringPacket = (object.monitoringPacket !== undefined && object.monitoringPacket !== null)
+      ? MonitoringPacket.fromPartial(object.monitoringPacket)
+      : undefined;
     return message;
   },
 };
 
-const baseMonitoringPacketAck: object = {};
+function createBaseMonitoringPacketAck(): MonitoringPacketAck {
+  return {};
+}
 
 export const MonitoringPacketAck = {
-  encode(_: MonitoringPacketAck, writer: Writer = Writer.create()): Writer {
+  encode(_: MonitoringPacketAck, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MonitoringPacketAck {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MonitoringPacketAck {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMonitoringPacketAck } as MonitoringPacketAck;
+    const message = createBaseMonitoringPacketAck();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -134,8 +113,7 @@ export const MonitoringPacketAck = {
   },
 
   fromJSON(_: any): MonitoringPacketAck {
-    const message = { ...baseMonitoringPacketAck } as MonitoringPacketAck;
-    return message;
+    return {};
   },
 
   toJSON(_: MonitoringPacketAck): unknown {
@@ -143,32 +121,31 @@ export const MonitoringPacketAck = {
     return obj;
   },
 
-  fromPartial(_: DeepPartial<MonitoringPacketAck>): MonitoringPacketAck {
-    const message = { ...baseMonitoringPacketAck } as MonitoringPacketAck;
+  fromPartial<I extends Exact<DeepPartial<MonitoringPacketAck>, I>>(_: I): MonitoringPacketAck {
+    const message = createBaseMonitoringPacketAck();
     return message;
   },
 };
 
-const baseMonitoringPacket: object = { blockHeight: 0 };
+function createBaseMonitoringPacket(): MonitoringPacket {
+  return { blockHeight: 0, signatureCounts: undefined };
+}
 
 export const MonitoringPacket = {
-  encode(message: MonitoringPacket, writer: Writer = Writer.create()): Writer {
+  encode(message: MonitoringPacket, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.blockHeight !== 0) {
       writer.uint32(8).int64(message.blockHeight);
     }
     if (message.signatureCounts !== undefined) {
-      SignatureCounts.encode(
-        message.signatureCounts,
-        writer.uint32(18).fork()
-      ).ldelim();
+      SignatureCounts.encode(message.signatureCounts, writer.uint32(18).fork()).ldelim();
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): MonitoringPacket {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): MonitoringPacket {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseMonitoringPacket } as MonitoringPacket;
+    const message = createBaseMonitoringPacket();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -176,10 +153,7 @@ export const MonitoringPacket = {
           message.blockHeight = longToNumber(reader.int64() as Long);
           break;
         case 2:
-          message.signatureCounts = SignatureCounts.decode(
-            reader,
-            reader.uint32()
-          );
+          message.signatureCounts = SignatureCounts.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -190,61 +164,36 @@ export const MonitoringPacket = {
   },
 
   fromJSON(object: any): MonitoringPacket {
-    const message = { ...baseMonitoringPacket } as MonitoringPacket;
-    if (object.blockHeight !== undefined && object.blockHeight !== null) {
-      message.blockHeight = Number(object.blockHeight);
-    } else {
-      message.blockHeight = 0;
-    }
-    if (
-      object.signatureCounts !== undefined &&
-      object.signatureCounts !== null
-    ) {
-      message.signatureCounts = SignatureCounts.fromJSON(
-        object.signatureCounts
-      );
-    } else {
-      message.signatureCounts = undefined;
-    }
-    return message;
+    return {
+      blockHeight: isSet(object.blockHeight) ? Number(object.blockHeight) : 0,
+      signatureCounts: isSet(object.signatureCounts) ? SignatureCounts.fromJSON(object.signatureCounts) : undefined,
+    };
   },
 
   toJSON(message: MonitoringPacket): unknown {
     const obj: any = {};
-    message.blockHeight !== undefined &&
-      (obj.blockHeight = message.blockHeight);
-    message.signatureCounts !== undefined &&
-      (obj.signatureCounts = message.signatureCounts
-        ? SignatureCounts.toJSON(message.signatureCounts)
-        : undefined);
+    message.blockHeight !== undefined && (obj.blockHeight = Math.round(message.blockHeight));
+    message.signatureCounts !== undefined
+      && (obj.signatureCounts = message.signatureCounts ? SignatureCounts.toJSON(message.signatureCounts) : undefined);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<MonitoringPacket>): MonitoringPacket {
-    const message = { ...baseMonitoringPacket } as MonitoringPacket;
-    if (object.blockHeight !== undefined && object.blockHeight !== null) {
-      message.blockHeight = object.blockHeight;
-    } else {
-      message.blockHeight = 0;
-    }
-    if (
-      object.signatureCounts !== undefined &&
-      object.signatureCounts !== null
-    ) {
-      message.signatureCounts = SignatureCounts.fromPartial(
-        object.signatureCounts
-      );
-    } else {
-      message.signatureCounts = undefined;
-    }
+  fromPartial<I extends Exact<DeepPartial<MonitoringPacket>, I>>(object: I): MonitoringPacket {
+    const message = createBaseMonitoringPacket();
+    message.blockHeight = object.blockHeight ?? 0;
+    message.signatureCounts = (object.signatureCounts !== undefined && object.signatureCounts !== null)
+      ? SignatureCounts.fromPartial(object.signatureCounts)
+      : undefined;
     return message;
   },
 };
 
-const baseSignatureCounts: object = { blockCount: 0 };
+function createBaseSignatureCounts(): SignatureCounts {
+  return { blockCount: 0, counts: [] };
+}
 
 export const SignatureCounts = {
-  encode(message: SignatureCounts, writer: Writer = Writer.create()): Writer {
+  encode(message: SignatureCounts, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.blockCount !== 0) {
       writer.uint32(8).uint64(message.blockCount);
     }
@@ -254,11 +203,10 @@ export const SignatureCounts = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): SignatureCounts {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCounts {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseSignatureCounts } as SignatureCounts;
-    message.counts = [];
+    const message = createBaseSignatureCounts();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -277,55 +225,37 @@ export const SignatureCounts = {
   },
 
   fromJSON(object: any): SignatureCounts {
-    const message = { ...baseSignatureCounts } as SignatureCounts;
-    message.counts = [];
-    if (object.blockCount !== undefined && object.blockCount !== null) {
-      message.blockCount = Number(object.blockCount);
-    } else {
-      message.blockCount = 0;
-    }
-    if (object.counts !== undefined && object.counts !== null) {
-      for (const e of object.counts) {
-        message.counts.push(SignatureCount.fromJSON(e));
-      }
-    }
-    return message;
+    return {
+      blockCount: isSet(object.blockCount) ? Number(object.blockCount) : 0,
+      counts: Array.isArray(object?.counts) ? object.counts.map((e: any) => SignatureCount.fromJSON(e)) : [],
+    };
   },
 
   toJSON(message: SignatureCounts): unknown {
     const obj: any = {};
-    message.blockCount !== undefined && (obj.blockCount = message.blockCount);
+    message.blockCount !== undefined && (obj.blockCount = Math.round(message.blockCount));
     if (message.counts) {
-      obj.counts = message.counts.map((e) =>
-        e ? SignatureCount.toJSON(e) : undefined
-      );
+      obj.counts = message.counts.map((e) => e ? SignatureCount.toJSON(e) : undefined);
     } else {
       obj.counts = [];
     }
     return obj;
   },
 
-  fromPartial(object: DeepPartial<SignatureCounts>): SignatureCounts {
-    const message = { ...baseSignatureCounts } as SignatureCounts;
-    message.counts = [];
-    if (object.blockCount !== undefined && object.blockCount !== null) {
-      message.blockCount = object.blockCount;
-    } else {
-      message.blockCount = 0;
-    }
-    if (object.counts !== undefined && object.counts !== null) {
-      for (const e of object.counts) {
-        message.counts.push(SignatureCount.fromPartial(e));
-      }
-    }
+  fromPartial<I extends Exact<DeepPartial<SignatureCounts>, I>>(object: I): SignatureCounts {
+    const message = createBaseSignatureCounts();
+    message.blockCount = object.blockCount ?? 0;
+    message.counts = object.counts?.map((e) => SignatureCount.fromPartial(e)) || [];
     return message;
   },
 };
 
-const baseSignatureCount: object = { opAddress: "", RelativeSignatures: "" };
+function createBaseSignatureCount(): SignatureCount {
+  return { opAddress: "", RelativeSignatures: "" };
+}
 
 export const SignatureCount = {
-  encode(message: SignatureCount, writer: Writer = Writer.create()): Writer {
+  encode(message: SignatureCount, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.opAddress !== "") {
       writer.uint32(10).string(message.opAddress);
     }
@@ -335,10 +265,10 @@ export const SignatureCount = {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): SignatureCount {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): SignatureCount {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseSignatureCount } as SignatureCount;
+    const message = createBaseSignatureCount();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -357,70 +287,56 @@ export const SignatureCount = {
   },
 
   fromJSON(object: any): SignatureCount {
-    const message = { ...baseSignatureCount } as SignatureCount;
-    if (object.opAddress !== undefined && object.opAddress !== null) {
-      message.opAddress = String(object.opAddress);
-    } else {
-      message.opAddress = "";
-    }
-    if (
-      object.RelativeSignatures !== undefined &&
-      object.RelativeSignatures !== null
-    ) {
-      message.RelativeSignatures = String(object.RelativeSignatures);
-    } else {
-      message.RelativeSignatures = "";
-    }
-    return message;
+    return {
+      opAddress: isSet(object.opAddress) ? String(object.opAddress) : "",
+      RelativeSignatures: isSet(object.RelativeSignatures) ? String(object.RelativeSignatures) : "",
+    };
   },
 
   toJSON(message: SignatureCount): unknown {
     const obj: any = {};
     message.opAddress !== undefined && (obj.opAddress = message.opAddress);
-    message.RelativeSignatures !== undefined &&
-      (obj.RelativeSignatures = message.RelativeSignatures);
+    message.RelativeSignatures !== undefined && (obj.RelativeSignatures = message.RelativeSignatures);
     return obj;
   },
 
-  fromPartial(object: DeepPartial<SignatureCount>): SignatureCount {
-    const message = { ...baseSignatureCount } as SignatureCount;
-    if (object.opAddress !== undefined && object.opAddress !== null) {
-      message.opAddress = object.opAddress;
-    } else {
-      message.opAddress = "";
-    }
-    if (
-      object.RelativeSignatures !== undefined &&
-      object.RelativeSignatures !== null
-    ) {
-      message.RelativeSignatures = object.RelativeSignatures;
-    } else {
-      message.RelativeSignatures = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<SignatureCount>, I>>(object: I): SignatureCount {
+    const message = createBaseSignatureCount();
+    message.opAddress = object.opAddress ?? "";
+    message.RelativeSignatures = object.RelativeSignatures ?? "";
     return message;
   },
 };
 
 declare var self: any | undefined;
 declare var window: any | undefined;
+declare var global: any | undefined;
 var globalThis: any = (() => {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
+  if (typeof globalThis !== "undefined") {
+    return globalThis;
+  }
+  if (typeof self !== "undefined") {
+    return self;
+  }
+  if (typeof window !== "undefined") {
+    return window;
+  }
+  if (typeof global !== "undefined") {
+    return global;
+  }
   throw "Unable to locate global object";
 })();
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
 
 function longToNumber(long: Long): number {
   if (long.gt(Number.MAX_SAFE_INTEGER)) {
@@ -429,7 +345,11 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
-  util.Long = Long as any;
-  configure();
+if (_m0.util.Long !== Long) {
+  _m0.util.Long = Long as any;
+  _m0.configure();
+}
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
 }

@@ -2,11 +2,13 @@
 
 import ArchiveCda from './archive.cda'
 import ArchiveContractregistry from './archive.contractregistry'
+import ArchiveIdentity from './archive.identity'
 
 
 export default { 
   ArchiveCda: load(ArchiveCda, 'archive.cda'),
   ArchiveContractregistry: load(ArchiveContractregistry, 'archive.contractregistry'),
+  ArchiveIdentity: load(ArchiveIdentity, 'archive.identity'),
   
 }
 

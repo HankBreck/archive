@@ -7,24 +7,22 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
 message CDA {
-    enum ContractStatus {
-        Pending = 0;
-        Finalized = 1;
-        Voided = 2;
-    }
-    string creator = 1;
-    uint64 id = 2;
-    repeated string signing_parties = 3;
-    uint64 contract_id = 4;
-    string legal_metadata_uri = 5;
-    google.protobuf.Timestamp utc_expire_time = 6 [
-        (gogoproto.stdtime) = true,
-        (gogoproto.nullable) = false
-    ];
-    ContractStatus status = 7;
+  enum ContractStatus {
+    Pending = 0;
+    Finalized = 1;
+    Voided = 2;
+  }
+  string creator = 1;
+  uint64 id = 2;
+  repeated string signing_parties = 3;
+  uint64 contract_id = 4;
+  string legal_metadata_uri = 5;
+  google.protobuf.Timestamp utc_expire_time = 6
+      [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+  ContractStatus status = 7;
 }
 
 message Ownership {
-    string owner = 1;
-    uint64 ownership = 2;
+  string owner = 1;
+  uint64 ownership = 2;
 }

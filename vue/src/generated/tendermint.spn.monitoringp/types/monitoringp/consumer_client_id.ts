@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "tendermint.spn.monitoringp";
 
@@ -7,20 +7,22 @@ export interface ConsumerClientID {
   clientID: string;
 }
 
-const baseConsumerClientID: object = { clientID: "" };
+function createBaseConsumerClientID(): ConsumerClientID {
+  return { clientID: "" };
+}
 
 export const ConsumerClientID = {
-  encode(message: ConsumerClientID, writer: Writer = Writer.create()): Writer {
+  encode(message: ConsumerClientID, writer: _m0.Writer = _m0.Writer.create()): _m0.Writer {
     if (message.clientID !== "") {
       writer.uint32(10).string(message.clientID);
     }
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): ConsumerClientID {
-    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+  decode(input: _m0.Reader | Uint8Array, length?: number): ConsumerClientID {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
     let end = length === undefined ? reader.len : reader.pos + length;
-    const message = { ...baseConsumerClientID } as ConsumerClientID;
+    const message = createBaseConsumerClientID();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -36,13 +38,7 @@ export const ConsumerClientID = {
   },
 
   fromJSON(object: any): ConsumerClientID {
-    const message = { ...baseConsumerClientID } as ConsumerClientID;
-    if (object.clientID !== undefined && object.clientID !== null) {
-      message.clientID = String(object.clientID);
-    } else {
-      message.clientID = "";
-    }
-    return message;
+    return { clientID: isSet(object.clientID) ? String(object.clientID) : "" };
   },
 
   toJSON(message: ConsumerClientID): unknown {
@@ -51,24 +47,24 @@ export const ConsumerClientID = {
     return obj;
   },
 
-  fromPartial(object: DeepPartial<ConsumerClientID>): ConsumerClientID {
-    const message = { ...baseConsumerClientID } as ConsumerClientID;
-    if (object.clientID !== undefined && object.clientID !== null) {
-      message.clientID = object.clientID;
-    } else {
-      message.clientID = "";
-    }
+  fromPartial<I extends Exact<DeepPartial<ConsumerClientID>, I>>(object: I): ConsumerClientID {
+    const message = createBaseConsumerClientID();
+    message.clientID = object.clientID ?? "";
     return message;
   },
 };
 
-type Builtin = Date | Function | Uint8Array | string | number | undefined;
-export type DeepPartial<T> = T extends Builtin
-  ? T
-  : T extends Array<infer U>
-  ? Array<DeepPartial<U>>
-  : T extends ReadonlyArray<infer U>
-  ? ReadonlyArray<DeepPartial<U>>
-  : T extends {}
-  ? { [K in keyof T]?: DeepPartial<T[K]> }
+type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
+
+export type DeepPartial<T> = T extends Builtin ? T
+  : T extends Array<infer U> ? Array<DeepPartial<U>> : T extends ReadonlyArray<infer U> ? ReadonlyArray<DeepPartial<U>>
+  : T extends {} ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+type KeysOfUnion<T> = T extends T ? keyof T : never;
+export type Exact<P, I extends P> = P extends Builtin ? P
+  : P & { [K in keyof P]: Exact<P[K], I[K]> } & { [K in Exclude<keyof I, KeysOfUnion<P>>]: never };
+
+function isSet(value: any): boolean {
+  return value !== null && value !== undefined;
+}
