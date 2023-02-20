@@ -137,11 +137,11 @@ func (k Keeper) MemberRole(goCtx context.Context, req *types.QueryMemberRoleRequ
 	if err != nil {
 		return nil, err
 	} else if hasAccepted {
-		return &types.QueryMemberRoleResponse{Role: "member"}, nil
+		return &types.QueryMemberRoleResponse{Role: "accepted-member"}, nil
 	}
 
 	// Check if member is a pending member
-	hasPending, err := k.HasMember(ctx, req.Id, memberAddr)
+	hasPending, err := k.HasPendingMember(ctx, req.Id, memberAddr)
 	if err != nil {
 		return nil, err
 	} else if hasPending {
