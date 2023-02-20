@@ -51,9 +51,6 @@ func (msg *MsgIssueCertificate) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid recipient address (%s)", err)
 	}
-	if msg.MetadataSchemaUri == "" {
-		return sdkerrors.Wrapf(types.ErrEmpty, "invalid metadata schema uri")
-	}
 	for i, entry := range msg.Hashes {
 		if entry == nil {
 			return sdkerrors.Wrapf(types.ErrEmpty, "hash entry cannot be empty (index of %d)", i)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/HankBreck/archive/testutil/sample"
+	"github.com/HankBreck/archive/x/contractregistry/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/stretchr/testify/require"
 )
@@ -22,6 +23,21 @@ func TestMsgRegisterIssuer_ValidateBasic(t *testing.T) {
 				MoreInfoUri: "google.com",
 			},
 			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "empty name",
+			msg: MsgRegisterIssuer{
+				Creator:     sample.AccAddress(),
+				Name:        "",
+				MoreInfoUri: "google.com",
+			},
+			err: types.ErrEmpty,
+		}, {
+			name: "empty more info URI",
+			msg: MsgRegisterIssuer{
+				Creator:     sample.AccAddress(),
+				Name:        "test",
+				MoreInfoUri: "",
+			},
 		}, {
 			name: "valid address",
 			msg: MsgRegisterIssuer{

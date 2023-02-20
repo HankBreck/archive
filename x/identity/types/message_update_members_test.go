@@ -21,9 +21,26 @@ func TestMsgUpdateMembers_ValidateBasic(t *testing.T) {
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid toAdd address",
 			msg: MsgUpdateMembers{
 				Creator: sample.AccAddress(),
+				ToAdd:   []string{"invalid_address"},
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid toRemove address",
+			msg: MsgUpdateMembers{
+				Creator:  sample.AccAddress(),
+				ToRemove: []string{"invalid_address"},
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "valid message",
+			msg: MsgUpdateMembers{
+				Creator:  sample.AccAddress(),
+				Id:       10,
+				ToAdd:    []string{sample.AccAddress()},
+				ToRemove: []string{sample.AccAddress()},
 			},
 		},
 	}
