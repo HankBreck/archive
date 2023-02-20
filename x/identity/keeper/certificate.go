@@ -7,7 +7,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // AppendCertificate stores the certificate in prefixed storage using certificate.Id as the key.
@@ -21,7 +20,6 @@ func (k Keeper) AppendCertificate(ctx sdk.Context, certificate types.Certificate
 	}
 	certificate.Id = count
 
-	// TODO: Any more checks necessary? (maybe hashes != nil)
 	k.uncheckedSetCertificate(ctx, certificate)
 	k.setCertificateCount(ctx, count+1)
 	return count
@@ -37,7 +35,7 @@ func (k Keeper) GetCertificate(ctx sdk.Context, id uint64) (*types.Certificate, 
 	var certificate types.Certificate
 	bzCert := store.Get(bzKey)
 	if len(bzCert) == 0 {
-		return nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", id) // TODO: switch this to types.ErrNonexistentCertificate
+		return nil, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", id)
 	}
 
 	k.cdc.MustUnmarshal(bzCert, &certificate)

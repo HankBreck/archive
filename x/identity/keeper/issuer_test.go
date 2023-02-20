@@ -2,6 +2,7 @@ package keeper_test
 
 import (
 	"github.com/HankBreck/archive/x/identity/types"
+	"github.com/cosmos/cosmos-sdk/types/query"
 )
 
 // TODO:
@@ -49,6 +50,37 @@ func (suite *KeeperTestSuite) TestGetIssuer() {
 	actualIssuer, err := k.GetIssuer(suite.Ctx, creator)
 	suite.NoError(err)
 	suite.Equal(expectedIssuer, *actualIssuer)
+}
+
+func (suite *KeeperTestSuite) TestGetIssuers() {
+	k := suite.App.IdentityKeeper
+
+	recoveredIssuers := []string{}
+	expectedIssuers, _ := suite.MockIssuers(10)
+
+	// Fetch first set of issuers
+	issuers, pageRes, err := k.GetIssuers(suite.Ctx, &query.PageRequest{Limit: 5})
+	suite.NoError(err)
+	suite.NotNil(pageRes.NextKey)
+	suite.Len(issuers, 5)
+	for _, addr := range issuers {
+		recoveredIssuers = append(recoveredIssuers, addr.String())
+	}
+
+	// Fetch second set of issuers
+	issuers, pageRes, err = k.GetIssuers(suite.Ctx, &query.PageRequest{Limit: 5, Key: pageRes.NextKey})
+	suite.NoError(err)
+	suite.Nil(pageRes.NextKey)
+	suite.Len(issuers, 5)
+	for _, addr := range issuers {
+		recoveredIssuers = append(recoveredIssuers, addr.String())
+	}
+
+	// Ensure expected and recovered issuers match (order unpredictable)
+	suite.Len(recoveredIssuers, len(expectedIssuers))
+	for _, addr := range expectedIssuers {
+		suite.Contains(recoveredIssuers, addr.String())
+	}
 }
 
 func (suite *KeeperTestSuite) TestHasIssuer() {

@@ -288,7 +288,7 @@ func (suite *KeeperTestSuite) TestQueryIdentity_InvalidCertificateId() {
 	// Test the query
 	invalidId := id + 1
 	res, err := queryClient.Identity(goCtx, &types.QueryIdentityRequest{Id: invalidId})
-	suite.EqualError(err, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", invalidId).Error())
+	suite.EqualError(err, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", invalidId).Error())
 	suite.Nil(res)
 }
 

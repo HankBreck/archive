@@ -137,7 +137,7 @@ func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.A
 
 	// Grant membership to each address
 	for _, addr := range toAdd {
-		store.Set(addr.Bytes(), []byte{0}) // TODO: add enum for operator status
+		store.Set(addr.Bytes(), []byte{0})
 	}
 
 	// Revoke membership from each address
