@@ -68,6 +68,18 @@ func (s *KeeperTestHelper) SetMembers(certificateId uint64, members []sdk.AccAdd
 	return nil
 }
 
+func (s *KeeperTestHelper) SetPendingMembers(certificateId uint64, members []sdk.AccAddress) error {
+	k := s.App.IdentityKeeper
+
+	// Add members as pending
+	err := k.UpdatePendingMembers(s.Ctx, certificateId, members, []sdk.AccAddress{})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *KeeperTestHelper) AddOperators(certificateId uint64, opers []sdk.AccAddress) error {
 	k := s.App.IdentityKeeper
 

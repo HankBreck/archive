@@ -68,8 +68,8 @@ func (suite *KeeperTestSuite) TestQueryIdentityMembers_Accepted() {
 	res, err := queryClient.IdentityMembers(context, &req)
 	suite.NoError(err)
 	suite.Len(res.Members, len(expectedMembers))
-	for i := range expectedMembers {
-		suite.Equal(expectedMembers[i].String(), res.Members[i])
+	for _, addr := range expectedMembers {
+		suite.Contains(res.Members, addr.String())
 	}
 }
 
@@ -255,9 +255,243 @@ func (suite *KeeperTestSuite) TestQueryIssuerInfo_NonIssuerAddress() {
 }
 
 // Test Identity
+func (suite *KeeperTestSuite) TestQueryIdentity() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
 
-// TODO:
-//		Test Identity
-//		Test Operators
-// 		Test MemberRole
-// 		Test IsFrozen
+	// Pulled from /app/apptesting/identity.go:28
+	expectedCertificate := types.Certificate{
+		Id:                id,
+		IssuerAddress:     suite.TestAccs[0].String(),
+		Salt:              "salt",
+		MetadataSchemaUri: "google.com/metadata-schema",
+		Hashes: []*types.HashEntry{
+			{Field: "field1", Hash: "hash1"},
+			{Field: "field2", Hash: "hash2"},
+		},
+	}
+
+	// Test the query
+	res, err := queryClient.Identity(goCtx, &types.QueryIdentityRequest{Id: id})
+	suite.NoError(err)
+	suite.Equal(expectedCertificate, *res.Certificate)
+}
+
+func (suite *KeeperTestSuite) TestQueryIdentity_InvalidCertificateId() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+
+	// Test the query
+	invalidId := id + 1
+	res, err := queryClient.Identity(goCtx, &types.QueryIdentityRequest{Id: invalidId})
+	suite.EqualError(err, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", invalidId).Error())
+	suite.Nil(res)
+}
+
+// Test Operators
+func (suite *KeeperTestSuite) TestQueryOperators() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+	recoveredOperators := []string{}
+
+	// Mock operators in storage
+	expectedOperators := suite.TestAccs[2:6]
+	expectedOperators = append(expectedOperators, suite.TestAccs[1]) // initial recipient is also an operator
+	suite.AddOperators(id, expectedOperators)
+
+	// Test the first query
+	res, err := queryClient.Operators(goCtx, &types.QueryOperatorsRequest{
+		Id:         id,
+		Pagination: &query.PageRequest{Limit: 2},
+	})
+	suite.NoError(err)
+	suite.Len(res.Operators, 2)
+	suite.NotNil(res.Pagination.NextKey)
+	recoveredOperators = append(recoveredOperators, res.Operators...)
+
+	// Test the seconds query
+	res, err = queryClient.Operators(goCtx, &types.QueryOperatorsRequest{
+		Id: id,
+		Pagination: &query.PageRequest{
+			Key:   res.Pagination.NextKey,
+			Limit: 3,
+		},
+	})
+	suite.NoError(err)
+	suite.Len(res.Operators, 3)
+	suite.Nil(res.Pagination.NextKey)
+	recoveredOperators = append(recoveredOperators, res.Operators...)
+
+	// Test that all operators were succesfully recovered
+	suite.Len(recoveredOperators, len(expectedOperators))
+	for _, addr := range expectedOperators {
+		suite.Contains(recoveredOperators, addr.String())
+	}
+}
+
+func (suite *KeeperTestSuite) TestQueryOperators_InvalidCertificateId() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+
+	// Test the query
+	invalidId := id + 1
+	res, err := queryClient.Operators(goCtx, &types.QueryOperatorsRequest{
+		Id: invalidId,
+	})
+	suite.EqualError(err, types.ErrNonexistentCertificate.Error())
+	suite.Nil(res)
+}
+
+// Test MemberRole
+func (suite *KeeperTestSuite) TestQueryMemberRole() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+	expectedOperator := suite.TestAccs[2]
+	suite.AddOperators(id, []sdk.AccAddress{expectedOperator})
+	expectedAcceptedMember := suite.TestAccs[3]
+	suite.SetMembers(id, []sdk.AccAddress{expectedAcceptedMember})
+	expectedPendingMember := suite.TestAccs[4]
+	suite.SetPendingMembers(id, []sdk.AccAddress{expectedPendingMember})
+
+	// Test operator query
+	res, err := queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     id,
+		Member: expectedOperator.String(),
+	})
+	suite.NoError(err)
+	suite.Equal("operator", res.Role)
+
+	// Test accepted member query
+	res, err = queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     id,
+		Member: expectedAcceptedMember.String(),
+	})
+	suite.NoError(err)
+	suite.Equal("accepted-member", res.Role)
+
+	// Test pending member query
+	res, err = queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     id,
+		Member: expectedPendingMember.String(),
+	})
+	suite.NoError(err)
+	suite.Equal("pending-member", res.Role)
+}
+
+func (suite *KeeperTestSuite) TestQueryMemberRole_InvalidAddress() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+
+	// Test operator query
+	res, err := queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     id,
+		Member: "invalid address",
+	})
+	suite.EqualError(err, "decoding bech32 failed: invalid character in string: ' '")
+	suite.Nil(res)
+}
+
+func (suite *KeeperTestSuite) TestQueryMemberRole_InvalidCertificateId() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+	expectedOperator := suite.TestAccs[2]
+	suite.AddOperators(id, []sdk.AccAddress{expectedOperator})
+	expectedAcceptedMember := suite.TestAccs[3]
+	suite.SetMembers(id, []sdk.AccAddress{expectedAcceptedMember})
+	expectedPendingMember := suite.TestAccs[4]
+	suite.SetPendingMembers(id, []sdk.AccAddress{expectedPendingMember})
+
+	// Test operator query
+	invalidId := id + 1
+	res, err := queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     invalidId,
+		Member: expectedOperator.String(),
+	})
+	suite.EqualError(err, types.ErrNonexistentCertificate.Wrapf("no certificate found for ID: %d", invalidId).Error())
+	suite.Nil(res)
+}
+
+func (suite *KeeperTestSuite) TestQueryMemberRole_NotAMember() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+	expectedOperator := suite.TestAccs[2]
+	suite.AddOperators(id, []sdk.AccAddress{expectedOperator})
+	expectedAcceptedMember := suite.TestAccs[3]
+	suite.SetMembers(id, []sdk.AccAddress{expectedAcceptedMember})
+	expectedPendingMember := suite.TestAccs[4]
+	suite.SetPendingMembers(id, []sdk.AccAddress{expectedPendingMember})
+
+	// Test operator query
+	nonMemberAddr := suite.TestAccs[5].String()
+	res, err := queryClient.MemberRole(goCtx, &types.QueryMemberRoleRequest{
+		Id:     id,
+		Member: nonMemberAddr,
+	})
+	expectedError := sdkerrors.ErrNotFound.Wrapf("account (%s) is not a member of identity %d", nonMemberAddr, id).Error()
+	suite.EqualError(err, expectedError)
+	suite.Nil(res)
+}
+
+// Test IsFrozen
+
+func (suite *KeeperTestSuite) TestQueryIsFrozen() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+	k := suite.App.IdentityKeeper
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+
+	// Ensure identities are initially frozen
+	res, err := queryClient.IsFrozen(goCtx, &types.QueryIsFrozenRequest{Id: id})
+	suite.NoError(err)
+	suite.False(res.IsFrozen)
+
+	// Freeze the identity
+	k.Freeze(suite.Ctx, id)
+
+	// Ensure query reads that the identity is now frozen
+	res, err = queryClient.IsFrozen(goCtx, &types.QueryIsFrozenRequest{Id: id})
+	suite.NoError(err)
+	suite.True(res.IsFrozen)
+}
+
+func (suite *KeeperTestSuite) TestQueryIsFrozen_InvalidCertificateId() {
+	suite.SetupTest()
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	queryClient := suite.queryClient
+
+	// Mock storage for test
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &suite.TestAccs[1])
+
+	// Test the query
+	invalidId := id + 1
+	res, err := queryClient.IsFrozen(goCtx, &types.QueryIsFrozenRequest{Id: invalidId})
+	suite.EqualError(err, types.ErrNonexistentCertificate.Error())
+	suite.Nil(res)
+}
