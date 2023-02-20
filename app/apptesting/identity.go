@@ -1,6 +1,8 @@
 package apptesting
 
 import (
+	"fmt"
+
 	"github.com/HankBreck/archive/x/identity/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -94,4 +96,23 @@ func (s *KeeperTestHelper) AcceptMembership(certificateId uint64, member sdk.Acc
 	// Remove member from pending list (expected by tests)
 	err = k.UpdatePendingMembers(s.Ctx, certificateId, []sdk.AccAddress{}, toAdd)
 	return err
+}
+
+func (s *KeeperTestHelper) MockIssuers(count int) ([]sdk.AccAddress, error) {
+	k := s.App.IdentityKeeper
+	issuers := CreateRandomAccounts(count)
+
+	// Add each new account as an issuer
+	for i, addr := range issuers {
+		err := k.SetIssuer(s.Ctx, types.Issuer{
+			Creator:     addr.String(),
+			Name:        fmt.Sprintf("Issuer #%d", i),
+			MoreInfoUri: fmt.Sprintf("https://google.com/issuers/%d", i),
+		})
+		if err != nil {
+			return []sdk.AccAddress{}, err
+		}
+	}
+
+	return issuers, nil
 }
