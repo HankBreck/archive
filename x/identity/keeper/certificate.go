@@ -37,7 +37,7 @@ func (k Keeper) GetCertificate(ctx sdk.Context, id uint64) (*types.Certificate, 
 	var certificate types.Certificate
 	bzCert := store.Get(bzKey)
 	if len(bzCert) == 0 {
-		return nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", id)
+		return nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", id) // TODO: switch this to types.ErrNonexistentCertificate
 	}
 
 	k.cdc.MustUnmarshal(bzCert, &certificate)
