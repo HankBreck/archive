@@ -48,9 +48,6 @@ func (msg *MsgRegisterIssuer) ValidateBasic() error {
 	if msg.Name == "" {
 		return sdkerrors.Wrapf(types.ErrEmpty, "name cannot be empty")
 	}
-	if msg.MoreInfoUri == "" {
-		return sdkerrors.Wrapf(types.ErrEmpty, "more info uri cannot be empty")
-	}
 
 	return nil
 }

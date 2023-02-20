@@ -54,8 +54,16 @@ func (msg *MsgIssueCertificate) ValidateBasic() error {
 	if msg.MetadataSchemaUri == "" {
 		return sdkerrors.Wrapf(types.ErrEmpty, "invalid metadata schema uri")
 	}
-	if len(msg.Hashes) == 0 {
-		return sdkerrors.Wrapf(types.ErrEmpty, "must contain at least one hash")
+	for i, entry := range msg.Hashes {
+		if entry == nil {
+			return sdkerrors.Wrapf(types.ErrEmpty, "hash entry cannot be empty (index of %d)", i)
+		}
+		if entry.Field == "" {
+			return sdkerrors.Wrapf(types.ErrEmpty, "hash entry field cannot be empty (index of %d)", i)
+		}
+		if entry.Hash == "" {
+			return sdkerrors.Wrapf(types.ErrEmpty, "hash entry hash cannot be empty (index of %d)", i)
+		}
 	}
 	return nil
 }

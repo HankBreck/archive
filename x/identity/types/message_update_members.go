@@ -44,5 +44,17 @@ func (msg *MsgUpdateMembers) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	for i, addrStr := range msg.ToAdd {
+		_, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid ToAdd address at index %d (%s)", i, err)
+		}
+	}
+	for i, addrStr := range msg.ToRemove {
+		_, err := sdk.AccAddressFromBech32(addrStr)
+		if err != nil {
+			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid ToRemove address at index %d (%s)", i, err)
+		}
+	}
 	return nil
 }
