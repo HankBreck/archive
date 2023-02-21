@@ -29,6 +29,9 @@ func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (types.RawSigningD
 	binary.BigEndian.PutUint64(bzKey, cdaId)
 
 	bzMetadata := store.Get(bzKey)
+	if len(bzMetadata) == 0 {
+		return nil, types.ErrNonExistentSigningData.Wrapf("id %d not found", cdaId)
+	}
 	var metadata types.RawSigningData
 	err := metadata.UnmarshalJSON(bzMetadata)
 	if err != nil {
