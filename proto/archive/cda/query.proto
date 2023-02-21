@@ -37,15 +37,19 @@ service Query {
   }
 
   rpc Contract(QueryContractRequest) returns (QueryContractResponse) {
-    option (google.api.http).get = "/archive/contractregistry/contract";
+    option (google.api.http).get = "/archive/cda/contract";
   }
 
   rpc Contracts(QueryContractsRequest) returns (QueryContractsResponse) {
-    option (google.api.http).get = "/archive/contractregistry/contracts";
+    option (google.api.http).get = "/archive/cda/contracts";
+  }
+
+  rpc SigningData(QuerySigningDataRequest) returns (QuerySigningDataResponse) {
+    option (google.api.http).get = "/archive/cda/signing_data/{id}";
   }
 
   rpc SigningDataSchema(QuerySigningDataSchemaRequest) returns (QuerySigningDataSchemaResponse) {
-    option (google.api.http).get = "/archive/contractregistry/signingdata";
+    option (google.api.http).get = "/archive/cda/signing_data_schema/{id}";
   }
   // this line is used by starport scaffolding # 2
 }
@@ -118,6 +122,16 @@ message QueryContractsResponse {
 
   // pagination defines the pagination in the response.
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC method
+message QuerySigningDataRequest { uint64 id = 1; }
+// QuerySigningDataResponse is the response type for the Query/SigningData RPC method
+message QuerySigningDataResponse { 
+    bytes signing_data = 1 [ 
+        (gogoproto.customname) = "SigningData",
+        (gogoproto.casttype) = "RawSigningData" 
+    ]; 
 }
 
 // QuerySigningDataSchemaRequest is the request type for the Query/SigningData RPC
