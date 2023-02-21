@@ -43,7 +43,7 @@ service Query {
   rpc Contracts(QueryContractsRequest) returns (QueryContractsResponse) {
     option (google.api.http).get = "/archive/contractregistry/contracts";
   }
-  
+
   rpc SigningData(QuerySigningDataRequest) returns (QuerySigningDataResponse) {
     option (google.api.http).get = "/archive/contractregistry/signingdata";
   }
