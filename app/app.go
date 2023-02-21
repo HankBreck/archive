@@ -99,17 +99,9 @@ import (
 
 	"github.com/HankBreck/archive/docs"
 
-	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
-
-	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
-
 	cdamodule "github.com/HankBreck/archive/x/cda"
-
-	contractregistrymoduletypes "github.com/HankBreck/archive/x/contractregistry/types"
-
-	contractregistrymodulekeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
-
-	contractregistrymodule "github.com/HankBreck/archive/x/contractregistry"
+	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
+	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
 
 	identitymodule "github.com/HankBreck/archive/x/identity"
 	identitymodulekeeper "github.com/HankBreck/archive/x/identity/keeper"
@@ -171,7 +163,6 @@ var (
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
 		cdamodule.AppModuleBasic{},
-		contractregistrymodule.AppModuleBasic{},
 		identitymodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
@@ -244,10 +235,7 @@ type App struct {
 	ScopedTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
-	CdaKeeper cdamodulekeeper.Keeper
-
-	ContractregistryKeeper contractregistrymodulekeeper.Keeper
-
+	CdaKeeper      cdamodulekeeper.Keeper
 	IdentityKeeper identitymodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
@@ -286,7 +274,6 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
 		cdamoduletypes.StoreKey,
-		contractregistrymoduletypes.StoreKey,
 		identitymoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -409,14 +396,6 @@ func New(
 	)
 	monitoringModule := monitoringp.NewAppModule(appCodec, app.MonitoringKeeper)
 
-	app.ContractregistryKeeper = *contractregistrymodulekeeper.NewKeeper(
-		appCodec,
-		keys[contractregistrymoduletypes.StoreKey],
-		keys[contractregistrymoduletypes.MemStoreKey],
-		app.GetSubspace(contractregistrymoduletypes.ModuleName),
-	)
-	contractregistryModule := contractregistrymodule.NewAppModule(appCodec, app.ContractregistryKeeper)
-
 	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
 		appCodec,
 		keys[cdamoduletypes.StoreKey],
@@ -475,7 +454,6 @@ func New(
 		transferModule,
 		monitoringModule,
 		cdaModule,
-		contractregistryModule,
 		identityModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -505,7 +483,6 @@ func New(
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
 		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
@@ -531,7 +508,6 @@ func New(
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
 		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
@@ -562,7 +538,6 @@ func New(
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
 		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
@@ -589,7 +564,6 @@ func New(
 		transferModule,
 		monitoringModule,
 		cdaModule,
-		contractregistryModule,
 		identityModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -781,7 +755,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
 	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
-	paramsKeeper.Subspace(contractregistrymoduletypes.ModuleName)
 	paramsKeeper.Subspace(identitymoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
