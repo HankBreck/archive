@@ -12,10 +12,10 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdQuerySigningDataSchema() *cobra.Command {
+func CmdQuerySigningData() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "signing-data-schema [id]",
-		Short: "Query the signing data schema for a contract",
+		Use:   "signing-data [id]",
+		Short: "Query the signing data for a contract",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqId := args[0]
@@ -33,11 +33,11 @@ func CmdQuerySigningDataSchema() *cobra.Command {
 				return err
 			}
 
-			req := &types.QuerySigningDataSchemaRequest{
+			req := &types.QuerySigningDataRequest{
 				Id: id,
 			}
 
-			res, err := queryClient.SigningDataSchema(cmd.Context(), req)
+			res, err := queryClient.SigningData(cmd.Context(), req)
 			if err != nil {
 				return err
 			}
