@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/HankBreck/archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -18,18 +18,18 @@ import (
 // Panics on any id that is not equal to the current contract count - 1.
 //
 // Returns an error if the signingData is nil.
-func (k Keeper) SetSigningData(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
+func (k Keeper) SetTemplateSigningData(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
 	// Ensure the signing data references a valid contract
 	if !k.HasContract(ctx, id) {
 		return types.ErrNonExistentContract.Wrapf("Could not find a contract with an id of %d", id)
 	}
 
 	// Ensure there is not a repeat ID
-	if k.HasSigningData(ctx, id) {
+	if k.HasTemplateSigningData(ctx, id) {
 		return types.ErrExistingEntry.Wrapf("Signing data already stored for id %d", id)
 	}
 
-	err := k.uncheckedSetSigningData(ctx, signingData, id)
+	err := k.uncheckedSetTemplateSigningData(ctx, signingData, id)
 	if err != nil {
 		return err
 	}
@@ -37,8 +37,8 @@ func (k Keeper) SetSigningData(ctx sdk.Context, signingData types.RawSigningData
 }
 
 // GetSigningData fetches the contract stored under the key of id. If no contract is found, an error is returned
-func (k Keeper) GetSigningData(ctx sdk.Context, id uint64) (types.RawSigningData, error) {
-	store := k.getSigningDataStore(ctx)
+func (k Keeper) GetTemplateSigningData(ctx sdk.Context, id uint64) (types.RawSigningData, error) {
+	store := k.getTemplateSigningDataStore(ctx)
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, id)
 
@@ -52,8 +52,8 @@ func (k Keeper) GetSigningData(ctx sdk.Context, id uint64) (types.RawSigningData
 	return result, nil
 }
 
-func (k Keeper) HasSigningData(ctx sdk.Context, id uint64) bool {
-	store := k.getSigningDataStore(ctx)
+func (k Keeper) HasTemplateSigningData(ctx sdk.Context, id uint64) bool {
+	store := k.getTemplateSigningDataStore(ctx)
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, id)
 
@@ -64,7 +64,7 @@ func (k Keeper) HasSigningData(ctx sdk.Context, id uint64) bool {
 //
 // Returns true if it matches the schema specified by the contract with an id
 // of targetContractId. Returns false if not.
-func (k Keeper) MatchesSigningDataSchema(ctx sdk.Context, targetContractId uint64, rawInputData types.RawSigningData) (bool, error) {
+func (k Keeper) MatchesTemplateSigningDataSchema(ctx sdk.Context, targetContractId uint64, rawInputData types.RawSigningData) (bool, error) {
 	// Fetch schema if it exists
 	rawSchema, err := k.GetSigningData(ctx, targetContractId)
 	if err != nil {
@@ -95,8 +95,8 @@ func (k Keeper) MatchesSigningDataSchema(ctx sdk.Context, targetContractId uint6
 
 // Stores the contract's signing data with the contract's ID as the key. The contract.Id field must be set by a calling function.
 // The signing data and ID passed as arguments are assumed to be valid, so calling functions must assure this.
-func (k Keeper) uncheckedSetSigningData(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
-	store := k.getSigningDataStore(ctx)
+func (k Keeper) uncheckedSetTemplateSigningData(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
+	store := k.getTemplateSigningDataStore(ctx)
 
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, id)
@@ -112,7 +112,7 @@ func (k Keeper) uncheckedSetSigningData(ctx sdk.Context, signingData types.RawSi
 	return nil
 }
 
-func (k Keeper) getSigningDataStore(ctx sdk.Context) prefix.Store {
+func (k Keeper) getTemplateSigningDataStore(ctx sdk.Context) prefix.Store {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.SigningDataKey))
 	return store
 }

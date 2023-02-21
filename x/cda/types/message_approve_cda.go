@@ -1,8 +1,6 @@
 package types
 
 import (
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -11,7 +9,7 @@ const TypeMsgApproveCda = "approve_cda"
 
 var _ sdk.Msg = &MsgApproveCda{}
 
-func NewMsgApproveCda(creator string, cdaId uint64, signingData crtypes.RawSigningData) *MsgApproveCda {
+func NewMsgApproveCda(creator string, cdaId uint64, signingData RawSigningData) *MsgApproveCda {
 	return &MsgApproveCda{
 		Creator:     creator,
 		CdaId:       cdaId,

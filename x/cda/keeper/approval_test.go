@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -61,7 +59,7 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
 	ids := suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
 
-	var invalidSigningData crtypes.RawSigningData
+	var invalidSigningData types.RawSigningData
 	invalidSigningData.UnmarshalJSON([]byte(`
 	{
 		"notOwnerships": [

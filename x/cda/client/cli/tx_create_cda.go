@@ -4,8 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -46,7 +44,7 @@ func CmdCreateCda() *cobra.Command {
 			legalMetadataUri := args[1]
 
 			// Signing Data
-			var signingData crtypes.RawSigningData
+			var signingData types.RawSigningData
 			signingData.UnmarshalJSON([]byte(args[3]))
 
 			// Parse expiration time from argument string

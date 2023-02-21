@@ -18,8 +18,6 @@ type (
 		storeKey   sdk.StoreKey
 		memKey     sdk.StoreKey
 		paramstore paramtypes.Subspace
-
-		crKeeper types.ContractregistryKeeper
 	}
 )
 
@@ -28,7 +26,6 @@ func NewKeeper(
 	storeKey,
 	memKey sdk.StoreKey,
 	ps paramtypes.Subspace,
-	crKeeper types.ContractregistryKeeper,
 
 ) *Keeper {
 	// set KeyTable if it has not already been set
@@ -42,8 +39,6 @@ func NewKeeper(
 		storeKey:   storeKey,
 		memKey:     memKey,
 		paramstore: ps,
-
-		crKeeper: crKeeper,
 	}
 }
 

@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/HankBreck/archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/cda/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -16,7 +16,7 @@ import (
 //		What happens on an overflow?
 
 func (suite *KeeperTestSuite) TestSetSigningData() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	var defaultData types.RawSigningData
 	defaultData.UnmarshalJSON([]byte(`{"test":1}`))
 	defaultId := uint64(0)
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestSetSigningData() {
 			for _, contract := range test.inputContracts {
 				k.AppendContract(suite.Ctx, *contract)
 			}
-			err := k.SetSigningData(suite.Ctx, test.inputData, test.inputId)
+			err := k.SetTemplateSigningData(suite.Ctx, test.inputData, test.inputId)
 			if !test.expErr {
 				suite.NoError(err)
 				actualData, _ := k.GetSigningData(suite.Ctx, test.inputId)
@@ -70,7 +70,7 @@ func (suite *KeeperTestSuite) TestSetSigningData() {
 }
 
 func (suite *KeeperTestSuite) TestDuplicateSetSigningData() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 
 	suite.PrepareContracts(1)
 
@@ -80,42 +80,42 @@ func (suite *KeeperTestSuite) TestDuplicateSetSigningData() {
 	secondData.UnmarshalJSON([]byte("test 2"))
 
 	// Set the first signing data for id 0
-	err := k.SetSigningData(suite.Ctx, firstData, 0)
+	err := k.SetTemplateSigningData(suite.Ctx, firstData, 0)
 	suite.NoError(err)
 
 	// Try to set the second signing data for the same id
-	err = k.SetSigningData(suite.Ctx, secondData, 0)
+	err = k.SetTemplateSigningData(suite.Ctx, secondData, 0)
 	suite.Error(err)
 
-	actualData, err := k.GetSigningData(suite.Ctx, 0)
+	actualData, err := k.GetTemplateSigningData(suite.Ctx, 0)
 	suite.NoError(err)
 	suite.Equal(firstData, actualData)
 }
 
 func (suite *KeeperTestSuite) TestGetSigningData() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	var expected types.RawSigningData
 	expected.UnmarshalJSON([]byte("test"))
 
 	ids := suite.PrepareContracts(1)
-	k.SetSigningData(suite.Ctx, expected, ids[0])
+	k.SetTemplateSigningData(suite.Ctx, expected, ids[0])
 
-	actual, err := k.GetSigningData(suite.Ctx, ids[0])
+	actual, err := k.GetTemplateSigningData(suite.Ctx, ids[0])
 	suite.NoError(err)
 	suite.Equal(expected, actual)
 }
 
 func (suite *KeeperTestSuite) TestHasSigningData() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	ids := suite.PrepareContracts(1)
-	k.SetSigningData(suite.Ctx, []byte("test"), ids[0])
+	k.SetTemplateSigningData(suite.Ctx, []byte("test"), ids[0])
 
-	hasData := k.HasSigningData(suite.Ctx, ids[0])
+	hasData := k.HasTemplateSigningData(suite.Ctx, ids[0])
 	suite.True(hasData)
 }
 
 func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON([]byte(getTestSchema()))
 	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
@@ -134,13 +134,13 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
 
 	var inputData types.RawSigningData
 	inputData.UnmarshalJSON([]byte(getTestDoc()))
-	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	matches, err := k.MatchesTemplateSigningDataSchema(suite.Ctx, res.Id, inputData)
 	suite.NoError(err)
 	suite.True(matches)
 }
 
 func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON(getTestSchema())
 	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
@@ -165,13 +165,13 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
 			{ "owner": "address2", "ownership_proportion": 99 }
 		]
 	}`))
-	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	matches, err := k.MatchesTemplateSigningDataSchema(suite.Ctx, res.Id, inputData)
 	suite.Error(err)
 	suite.False(matches)
 }
 
 func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_InvalidJSONSchema() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON([]byte(`"hello": "world"`)) // missing braces around JSON
 	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
@@ -190,7 +190,7 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_InvalidJSONSchema() {
 
 	var inputData types.RawSigningData
 	inputData.UnmarshalJSON(getTestDoc())
-	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
+	matches, err := k.MatchesTemplateSigningDataSchema(suite.Ctx, res.Id, inputData)
 	suite.Error(err)
 	suite.False(matches)
 }
