@@ -3,10 +3,6 @@ package keeper
 import (
 	"testing"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
-	crkeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/HankBreck/archive/x/cda/keeper"
@@ -36,17 +32,6 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
-	crStoreKey := sdk.NewKVStoreKey(crtypes.StoreKey)
-	crMemStoreKey := storetypes.NewMemoryStoreKey(crtypes.MemStoreKey)
-	crSubspace := typesparams.NewSubspace(
-		cdc,
-		crtypes.Amino,
-		crStoreKey,
-		crMemStoreKey,
-		"ContractregistryParams",
-	)
-	crKeeper := crkeeper.NewKeeper(cdc, crStoreKey, crMemStoreKey, crSubspace)
-
 	paramsSubspace := typesparams.NewSubspace(cdc,
 		types.Amino,
 		storeKey,
@@ -58,7 +43,6 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
-		crKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

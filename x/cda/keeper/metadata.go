@@ -3,8 +3,6 @@ package keeper
 import (
 	"encoding/binary"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -12,7 +10,7 @@ import (
 )
 
 // TODO: Check that the contract id exists
-func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata crtypes.RawSigningData) error {
+func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata types.RawSigningData) error {
 	// Ensure cdaId references an existing CDA
 	if !k.HasCDA(ctx, cdaId) {
 		return types.ErrNonExistentCdaId
@@ -24,14 +22,14 @@ func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata crtypes.R
 
 }
 
-func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (crtypes.RawSigningData, error) {
+func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (types.RawSigningData, error) {
 	store := k.getMetadataStore(ctx)
 
 	bzKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(bzKey, cdaId)
 
 	bzMetadata := store.Get(bzKey)
-	var metadata crtypes.RawSigningData
+	var metadata types.RawSigningData
 	err := metadata.UnmarshalJSON(bzMetadata)
 	if err != nil {
 		return nil, err
@@ -40,7 +38,7 @@ func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (crtypes.RawSignin
 	return metadata, nil
 }
 
-func (k Keeper) uncheckedSetMetadata(ctx sdk.Context, cdaId uint64, metadata crtypes.RawSigningData) error {
+func (k Keeper) uncheckedSetMetadata(ctx sdk.Context, cdaId uint64, metadata types.RawSigningData) error {
 	store := k.getMetadataStore(ctx)
 
 	bzKey := make([]byte, 8)

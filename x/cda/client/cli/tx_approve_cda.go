@@ -3,8 +3,6 @@ package cli
 import (
 	"strconv"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -35,7 +33,7 @@ func CmdApproveCda() *cobra.Command {
 			}
 
 			// Signing Data
-			var signingData crtypes.RawSigningData
+			var signingData types.RawSigningData
 			signingData.UnmarshalJSON([]byte(args[1]))
 
 			msg := types.NewMsgApproveCda(

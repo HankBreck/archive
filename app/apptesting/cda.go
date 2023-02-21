@@ -3,8 +3,6 @@ package apptesting
 import (
 	"time"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -126,8 +124,8 @@ func (s *KeeperTestHelper) GetCdas(ids []uint64) []*types.CDA {
 	return result
 }
 
-func (s *KeeperTestHelper) GetSigningData() crtypes.RawSigningData {
-	var data crtypes.RawSigningData
+func (s *KeeperTestHelper) GetSigningData() types.RawSigningData {
+	var data types.RawSigningData
 	data.UnmarshalJSON([]byte(`
 	{
 		"ownerships": [

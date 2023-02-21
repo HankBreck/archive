@@ -422,7 +422,6 @@ func New(
 		keys[cdamoduletypes.StoreKey],
 		keys[cdamoduletypes.MemStoreKey],
 		app.GetSubspace(cdamoduletypes.ModuleName),
-		app.ContractregistryKeeper,
 	)
 	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
