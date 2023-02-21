@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestSetSigningDataSchema() {
 			for _, contract := range test.inputContracts {
 				k.AppendContract(suite.Ctx, *contract)
 			}
-			err := k.SetSigningDataSchema(suite.Ctx, test.inputData, test.inputId)
+			err := k.SetSigningDataSchema(suite.Ctx, test.inputId, test.inputData)
 			if !test.expErr {
 				suite.NoError(err)
 				actualData, _ := k.GetSigningDataSchema(suite.Ctx, test.inputId)
@@ -80,11 +80,11 @@ func (suite *KeeperTestSuite) TestDuplicateSetSigningDataSchema() {
 	secondData.UnmarshalJSON([]byte("test 2"))
 
 	// Set the first signing data for id 0
-	err := k.SetSigningDataSchema(suite.Ctx, firstData, 0)
+	err := k.SetSigningDataSchema(suite.Ctx, 0, firstData)
 	suite.NoError(err)
 
 	// Try to set the second signing data for the same id
-	err = k.SetSigningDataSchema(suite.Ctx, secondData, 0)
+	err = k.SetSigningDataSchema(suite.Ctx, 0, secondData)
 	suite.Error(err)
 
 	actualData, err := k.GetSigningDataSchema(suite.Ctx, 0)
@@ -98,7 +98,7 @@ func (suite *KeeperTestSuite) TestGetSigningDataSchema() {
 	expected.UnmarshalJSON([]byte("test"))
 
 	ids := suite.PrepareContracts(1)
-	k.SetSigningDataSchema(suite.Ctx, expected, ids[0])
+	k.SetSigningDataSchema(suite.Ctx, ids[0], expected)
 
 	actual, err := k.GetSigningDataSchema(suite.Ctx, ids[0])
 	suite.NoError(err)
@@ -108,7 +108,7 @@ func (suite *KeeperTestSuite) TestGetSigningDataSchema() {
 func (suite *KeeperTestSuite) TestHasSigningDataSchema() {
 	k := suite.App.CdaKeeper
 	ids := suite.PrepareContracts(1)
-	k.SetSigningDataSchema(suite.Ctx, []byte("test"), ids[0])
+	k.SetSigningDataSchema(suite.Ctx, ids[0], []byte("test"))
 
 	hasData := k.HasSigningDataSchema(suite.Ctx, ids[0])
 	suite.True(hasData)
