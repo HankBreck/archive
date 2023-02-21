@@ -262,6 +262,74 @@ func (suite *KeeperTestSuite) TestApprovalQuery_EmptyRequest() {
 	suite.Nil(res)
 }
 
+// Test SigningData
+func (suite *KeeperTestSuite) TestSigningData() {
+	k := suite.App.CdaKeeper
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	id := suite.PrepareCdasForOwner([]*sdk.AccAddress{&suite.TestAccs[0]}, 1)[0]
+
+	// Mock signing data in storage
+	var expectedSigningData types.RawSigningData
+	expectedSigningData.UnmarshalJSON([]byte("hello world"))
+	k.SetSigningData(suite.Ctx, id, expectedSigningData)
+
+	// Test SigningData query
+	res, err := suite.queryClient.SigningData(goCtx, &types.QuerySigningDataRequest{Id: id})
+	suite.NoError(err)
+	suite.Equal(expectedSigningData.Bytes(), res.SigningData.Bytes())
+}
+
+func (suite *KeeperTestSuite) TestSigningData_InvalidId() {
+	k := suite.App.CdaKeeper
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	contract := suite.PrepareContract()
+
+	// Mock signing data in storage
+	var expectedSchema types.RawSigningData
+	expectedSchema.UnmarshalJSON([]byte("hello world"))
+	k.SetSigningData(suite.Ctx, contract.Id, expectedSchema)
+
+	// Test SigningDataSchema query
+	invalidId := contract.Id + 1
+	res, err := suite.queryClient.SigningData(goCtx, &types.QuerySigningDataRequest{Id: invalidId})
+	suite.EqualError(err, types.ErrNonExistentSigningData.Wrapf("id %d not found", invalidId).Error())
+	suite.Nil(res)
+}
+
+// Test SigningDataSchema
+func (suite *KeeperTestSuite) TestSigningDataSchema() {
+	k := suite.App.CdaKeeper
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	contract := suite.PrepareContract()
+
+	// Mock signing data in storage
+	var expectedSchema types.RawSigningData
+	expectedSchema.UnmarshalJSON([]byte("hello world"))
+	k.SetSigningDataSchema(suite.Ctx, contract.Id, expectedSchema)
+
+	// Test SigningDataSchema query
+	res, err := suite.queryClient.SigningDataSchema(goCtx, &types.QuerySigningDataSchemaRequest{Id: contract.Id})
+	suite.NoError(err)
+	suite.Equal(expectedSchema.Bytes(), res.Schema.Bytes())
+}
+
+func (suite *KeeperTestSuite) TestSigningDataSchema_InvalidId() {
+	k := suite.App.CdaKeeper
+	goCtx := sdk.WrapSDKContext(suite.Ctx)
+	contract := suite.PrepareContract()
+
+	// Mock signing data in storage
+	var expectedSchema types.RawSigningData
+	expectedSchema.UnmarshalJSON([]byte("hello world"))
+	k.SetSigningDataSchema(suite.Ctx, contract.Id, expectedSchema)
+
+	// Test SigningDataSchema query
+	invalidId := contract.Id + 1
+	res, err := suite.queryClient.SigningDataSchema(goCtx, &types.QuerySigningDataSchemaRequest{Id: invalidId})
+	suite.EqualError(err, types.ErrNonExistentSigningData.Wrapf("id %d not found", invalidId).Error())
+	suite.Nil(res)
+}
+
 /*
  * Query Params Tests
  *
