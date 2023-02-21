@@ -105,6 +105,29 @@ func (s *KeeperTestHelper) PrepareVoidedCdaForSigners(signers []*sdk.AccAddress)
 	return id
 }
 
+func (s *KeeperTestHelper) PrepareContract() types.Contract {
+	k := s.App.CdaKeeper
+	contract := types.Contract{
+		Description:       "",
+		Authors:           []string{},
+		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Phone, Value: "(123) 456-7890"},
+		MoreInfoUri:       "",
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+	}
+	id := k.AppendContract(s.Ctx, types.Contract{
+		Description:       "",
+		Authors:           []string{},
+		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Phone, Value: "(123) 456-7890"},
+		MoreInfoUri:       "",
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+	})
+	contract.Id = id
+
+	return contract
+}
+
 func (s *KeeperTestHelper) GetCdas(ids []uint64) []*types.CDA {
 	k := s.App.CdaKeeper
 	result := make([]*types.CDA, len(ids))
