@@ -18,7 +18,7 @@ import (
 // Panics on any id that is not equal to the current contract count - 1.
 //
 // Returns an error if the signingData is nil.
-func (k Keeper) SetSigningDataSchema(ctx sdk.Context, signingData types.RawSigningData, id uint64) error {
+func (k Keeper) SetSigningDataSchema(ctx sdk.Context, id uint64, signingData types.RawSigningData) error {
 	// Ensure the signing data references a valid contract
 	if !k.HasContract(ctx, id) {
 		return types.ErrNonExistentContract.Wrapf("Could not find a contract with an id of %d", id)
