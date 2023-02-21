@@ -116,7 +116,7 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 	id := m.AppendContract(ctx, contract)
 
 	// Store the schema in state
-	err := m.SetSigningDataSchema(ctx, msg.SigningDataSchema, id)
+	err := m.SetSigningDataSchema(ctx, id, msg.SigningDataSchema)
 	if err != nil {
 		return nil, err
 	}
