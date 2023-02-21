@@ -173,12 +173,24 @@ func (k Keeper) Contracts(goCtx context.Context, req *types.QueryContractsReques
 	}, nil
 }
 
-func (k Keeper) SigningDataSchema(goCtx context.Context, req *types.QuerySigningDataSchemaRequest) (*types.QuerySigningDataSchemaResponse, error) {
+func (k Keeper) SigningData(goCtx context.Context, req *types.QuerySigningDataRequest) (*types.QuerySigningDataResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 	data, err := k.GetSigningData(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &types.QuerySigningDataResponse{SigningData: data}, nil
+}
+
+func (k Keeper) SigningDataSchema(goCtx context.Context, req *types.QuerySigningDataSchemaRequest) (*types.QuerySigningDataSchemaResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	ctx := sdk.UnwrapSDKContext(goCtx)
+	data, err := k.GetSigningDataSchema(ctx, req.Id)
 	if err != nil {
 		return nil, err
 	}
