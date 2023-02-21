@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "archive/cda/params.proto";
 import "archive/cda/cda.proto";
-// this line is used by starport scaffolding # 1
+import "archive/cda/contract.proto";
 
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
@@ -36,12 +36,22 @@ service Query {
     option (google.api.http).get = "/archive/cda/approval/{cdaId}";
   }
 
+  rpc Contract(QueryContractRequest) returns (QueryContractResponse) {
+    option (google.api.http).get = "/archive/contractregistry/contract";
+  }
+
+  rpc Contracts(QueryContractsRequest) returns (QueryContractsResponse) {
+    option (google.api.http).get = "/archive/contractregistry/contracts";
+  }
+  
+  rpc SigningData(QuerySigningDataRequest) returns (QuerySigningDataResponse) {
+    option (google.api.http).get = "/archive/contractregistry/signingdata";
+  }
   // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
-
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
@@ -49,14 +59,12 @@ message QueryParamsResponse {
 }
 
 message QueryCdaRequest { uint64 id = 1; }
-
 message QueryCdaResponse { CDA cda = 1; }
 
 message QueryCdasRequest {
   // Pagination to view all CDAs
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
-
 message QueryCdasResponse {
   // List of CDA objects
   repeated CDA CDAs = 1;
@@ -72,7 +80,6 @@ message QueryCdasOwnedRequest {
   // Pagination to view all ids
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
-
 message QueryCdasOwnedResponse {
   // List of CDA ids belonging to the owner
   repeated uint64 ids = 1;
@@ -88,7 +95,36 @@ message QueryApprovalRequest {
   // The wallet address of the owner to check
   string owner = 2;
 }
-
 message QueryApprovalResponse { bool approved = 1; }
 
-// this line is used by starport scaffolding # 3
+// QueryContractRequest is the request type for the Query/Contract RPC method.
+message QueryContractRequest { uint64 id = 1; }
+// QueryContractResponse is the response type for the Query/Contracts RPC
+// method.
+message QueryContractResponse {
+  Contract contract = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryContractsRequest is the request type for the Query/Contracts RPC method.
+message QueryContractsRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+// QueryContractsResponse is the response type for the Query/Contracts RPC
+// method.
+message QueryContractsResponse {
+  // the ids of the contracts registered
+  repeated Contract contracts = 1 [ (gogoproto.nullable) = false ];
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC
+// method
+message QuerySigningDataRequest { uint64 id = 1; }
+// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
+// method
+message QuerySigningDataResponse {
+  bytes signing_data = 1 [ (gogoproto.casttype) = "RawSigningData" ];
+}
