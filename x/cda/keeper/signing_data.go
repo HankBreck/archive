@@ -44,7 +44,7 @@ func (k Keeper) GetSigningDataSchema(ctx sdk.Context, id uint64) (types.RawSigni
 
 	bzData := store.Get(bzKey)
 	if len(bzData) == 0 {
-		return nil, types.ErrNonExistentSigningData.Wrapf("Signing data not found for id %d", id)
+		return nil, types.ErrNonExistentSigningData.Wrapf("id %d not found", id)
 	}
 	var result types.RawSigningData
 	result.UnmarshalJSON(bzData)
