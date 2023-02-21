@@ -66,7 +66,7 @@ func (k Keeper) HasTemplateSigningData(ctx sdk.Context, id uint64) bool {
 // of targetContractId. Returns false if not.
 func (k Keeper) MatchesTemplateSigningDataSchema(ctx sdk.Context, targetContractId uint64, rawInputData types.RawSigningData) (bool, error) {
 	// Fetch schema if it exists
-	rawSchema, err := k.GetSigningData(ctx, targetContractId)
+	rawSchema, err := k.GetTemplateSigningData(ctx, targetContractId)
 	if err != nil {
 		return false, err
 	}

@@ -15,7 +15,7 @@ import (
 // GetSigningData test cases
 //		What happens on an overflow?
 
-func (suite *KeeperTestSuite) TestSetSigningData() {
+func (suite *KeeperTestSuite) TestSetTemplateSigningData() {
 	k := suite.App.CdaKeeper
 	var defaultData types.RawSigningData
 	defaultData.UnmarshalJSON([]byte(`{"test":1}`))
@@ -60,7 +60,7 @@ func (suite *KeeperTestSuite) TestSetSigningData() {
 			err := k.SetTemplateSigningData(suite.Ctx, test.inputData, test.inputId)
 			if !test.expErr {
 				suite.NoError(err)
-				actualData, _ := k.GetSigningData(suite.Ctx, test.inputId)
+				actualData, _ := k.GetTemplateSigningData(suite.Ctx, test.inputId)
 				suite.Equal(test.expData, actualData)
 			} else {
 				suite.Error(err)
@@ -69,7 +69,7 @@ func (suite *KeeperTestSuite) TestSetSigningData() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestDuplicateSetSigningData() {
+func (suite *KeeperTestSuite) TestDuplicateSetTemplateSigningData() {
 	k := suite.App.CdaKeeper
 
 	suite.PrepareContracts(1)
@@ -92,7 +92,7 @@ func (suite *KeeperTestSuite) TestDuplicateSetSigningData() {
 	suite.Equal(firstData, actualData)
 }
 
-func (suite *KeeperTestSuite) TestGetSigningData() {
+func (suite *KeeperTestSuite) TestGetTemplateSigningData() {
 	k := suite.App.CdaKeeper
 	var expected types.RawSigningData
 	expected.UnmarshalJSON([]byte("test"))
@@ -105,7 +105,7 @@ func (suite *KeeperTestSuite) TestGetSigningData() {
 	suite.Equal(expected, actual)
 }
 
-func (suite *KeeperTestSuite) TestHasSigningData() {
+func (suite *KeeperTestSuite) TestHasTemplateSigningData() {
 	k := suite.App.CdaKeeper
 	ids := suite.PrepareContracts(1)
 	k.SetTemplateSigningData(suite.Ctx, []byte("test"), ids[0])
@@ -114,7 +114,7 @@ func (suite *KeeperTestSuite) TestHasSigningData() {
 	suite.True(hasData)
 }
 
-func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
+func (suite *KeeperTestSuite) TestMatchesTemplateSigningDataSchema() {
 	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON([]byte(getTestSchema()))
@@ -139,7 +139,7 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
 	suite.True(matches)
 }
 
-func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
+func (suite *KeeperTestSuite) TestMatchesTemplateSigningDataSchema_NoMatch() {
 	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON(getTestSchema())
@@ -170,7 +170,7 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
 	suite.False(matches)
 }
 
-func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_InvalidJSONSchema() {
+func (suite *KeeperTestSuite) TestMatchesTemplateSigningDataSchema_InvalidJSONSchema() {
 	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
 	signingDataSchema.UnmarshalJSON([]byte(`"hello": "world"`)) // missing braces around JSON
