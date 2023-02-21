@@ -173,7 +173,7 @@ func (k Keeper) Contracts(goCtx context.Context, req *types.QueryContractsReques
 	}, nil
 }
 
-func (k Keeper) SigningData(goCtx context.Context, req *types.QuerySigningDataRequest) (*types.QuerySigningDataResponse, error) {
+func (k Keeper) SigningDataSchema(goCtx context.Context, req *types.QuerySigningDataSchemaRequest) (*types.QuerySigningDataSchemaResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
@@ -182,5 +182,5 @@ func (k Keeper) SigningData(goCtx context.Context, req *types.QuerySigningDataRe
 	if err != nil {
 		return nil, err
 	}
-	return &types.QuerySigningDataResponse{SigningData: data}, nil
+	return &types.QuerySigningDataSchemaResponse{Schema: data}, nil
 }
