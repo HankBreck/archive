@@ -2,10 +2,9 @@ syntax = "proto3";
 package archive.cda;
 
 import "archive/cda/cda.proto";
+import "archive/cda/contract.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/any.proto";
-// this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
@@ -14,7 +13,7 @@ service Msg {
   rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
   rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
-  // this line is used by starport scaffolding # proto/tx/rpc
+  rpc RegisterContract(MsgRegisterContract) returns (MsgRegisterContractResponse);
 }
 
 message MsgCreateCda {
@@ -24,13 +23,11 @@ message MsgCreateCda {
   string legal_metadata_uri = 4;
   bytes signing_data = 5 [
     (gogoproto.customname) = "SigningData",
-    (gogoproto.casttype) =
-        "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
+    (gogoproto.casttype) = "RawSigningData"
   ];
   google.protobuf.Timestamp utc_expire_time = 6
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
 }
-
 message MsgCreateCdaResponse { uint64 id = 1; }
 
 message MsgApproveCda {
@@ -41,14 +38,28 @@ message MsgApproveCda {
         "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
   ];
 }
-
 message MsgApproveCdaResponse {}
 
 message MsgFinalizeCda {
   string creator = 1;
   uint64 cda_id = 2;
 }
-
 message MsgFinalizeCdaResponse {}
+
+message MsgRegisterContract {
+    string creator = 1;
+    string description = 2;
+    repeated string authors = 3;
+    ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
+    string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
+    bytes signing_data_schema = 6 [
+      (gogoproto.customname) = "SigningDataSchema",
+      (gogoproto.casttype) = "RawSigningData"
+    ];
+    string template_uri = 7 [ (gogoproto.customname) = "TemplateUri" ];
+    string template_schema_uri = 8
+        [ (gogoproto.customname) = "TemplateSchemaUri" ];
+  }
+  message MsgRegisterContractResponse { uint64 id = 1; }
 
 // this line is used by starport scaffolding # proto/tx/message
