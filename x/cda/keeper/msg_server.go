@@ -37,7 +37,7 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 	}
 
 	// Ensure the signing data matches the expected contract's schema
-	matches, err := k.MatchesTemplateSigningDataSchema(ctx, msg.ContractId, msg.SigningData)
+	matches, err := k.MatchesSigningDataSchema(ctx, msg.ContractId, msg.SigningData)
 	if err != nil || !matches {
 		return nil, types.ErrInvalidSigningData.Wrap("does not match schema")
 	}
@@ -116,7 +116,7 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 	id := m.AppendContract(ctx, contract)
 
 	// Store the schema in state
-	err := m.SetTemplateSigningData(ctx, msg.SigningDataSchema, id)
+	err := m.SetSigningDataSchema(ctx, msg.SigningDataSchema, id)
 	if err != nil {
 		return nil, err
 	}
