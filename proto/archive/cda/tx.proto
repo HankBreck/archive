@@ -13,7 +13,8 @@ service Msg {
   rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
   rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
-  rpc RegisterContract(MsgRegisterContract) returns (MsgRegisterContractResponse);
+  rpc RegisterContract(MsgRegisterContract)
+      returns (MsgRegisterContractResponse);
 }
 
 message MsgCreateCda {
@@ -33,9 +34,7 @@ message MsgCreateCdaResponse { uint64 id = 1; }
 message MsgApproveCda {
   string creator = 1;
   uint64 cda_id = 2;
-  bytes signing_data = 3 [
-    (gogoproto.casttype) = "RawSigningData"
-  ];
+  bytes signing_data = 3 [ (gogoproto.casttype) = "RawSigningData" ];
 }
 message MsgApproveCdaResponse {}
 
@@ -46,19 +45,19 @@ message MsgFinalizeCda {
 message MsgFinalizeCdaResponse {}
 
 message MsgRegisterContract {
-    string creator = 1;
-    string description = 2;
-    repeated string authors = 3;
-    ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
-    string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
-    bytes signing_data_schema = 6 [
-      (gogoproto.customname) = "SigningDataSchema",
-      (gogoproto.casttype) = "RawSigningData"
-    ];
-    string template_uri = 7 [ (gogoproto.customname) = "TemplateUri" ];
-    string template_schema_uri = 8
-        [ (gogoproto.customname) = "TemplateSchemaUri" ];
-  }
-  message MsgRegisterContractResponse { uint64 id = 1; }
+  string creator = 1;
+  string description = 2;
+  repeated string authors = 3;
+  ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
+  string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
+  bytes signing_data_schema = 6 [
+    (gogoproto.customname) = "SigningDataSchema",
+    (gogoproto.casttype) = "RawSigningData"
+  ];
+  string template_uri = 7 [ (gogoproto.customname) = "TemplateUri" ];
+  string template_schema_uri = 8
+      [ (gogoproto.customname) = "TemplateSchemaUri" ];
+}
+message MsgRegisterContractResponse { uint64 id = 1; }
 
 // this line is used by starport scaffolding # proto/tx/message

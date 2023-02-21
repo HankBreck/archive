@@ -46,8 +46,7 @@ service Query {
   }
   // Queries an Identity to see if it is frozen
   rpc IsFrozen(QueryIsFrozenRequest) returns (QueryIsFrozenResponse) {
-    option (google.api.http).get =
-        "/archive/identity/is_frozen/{id}";
+    option (google.api.http).get = "/archive/identity/is_frozen/{id}";
   }
 
   // this line is used by starport scaffolding # 2
@@ -102,11 +101,9 @@ message QueryMemberRoleRequest {
 }
 message QueryMemberRoleResponse { string role = 1; }
 
-message QueryIsFrozenRequest {
-    uint64 id = 1;
-}
+message QueryIsFrozenRequest { uint64 id = 1; }
 message QueryIsFrozenResponse {
-    bool is_frozen = 1 [ (gogoproto.customname) = "IsFrozen" ];
+  bool is_frozen = 1 [ (gogoproto.customname) = "IsFrozen" ];
 }
 
 // this line is used by starport scaffolding # 3
