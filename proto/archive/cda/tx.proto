@@ -21,7 +21,7 @@ message MsgCreateCda {
   // the account that sent the message
   string creator = 1;
   // the list of identity IDs that must sign the CDA
-  repeated uint64 signer_ids = 2 [ (gogoproto.customname) = "SignerIds"];
+  repeated uint64 signer_ids = 2 [ (gogoproto.customname) = "SignerIds" ];
   // the id of the registered contract template
   uint64 contract_id = 3;
   // the URI pointing to the contract's metadata
@@ -41,9 +41,9 @@ message MsgApproveCda {
   // the account that sent the message
   string creator = 1;
   // the ID of the CDA to approve
-  uint64 cda_id = 2 [ (gogoproto.customname) = "CdaId"];
+  uint64 cda_id = 2 [ (gogoproto.customname) = "CdaId" ];
   // the identity ID to sign on behalf of
-  uint64 signer_id = 3 [ (gogoproto.customname) = "SignerId"];
+  uint64 signer_id = 3 [ (gogoproto.customname) = "SignerId" ];
   // the on-chain data specified in MsgCreateCda
   bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
 }

@@ -27,7 +27,8 @@ service Query {
   }
 
   // Queries a list of CdasOwned items.
-  rpc CdasBySigner(QueryCdasBySignerRequest) returns (QueryCdasBySignerResponse) {
+  rpc CdasBySigner(QueryCdasBySignerRequest)
+      returns (QueryCdasBySignerResponse) {
     option (google.api.http).get = "/archive/cda/cdas_owned/{signer}";
   }
 
@@ -48,7 +49,8 @@ service Query {
     option (google.api.http).get = "/archive/cda/signing_data/{id}";
   }
 
-  rpc SigningDataSchema(QuerySigningDataSchemaRequest) returns (QuerySigningDataSchemaResponse) {
+  rpc SigningDataSchema(QuerySigningDataSchemaRequest)
+      returns (QuerySigningDataSchemaResponse) {
     option (google.api.http).get = "/archive/cda/signing_data_schema/{id}";
   }
 }
@@ -93,10 +95,10 @@ message QueryCdasBySignerResponse {
 
 message QueryApprovalRequest {
   // The CDA ID to check
-  uint64 cda_id = 1 [ (gogoproto.customname) = "CdaId"];
+  uint64 cda_id = 1 [ (gogoproto.customname) = "CdaId" ];
 
   // The identity ID of the signer to check
-  uint64 signer_id = 2 [ (gogoproto.customname) = "SignerId"];
+  uint64 signer_id = 2 [ (gogoproto.customname) = "SignerId" ];
 }
 message QueryApprovalResponse { bool approved = 1; }
 
@@ -123,18 +125,20 @@ message QueryContractsResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-// QuerySigningDataRequest is the request type for the Query/SigningData RPC method
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC
+// method
 message QuerySigningDataRequest { uint64 id = 1; }
-// QuerySigningDataResponse is the response type for the Query/SigningData RPC method
-message QuerySigningDataResponse { 
-    bytes signing_data = 1 [ 
-        (gogoproto.customname) = "SigningData",
-        (gogoproto.casttype) = "RawSigningData" 
-    ]; 
+// QuerySigningDataResponse is the response type for the Query/SigningData RPC
+// method
+message QuerySigningDataResponse {
+  bytes signing_data = 1 [
+    (gogoproto.customname) = "SigningData",
+    (gogoproto.casttype) = "RawSigningData"
+  ];
 }
 
-// QuerySigningDataSchemaRequest is the request type for the Query/SigningData RPC
-// method
+// QuerySigningDataSchemaRequest is the request type for the Query/SigningData
+// RPC method
 message QuerySigningDataSchemaRequest { uint64 id = 1; }
 // QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
 // method
