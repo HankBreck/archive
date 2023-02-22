@@ -16,6 +16,7 @@ import (
 // Returns the id of cda
 func (k Keeper) AppendCDA(ctx sdk.Context, cda types.CDA) uint64 {
 	count := k.getCDACount(ctx)
+	// TODO: probably want to avoid checking state for something that shouldn't ever happen
 	if k.HasCDA(ctx, count) {
 		panic("Duplicate CDA id found" + strconv.FormatUint(count, 10))
 	}

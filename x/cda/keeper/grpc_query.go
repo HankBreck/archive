@@ -82,7 +82,7 @@ func (k Keeper) Cdas(goCtx context.Context, req *types.QueryCdasRequest) (*types
 	return &types.QueryCdasResponse{CDAs: cdas, Pagination: pageRes}, nil
 }
 
-func (k Keeper) CdasOwned(goCtx context.Context, req *types.QueryCdasOwnedRequest) (*types.QueryCdasOwnedResponse, error) {
+func (k Keeper) CdasBySigner(goCtx context.Context, req *types.QueryCdasBySignerRequest) (*types.QueryCdasBySignerResponse, error) {
 	// Return an error if the request is nil
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
