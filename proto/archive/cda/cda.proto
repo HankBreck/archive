@@ -7,18 +7,29 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
 message CDA {
+  // the state of the CDA
+  // pending - waiting approval by signing parties
+  // finalized - all signatures present
+  // voided - inactive
   enum ContractStatus {
     Pending = 0;
     Finalized = 1;
     Voided = 2;
   }
+  // the account that sent the message
   string creator = 1;
+  // the ID of the CDA
   uint64 id = 2;
-  repeated string signing_parties = 3;
+  // the list of identity IDs that must sign the CDA
+  repeated uint64 signer_identities = 3;
+  // the id of the registered contract template
   uint64 contract_id = 4;
+  // the URI pointing to the contract's metadata
   string legal_metadata_uri = 5;
+  // the expiration UTC timestamp of this agreement
   google.protobuf.Timestamp utc_expire_time = 6
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
+  // the current status of the CDA
   ContractStatus status = 7;
 }
 
