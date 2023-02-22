@@ -3,9 +3,11 @@ package keeper
 import (
 	"testing"
 
+	"github.com/HankBreck/archive/x/cda/keeper"
 	"github.com/HankBreck/archive/x/cda/types"
 
-	"github.com/HankBreck/archive/x/cda/keeper"
+	identitykeeper "github.com/HankBreck/archive/x/identity/keeper"
+	identitytypes "github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -32,6 +34,22 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
+	idStoreKey := sdk.NewKVStoreKey(identitytypes.StoreKey)
+	idMemStoreKey := storetypes.NewMemoryStoreKey(identitytypes.MemStoreKey)
+	idParamsSubspace := typesparams.NewSubspace(
+		cdc,
+		identitytypes.Amino,
+		idStoreKey,
+		idMemStoreKey,
+		"IdentityParams",
+	)
+	idKeeper := identitykeeper.NewKeeper(
+		cdc,
+		idStoreKey,
+		idMemStoreKey,
+		idParamsSubspace,
+	)
+
 	paramsSubspace := typesparams.NewSubspace(cdc,
 		types.Amino,
 		storeKey,
@@ -43,6 +61,7 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
+		idKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())
