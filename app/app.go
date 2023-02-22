@@ -162,8 +162,8 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
-		cdamodule.AppModuleBasic{},
 		identitymodule.AppModuleBasic{},
+		cdamodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -235,8 +235,8 @@ type App struct {
 	ScopedTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
-	CdaKeeper      cdamodulekeeper.Keeper
 	IdentityKeeper identitymodulekeeper.Keeper
+	CdaKeeper      cdamodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -273,8 +273,8 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
-		cdamoduletypes.StoreKey,
 		identitymoduletypes.StoreKey,
+		cdamoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -396,14 +396,6 @@ func New(
 	)
 	monitoringModule := monitoringp.NewAppModule(appCodec, app.MonitoringKeeper)
 
-	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
-		appCodec,
-		keys[cdamoduletypes.StoreKey],
-		keys[cdamoduletypes.MemStoreKey],
-		app.GetSubspace(cdamoduletypes.ModuleName),
-	)
-	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
-
 	app.IdentityKeeper = *identitymodulekeeper.NewKeeper(
 		appCodec,
 		keys[identitymoduletypes.StoreKey],
@@ -411,6 +403,15 @@ func New(
 		app.GetSubspace(identitymoduletypes.ModuleName),
 	)
 	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper)
+
+	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
+		appCodec,
+		keys[cdamoduletypes.StoreKey],
+		keys[cdamoduletypes.MemStoreKey],
+		app.GetSubspace(cdamoduletypes.ModuleName),
+		app.IdentityKeeper,
+	)
+	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -453,8 +454,8 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		monitoringModule,
-		cdaModule,
 		identityModule,
+		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -482,8 +483,8 @@ func New(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -507,8 +508,8 @@ func New(
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -537,8 +538,8 @@ func New(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -563,8 +564,8 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		monitoringModule,
-		cdaModule,
 		identityModule,
+		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -754,8 +755,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
-	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
 	paramsKeeper.Subspace(identitymoduletypes.ModuleName)
+	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
