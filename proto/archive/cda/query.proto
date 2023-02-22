@@ -28,16 +28,16 @@ service Query {
 
   // Queries a list of CdasOwned items.
   rpc CdasBySigner(QueryCdasBySignerRequest) returns (QueryCdasBySignerResponse) {
-    option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
+    option (google.api.http).get = "/archive/cda/cdas_owned/{signer}";
   }
 
   // Queries a list of Approvals items.
   rpc Approval(QueryApprovalRequest) returns (QueryApprovalResponse) {
-    option (google.api.http).get = "/archive/cda/approval/{cdaId}";
+    option (google.api.http).get = "/archive/cda/approval/{cda_id}/{signer_id}";
   }
 
   rpc Contract(QueryContractRequest) returns (QueryContractResponse) {
-    option (google.api.http).get = "/archive/cda/contract";
+    option (google.api.http).get = "/archive/cda/contract/{id}";
   }
 
   rpc Contracts(QueryContractsRequest) returns (QueryContractsResponse) {
