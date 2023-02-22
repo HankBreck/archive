@@ -1,12 +1,14 @@
 package keeper
 
 import (
+	"bytes"
 	"context"
 	"strconv"
 
 	"github.com/HankBreck/archive/x/cda/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 type msgServer struct {
@@ -70,11 +72,47 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 func (k msgServer) ApproveCda(goCtx context.Context, msg *types.MsgApproveCda) (*types.MsgApproveCdaResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.SetApproval(ctx, msg)
+	// Ensure CDA exists
+	cda, err := k.GetCDA(ctx, msg.CdaId)
+	if err != nil {
+		return nil, err
+	} else if cda == nil {
+		return nil, types.ErrNonExistentCdaId.Wrapf("no CDA found for ID %d", msg.CdaId)
+	}
 
+	// Only allow approvals when in the pending state
+	if cda.Status != types.CDA_Pending {
+		return nil, types.ErrInvalidCdaStatus.Wrap("The CDA must have a status of pending to be approved")
+	}
+
+	// Ensure signing data matches
+	metadata, err := k.GetSigningData(ctx, msg.CdaId)
 	if err != nil {
 		return nil, err
 	}
+	if !bytes.Equal(metadata.Bytes(), msg.SigningData.Bytes()) {
+		return nil, types.ErrInvalidSigningData
+	}
+
+	// Ensure the sender is authorized to sign for identity
+	creator, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+	hasSender, err := k.identityKeeper.HasMember(ctx, msg.SignerId, creator)
+	if err != nil {
+		return nil, err
+	} else if !hasSender {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("account (%s) is not authorized to sign for identity %d", creator.String(), msg.SignerId)
+	}
+
+	// Set approval
+	err = k.SetApproval(ctx, msg.CdaId, msg.SignerId)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: emit events
 
 	return &types.MsgApproveCdaResponse{}, nil
 }
