@@ -27,9 +27,9 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 
 	// Create the CDA
 	var cda = types.CDA{
+		// Id set inside k.AppendCDA
 		Creator:          msg.Creator,
-		Id:               0, // Remove
-		SigningParties:   msg.SigningParties,
+		SignerIdentities: msg.SignerIds,
 		ContractId:       msg.ContractId,
 		LegalMetadataUri: msg.LegalMetadataUri,
 		UtcExpireTime:    msg.UtcExpireTime,
@@ -44,12 +44,13 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
-	for i := range cda.SigningParties {
-		owner := cda.SigningParties[i]
-		err := k.AppendOwnerCDA(ctx, owner, id)
-		if err != nil {
-			return nil, err
+	for i := range cda.SignerIdentities {
+		signer := cda.SignerIdentities[i]
+		// Ensure signer exists
+		if !k.identityKeeper.HasCertificate(ctx, signer) {
+			return nil, types.ErrIdentityNotFound.Wrapf("No identity registered for ID (%d)", signer)
 		}
+		k.AppendSignerCDA(ctx, signer, id)
 	}
 
 	// Store the signing metadata for the CDA

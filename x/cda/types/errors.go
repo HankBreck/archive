@@ -13,6 +13,7 @@ var (
 	ErrNonExistentContract    = sdkerrors.Register(ModuleName, 4, "Invalid Contract ID. Please ensure the Contract exists for the given ID.")
 	ErrNonExistentSigningData = sdkerrors.Register(ModuleName, 5, "Signing data was not found.")
 	ErrExistingEntry          = sdkerrors.Register(ModuleName, 6, "Existing entry found.")
+	ErrIdentityNotFound       = sdkerrors.Register(ModuleName, 7, "Identity was not found.")
 
 	ErrInvalidExpiration  = sdkerrors.Register(ModuleName, 113, "Invalid value for expiration. Must be a valid UTC millisecond timestamp.")
 	ErrExistingApproval   = sdkerrors.Register(ModuleName, 114, "The address has already given approval for this CDA.")

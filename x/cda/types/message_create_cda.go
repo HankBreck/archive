@@ -11,10 +11,10 @@ const TypeMsgCreateCda = "create_cda"
 
 var _ sdk.Msg = &MsgCreateCda{}
 
-func NewMsgCreateCda(creator string, signingParties []string, contractId uint64, legalMetadataUri string, signingData RawSigningData, utcExpireTime time.Time) *MsgCreateCda {
+func NewMsgCreateCda(creator string, signerIds []uint64, contractId uint64, legalMetadataUri string, signingData RawSigningData, utcExpireTime time.Time) *MsgCreateCda {
 	return &MsgCreateCda{
 		Creator:          creator,
-		SigningParties:   signingParties,
+		SignerIds:        signerIds,
 		ContractId:       contractId,
 		LegalMetadataUri: legalMetadataUri,
 		SigningData:      signingData,
