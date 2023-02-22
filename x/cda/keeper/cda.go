@@ -56,6 +56,25 @@ func (k Keeper) HasCDA(ctx sdk.Context, cdaId uint64) bool {
 	return store.Has(bzKey)
 }
 
+// UpdateCDA writes cda to state under the key of id.
+// This method should only be used for updates (like updating status).
+//
+// Returns an error if the CDA does not already exist in state
+func (k Keeper) UpdateCDA(ctx sdk.Context, id uint64, cda *types.CDA) error {
+	if cda == nil {
+		return types.ErrEmpty.Wrapf("cda pointer is nil! this is bad!")
+	}
+
+	if !k.HasCDA(ctx, id) {
+		return types.ErrExistingEntry.Wrapf("CDA already found for ID")
+	}
+
+	// TODO: any more checks necessary?
+
+	k.uncheckedSetCda(ctx, *cda)
+	return nil
+}
+
 func (k Keeper) uncheckedSetCda(ctx sdk.Context, cda types.CDA) {
 	// Convert the id to bytes
 	byteId := make([]byte, 8)
