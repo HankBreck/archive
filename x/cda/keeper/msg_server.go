@@ -120,8 +120,32 @@ func (k msgServer) ApproveCda(goCtx context.Context, msg *types.MsgApproveCda) (
 func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda) (*types.MsgFinalizeCdaResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	err := k.Finalize(ctx, msg)
+	// validator creator address (duplicate of VB)
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
+		return nil, err
+	}
+
+	// Ensure CDA exists and is pending
+	cda, err := k.GetCDA(ctx, msg.CdaId)
+	if err != nil {
+		return nil, err
+	} else if cda.Status != types.CDA_Pending {
+		return nil, types.ErrInvalidCdaStatus.Wrapf("CDA must have a status of pending")
+	}
+
+	// Ensure each signer has approved the CDA
+	for _, signerId := range cda.SignerIdentities {
+		if !k.HasApproval(ctx, cda.Id, signerId) {
+			return nil, types.ErrMissingApproval.Wrapf("missing approval for signer ID %d", signerId)
+		}
+	}
+
+	// Update the CDA in storage
+	cda.Status = types.CDA_Finalized
+	err = k.UpdateCDA(ctx, cda.Id, cda)
+	if err != nil {
+		// TODO: abstract away internal error messages
 		return nil, err
 	}
 
