@@ -27,7 +27,7 @@ service Query {
   }
 
   // Queries a list of CdasOwned items.
-  rpc CdasOwned(QueryCdasOwnedRequest) returns (QueryCdasOwnedResponse) {
+  rpc CdasBySigner(QueryCdasBySignerRequest) returns (QueryCdasBySignerResponse) {
     option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
   }
 
@@ -51,7 +51,6 @@ service Query {
   rpc SigningDataSchema(QuerySigningDataSchemaRequest) returns (QuerySigningDataSchemaResponse) {
     option (google.api.http).get = "/archive/cda/signing_data_schema/{id}";
   }
-  // this line is used by starport scaffolding # 2
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
@@ -77,14 +76,14 @@ message QueryCdasResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryCdasOwnedRequest {
+message QueryCdasBySignerRequest {
   // Account address for the owner
-  string owner = 1;
+  uint64 signer = 1;
 
   // Pagination to view all ids
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
-message QueryCdasOwnedResponse {
+message QueryCdasBySignerResponse {
   // List of CDA ids belonging to the owner
   repeated uint64 ids = 1;
 
@@ -93,11 +92,11 @@ message QueryCdasOwnedResponse {
 }
 
 message QueryApprovalRequest {
-  // The id of the CDA to check
-  uint64 cdaId = 1;
+  // The CDA ID to check
+  uint64 cda_id = 1 [ (gogoproto.customname) = "CdaId"];
 
-  // The wallet address of the owner to check
-  string owner = 2;
+  // The identity ID of the signer to check
+  uint64 signer_id = 2 [ (gogoproto.customname) = "SignerId"];
 }
 message QueryApprovalResponse { bool approved = 1; }
 
