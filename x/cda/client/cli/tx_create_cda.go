@@ -2,12 +2,12 @@ package cli
 
 import (
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +18,7 @@ const SIGNING_PARTIES = "signing-parties"
 
 func CmdCreateCda() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-cda [legal contract ID] [legal metadata URI] [signing data type URI] [signing data stringified] [expiration time UTC]",
+		Use:   "create-cda [signer ids] [legal contract ID] [legal metadata URI] [signing data stringified] [expiration time UTC]",
 		Short: "Broadcast message CreateCda",
 		Args:  cobra.ExactArgs(5),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -29,19 +29,24 @@ func CmdCreateCda() *cobra.Command {
 			}
 
 			// Signing Parties
-			signingParties, err := cmd.Flags().GetStringArray(SIGNING_PARTIES)
-			if err != nil {
-				return err
+			signerIdStrs := strings.Split(args[0], ",")
+			signerIds := make([]uint64, len(signerIdStrs))
+			for i, idStr := range signerIdStrs {
+				id, err := strconv.ParseUint(idStr, 10, 64)
+				if err != nil {
+					return err
+				}
+				signerIds[i] = id
 			}
 
 			// Contract ID
-			contractId, err := strconv.ParseUint(args[0], 10, 64)
+			contractId, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
 
 			// Legal Metadata URI
-			legalMetadataUri := args[1]
+			legalMetadataUri := args[2]
 
 			// Signing Data
 			var signingData types.RawSigningData
@@ -56,7 +61,7 @@ func CmdCreateCda() *cobra.Command {
 
 			msg := types.NewMsgCreateCda(
 				clientCtx.GetFromAddress().String(),
-				signingParties,
+				signerIds,
 				contractId,
 				legalMetadataUri,
 				signingData,
@@ -68,12 +73,6 @@ func CmdCreateCda() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
-
-	// Signing parties flag
-	cmd.Flags().StringArray(SIGNING_PARTIES, []string{}, "A list of account addresses that are signing parties in the CDA.")
-	cmd.MarkFlagRequired(SIGNING_PARTIES)
-
-	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
