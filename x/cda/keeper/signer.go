@@ -33,6 +33,15 @@ func (k Keeper) AppendSignerCDA(ctx sdk.Context, signerId uint64, cdaId uint64) 
 	k.setSignerCDACount(ctx, signerId, count+1)
 }
 
+func (k Keeper) SignerHasCda(ctx sdk.Context, signerId uint64, cdaId uint64) bool {
+	// Convert the CDA id to bytes
+	bzCdaId := make([]byte, 8)
+	binary.BigEndian.PutUint64(bzCdaId, cdaId)
+
+	store := k.getSignerCdaStore(ctx, signerId)
+	return store.Has(bzCdaId)
+}
+
 // GetCdasBySigner pages through all CDAs stored under the key of signerId.
 //
 // Returns a tuple of: the ids found, the page response, and an error.
