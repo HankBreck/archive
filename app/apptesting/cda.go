@@ -8,28 +8,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-func (s *KeeperTestHelper) ApproveCda(cdaId uint64, owner *sdk.AccAddress) error {
+func (s *KeeperTestHelper) ApproveCda(signer sdk.AccAddress, cdaId uint64, signerId uint64) error {
 	k := s.App.CdaKeeper
-
-	goCtx := sdk.WrapSDKContext(s.Ctx)
-	res, err := k.Cda(goCtx, &types.QueryCdaRequest{
-		Id: cdaId,
-	})
+	cda, err := k.GetCDA(s.Ctx, cdaId)
 	if err != nil {
 		return err
 	}
 
-	signingData, err := k.GetSigningData(s.Ctx, cdaId)
-	if err != nil {
-		return err
-	}
-
-	msg := types.MsgApproveCda{
-		Creator:     owner.String(),
-		CdaId:       res.Cda.Id,
-		SigningData: signingData,
-	}
-	err = k.SetApproval(s.Ctx, &msg)
+	err = k.SetApproval(s.Ctx, cda.Id, signerId)
 	if err != nil {
 		return err
 	}
@@ -37,18 +23,19 @@ func (s *KeeperTestHelper) ApproveCda(cdaId uint64, owner *sdk.AccAddress) error
 	return nil
 }
 
-func (s *KeeperTestHelper) PrepareCdasForOwner(signers []*sdk.AccAddress, count int) []uint64 {
-	ids := make([]uint64, count)
+func (s *KeeperTestHelper) PrepareCdas(signers []*sdk.AccAddress, count int) ([]uint64, []uint64) {
+	cdaIds := make([]uint64, count)
 	k := s.App.CdaKeeper
-	signingParties := make([]string, len(signers))
+	issuer := s.TestAccs[0]
+	signerIds := make([]uint64, len(signers))
 	for i, signer := range signers {
-		signingParties[i] = signer.String()
+		signerIds[i], _ = s.PrepareCertificate(issuer, signer)
 	}
 
 	for i := 0; i < count; i++ {
 		var cda = types.CDA{
 			Creator:          signers[0].String(),
-			SigningParties:   signingParties,
+			SignerIdentities: signerIds,
 			ContractId:       0,
 			LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
 			UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
@@ -57,11 +44,8 @@ func (s *KeeperTestHelper) PrepareCdasForOwner(signers []*sdk.AccAddress, count 
 
 		// Store CDA & grab cda id
 		id := k.AppendCDA(s.Ctx, cda)
-		for _, signer := range cda.SigningParties {
-			err := k.AppendOwnerCDA(s.Ctx, signer, id)
-			if err != nil {
-				panic(err)
-			}
+		for _, signerId := range cda.SignerIdentities {
+			k.AppendSignerCDA(s.Ctx, signerId, id)
 		}
 
 		err := k.SetSigningData(s.Ctx, id, s.GetSigningData())
@@ -69,34 +53,34 @@ func (s *KeeperTestHelper) PrepareCdasForOwner(signers []*sdk.AccAddress, count 
 			panic(err)
 		}
 
-		ids[i] = id
+		cdaIds[i] = id
 	}
-	return ids
+	return cdaIds, signerIds
 }
 
 func (s *KeeperTestHelper) PrepareVoidedCdaForSigners(signers []*sdk.AccAddress) uint64 {
 	k := s.App.CdaKeeper
-	signingParties := make([]string, len(signers))
+	issuer := s.TestAccs[0]
+	signerIds := make([]uint64, len(signers))
 	for i, signer := range signers {
-		signingParties[i] = signer.String()
+		signerIds[i], _ = s.PrepareCertificate(issuer, signer)
 	}
-	cda := types.CDA{
+
+	var cda = types.CDA{
 		Creator:          signers[0].String(),
-		SigningParties:   signingParties,
+		SignerIdentities: signerIds,
 		ContractId:       0,
 		LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
 		UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
 		Status:           types.CDA_Voided,
 	}
 
-	// CreateCda() logic
+	// Store CDA & grab cda id
 	id := k.AppendCDA(s.Ctx, cda)
-	for _, signer := range cda.SigningParties {
-		err := k.AppendOwnerCDA(s.Ctx, signer, id)
-		if err != nil {
-			panic(err)
-		}
+	for _, signerId := range cda.SignerIdentities {
+		k.AppendSignerCDA(s.Ctx, signerId, id)
 	}
+
 	err := k.SetSigningData(s.Ctx, id, s.GetSigningData())
 	if err != nil {
 		panic(err)
