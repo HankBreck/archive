@@ -12,7 +12,7 @@ Build the local archive Docker container:
 make localnet-init
 ```
 
-Start the local archive Docker contaienr:
+Start the local archive Docker container:
 ```bash
 make localnet-start
 ```
