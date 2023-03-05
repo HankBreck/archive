@@ -233,7 +233,7 @@ func (suite *KeeperTestSuite) TestApprovalQuery() {
 
 	// Setup test env
 	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
-	err := suite.ApproveCda(*signers[0], cdaIds[0], signerIds[0])
+	suite.ApproveCda(*signers[0], cdaIds[0], signerIds[0])
 
 	// Perform the test
 	req := types.QueryApprovalRequest{
