@@ -32,7 +32,6 @@ func CmdMemberRole() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryMemberRoleRequest{
-
 				Id:     reqId,
 				Member: reqMember,
 			}

@@ -28,7 +28,7 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	// Create the CDA
-	var cda = types.CDA{
+	cda := types.CDA{
 		// Id set inside k.AppendCDA
 		Creator:          msg.Creator,
 		SignerIdentities: msg.SignerIds,
@@ -153,7 +153,6 @@ func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda)
 }
 
 func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
-
 	// Validate Basic checks:
 	//		signingDataSchema != nil
 	//		signingDataSchema is valid JSON

@@ -31,7 +31,6 @@ func CmdOperators() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryOperatorsRequest{
-
 				Id: reqId,
 			}
 

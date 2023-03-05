@@ -11,8 +11,10 @@ import (
 	dbm "github.com/tendermint/tm-db"
 )
 
-var defaultGenesisBz []byte
-var defaultEncodingConfig = appparams.MakeEncodingConfig()
+var (
+	defaultGenesisBz      []byte
+	defaultEncodingConfig = appparams.MakeEncodingConfig()
+)
 
 func getDefaultGenesisStateBytes() []byte {
 	if len(defaultGenesisBz) == 0 {

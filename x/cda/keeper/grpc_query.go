@@ -67,9 +67,7 @@ func (k Keeper) Cdas(goCtx context.Context, req *types.QueryCdasRequest) (*types
 		cdas = append(cdas, &cda)
 
 		return nil
-
 	})
-
 	// Throw error if pagination fails
 	if err != nil {
 		return nil, err
