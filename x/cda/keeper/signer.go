@@ -14,23 +14,13 @@ import (
 // Assumes signer references an existing identity
 // Assumes cdaId references an existing CDA
 func (k Keeper) AppendSignerCDA(ctx sdk.Context, signerId uint64, cdaId uint64) {
-	// Get current index for this owner
-	count := k.getSignerCDACount(ctx, signerId)
-
-	// Convert the index to bytes
-	bzSignerIdx := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzSignerIdx, count)
-
 	// Convert the CDA id to bytes
 	byteCdaId := make([]byte, 8)
 	binary.BigEndian.PutUint64(byteCdaId, cdaId)
 
-	// Store the CDA id under the key CDA signer key (e.g. "CDA-signer-{signer ID}")
+	// Store the CDA id under the key CDA signer key (e.g. "CDA-signer-{signer ID}-{CDA ID}")
 	store := k.getSignerCdaStore(ctx, signerId)
-	store.Set(bzSignerIdx, byteCdaId)
-
-	// Increment the index in storage
-	k.setSignerCDACount(ctx, signerId, count+1)
+	store.Set(byteCdaId, []byte{0x1})
 }
 
 func (k Keeper) SignerHasCda(ctx sdk.Context, signerId uint64, cdaId uint64) bool {
@@ -63,28 +53,29 @@ func (k Keeper) GetCdasBySigner(ctx sdk.Context, signerId uint64, pageReq *query
 	return ids, pageRes, nil
 }
 
+// TODO: Clean up
 // Returns the next available index for storing the CDA id
-func (k Keeper) getSignerCDACount(ctx sdk.Context, signer uint64) uint64 {
+// func (k Keeper) getSignerCDACount(ctx sdk.Context, signer uint64) uint64 {
 
-	// Covert the storage key to bytes
-	storePrefix := []byte(types.CDASignerCountKey)
+// 	// Covert the storage key to bytes
+// 	storePrefix := []byte(types.CDASignerCountKey)
 
-	// Load the store
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), storePrefix)
+// 	// Load the store
+// 	store := prefix.NewStore(ctx.KVStore(k.storeKey), storePrefix)
 
-	// Get the current count of CDAs
-	bzSignerId := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzSignerId, signer)
-	bzCount := store.Get(bzSignerId)
+// 	// Get the current count of CDAs
+// 	bzSignerId := make([]byte, 8)
+// 	binary.BigEndian.PutUint64(bzSignerId, signer)
+// 	bzCount := store.Get(bzSignerId)
 
-	// Return 0 if the key is nil (first time accessing)
-	if bzCount == nil {
-		return 0
-	}
+// 	// Return 0 if the key is nil (first time accessing)
+// 	if bzCount == nil {
+// 		return 0
+// 	}
 
-	// Return count as uint64
-	return binary.BigEndian.Uint64(bzCount)
-}
+// 	// Return count as uint64
+// 	return binary.BigEndian.Uint64(bzCount)
+// }
 
 // Increments the value of the owner's CDASignerCountKey ("CDA-signer-count-{signer identity ID}") in storage
 func (k Keeper) setSignerCDACount(ctx sdk.Context, signerId uint64, count uint64) {
