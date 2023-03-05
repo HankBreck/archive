@@ -19,7 +19,6 @@ func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata types.Raw
 	// TODO: Should we throw an error if the metadata already exists?
 	err := k.uncheckedSetMetadata(ctx, cdaId, metadata)
 	return err
-
 }
 
 func (k Keeper) GetSigningData(ctx sdk.Context, cdaId uint64) (types.RawSigningData, error) {

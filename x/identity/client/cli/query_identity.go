@@ -31,7 +31,6 @@ func CmdIdentity() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryIdentityRequest{
-
 				Id: reqId,
 			}
 

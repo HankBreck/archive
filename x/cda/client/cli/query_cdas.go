@@ -18,7 +18,6 @@ func CmdCdas() *cobra.Command {
 		Short: "Query CDAs",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			// TODO: Figure out how to optionally parse flags
 
 			// nextKey, err := cmd.Flags().GetString("next-key")

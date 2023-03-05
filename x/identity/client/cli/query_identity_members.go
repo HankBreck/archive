@@ -35,7 +35,6 @@ func CmdIdentityMembers() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryIdentityMembersRequest{
-
 				Id:        reqId,
 				IsPending: reqIsPending,
 			}
