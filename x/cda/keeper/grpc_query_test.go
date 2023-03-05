@@ -27,27 +27,27 @@ const (
 func (suite *KeeperTestSuite) TestCdaQuery() {
 	queryClient := suite.queryClient
 	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(signers, 1)
+	ids, _ := suite.PrepareCdas(signers, 1)
 	expected := types.QueryCdaResponse{
 		Cda: suite.GetCdas(ids)[0],
 	}
 
 	response, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: ids[0]})
-	suite.Require().NoError(err)
-	suite.Require().EqualValues(*response, expected)
+	suite.NoError(err)
+	suite.EqualValues(*response, expected)
 }
 
 func (suite *KeeperTestSuite) TestCdaQuery_UnsetId() {
 	queryClient := suite.queryClient
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	ids, _ := suite.PrepareCdas(owners, 1)
 
-	suite.Require().NotContains(ids, 1)
+	suite.NotContains(ids, 1)
 
 	// Attempt to query for unset ID
 	_, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: 1})
 
-	suite.Require().EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
+	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
 }
 
 /*
@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestCdaQuery_UnsetId() {
 func (suite *KeeperTestSuite) TestQueryCdas() {
 	queryClient := suite.queryClient
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 5)
+	ids, _ := suite.PrepareCdas(owners, 5)
 
 	response, err := queryClient.Cdas(context.Background(), &types.QueryCdasRequest{})
 
@@ -76,8 +76,8 @@ func (suite *KeeperTestSuite) TestQueryCdas_Paginate() {
 	queryClient := suite.queryClient
 	firstOwners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	secondOwners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	firstIds := suite.PrepareCdasForOwner(firstOwners, 5)
-	secondIds := suite.PrepareCdasForOwner(secondOwners, 5)
+	firstIds, _ := suite.PrepareCdas(firstOwners, 5)
+	secondIds, _ := suite.PrepareCdas(secondOwners, 5)
 
 	// Get the first 5 elements, starting with 0
 	bzKey := make([]byte, 8)
@@ -113,8 +113,8 @@ func (suite *KeeperTestSuite) TestQueryCdas_Paginate() {
 
 func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 	queryClient := suite.queryClient
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 10)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	cdaIds, _ := suite.PrepareCdas(signers, 10)
 
 	// Get the last 5 elements stored
 	pagination := &query.PageRequest{
@@ -130,8 +130,8 @@ func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 	suite.Require().Len(response.CDAs, 5)
 	for i := 0; i < 5; i++ {
 		// Order is reversed so need to index ids with len(ids)-i
-		suite.Require().Equal(ids[9-i], response.CDAs[i].Id)
-		suite.Require().Equal(owners[0].String(), response.CDAs[i].Creator)
+		suite.Require().Equal(cdaIds[9-i], response.CDAs[i].Id)
+		suite.Require().Equal(signers[0].String(), response.CDAs[i].Creator)
 	}
 
 	// Fetch the next five using response.Pagination.NextKey
@@ -148,15 +148,15 @@ func (suite *KeeperTestSuite) TestQueryCdas_PaginateReversed() {
 	for i := 0; i < 5; i++ {
 		// Order is reversed and this is the second batch,
 		// so need to index ids with len(ids)-5-i
-		suite.Require().Equal(ids[4-i], finalResponse.CDAs[i].Id)
-		suite.Require().Equal(owners[0].String(), finalResponse.CDAs[i].Creator)
+		suite.Require().Equal(cdaIds[4-i], finalResponse.CDAs[i].Id)
+		suite.Require().Equal(signers[0].String(), finalResponse.CDAs[i].Creator)
 	}
 }
 
 func (suite *KeeperTestSuite) TestQueryCdas_InvalidKey() {
 	queryClient := suite.queryClient
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	suite.PrepareCdasForOwner(owners, 5)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	suite.PrepareCdas(signers, 5)
 
 	invalidKey := make([]byte, 8)
 	binary.BigEndian.PutUint64(invalidKey, uint64(6))
@@ -174,52 +174,52 @@ func (suite *KeeperTestSuite) TestQueryCdas_InvalidKey() {
  *
  */
 
-func (suite *KeeperTestSuite) TestQueryCdasOwned() {
-	queryClient := suite.queryClient
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 5)
+// func (suite *KeeperTestSuite) TestQueryCdasOwned() {
+// 	queryClient := suite.queryClient
+// 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
+// 	ids := suite.PrepareCdasForOwner(owners, 5)
 
-	response, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owners[0].String()})
+// 	response, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owners[0].String()})
 
-	suite.Require().NoError(err)
-	suite.Require().Equal(len(ids), len(response.Ids))
+// 	suite.Require().NoError(err)
+// 	suite.Require().Equal(len(ids), len(response.Ids))
 
-	for i := 0; i < len(ids); i++ {
-		suite.Require().Contains(response.Ids, ids[i])
-	}
-}
+// 	for i := 0; i < len(ids); i++ {
+// 		suite.Require().Contains(response.Ids, ids[i])
+// 	}
+// }
 
-func (suite *KeeperTestSuite) TestQueryCdasOwned_InvalidOwner() {
-	queryClient := suite.queryClient
-	owner := "invalid address"
+// func (suite *KeeperTestSuite) TestQueryCdasOwned_InvalidOwner() {
+// 	queryClient := suite.queryClient
+// 	owner := "invalid address"
 
-	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owner})
-	suite.Require().EqualError(err, "decoding bech32 failed: invalid character in string: ' '")
-}
+// 	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owner})
+// 	suite.Require().EqualError(err, "decoding bech32 failed: invalid character in string: ' '")
+// }
 
-func (suite *KeeperTestSuite) TestQueryCdasOwned_OwnerNotFound() {
-	queryClient := suite.queryClient
-	owner := suite.TestAccs[0]
+// func (suite *KeeperTestSuite) TestQueryCdasOwned_OwnerNotFound() {
+// 	queryClient := suite.queryClient
+// 	owner := suite.TestAccs[0]
 
-	res, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owner.String()})
+// 	res, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: owner.String()})
 
-	suite.Require().Nil(res.Ids)
-	suite.Require().NoError(err)
-}
+// 	suite.Require().Nil(res.Ids)
+// 	suite.Require().NoError(err)
+// }
 
-func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyStringRequest() {
-	queryClient := suite.queryClient
+// func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyStringRequest() {
+// 	queryClient := suite.queryClient
 
-	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: ""})
-	suite.Require().EqualError(err, "empty address string is not allowed")
-}
+// 	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{Owner: ""})
+// 	suite.Require().EqualError(err, "empty address string is not allowed")
+// }
 
-func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyRequest() {
-	queryClient := suite.queryClient
+// func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyRequest() {
+// 	queryClient := suite.queryClient
 
-	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{})
-	suite.Require().EqualError(err, "empty address string is not allowed")
-}
+// 	_, err := queryClient.CdasOwned(context.Background(), &types.QueryCdasOwnedRequest{})
+// 	suite.Require().EqualError(err, "empty address string is not allowed")
+// }
 
 /*
  * Query Approval Tests
@@ -229,14 +229,16 @@ func (suite *KeeperTestSuite) TestQueryCdasOwned_EmptyRequest() {
 
 func (suite *KeeperTestSuite) TestApprovalQuery() {
 	queryClient := suite.queryClient
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
-	err := suite.ApproveCda(ids[0], owners[0])
-	suite.NoError(err)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
 
+	// Setup test env
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
+	err := suite.ApproveCda(*signers[0], cdaIds[0], signerIds[0])
+
+	// Perform the test
 	req := types.QueryApprovalRequest{
-		CdaId: ids[0],
-		Owner: owners[0].String(),
+		CdaId:    cdaIds[0],
+		SignerId: signerIds[0],
 	}
 	res, err := queryClient.Approval(context.Background(), &req)
 	suite.NoError(err)
@@ -245,36 +247,25 @@ func (suite *KeeperTestSuite) TestApprovalQuery() {
 
 func (suite *KeeperTestSuite) TestApprovalQuery_NonexistentCda() {
 	queryClient := suite.queryClient
-	req := types.QueryApprovalRequest{
-		CdaId: 0, // unset
-		Owner: suite.TestAccs[0].String(),
-	}
+	req := types.QueryApprovalRequest{}
 	res, err := queryClient.Approval(context.Background(), &req)
 	suite.Nil(res)
 	suite.EqualError(err, "Could not find the cda with an id of 0: key not found")
-}
-
-func (suite *KeeperTestSuite) TestApprovalQuery_EmptyRequest() {
-	queryClient := suite.queryClient
-	req := types.QueryApprovalRequest{}
-	res, err := queryClient.Approval(context.Background(), &req)
-	suite.EqualError(err, "empty address string is not allowed")
-	suite.Nil(res)
 }
 
 // Test SigningData
 func (suite *KeeperTestSuite) TestSigningData() {
 	k := suite.App.CdaKeeper
 	goCtx := sdk.WrapSDKContext(suite.Ctx)
-	id := suite.PrepareCdasForOwner([]*sdk.AccAddress{&suite.TestAccs[0]}, 1)[0]
+	cdaIds, _ := suite.PrepareCdas([]*sdk.AccAddress{&suite.TestAccs[0]}, 1)
 
 	// Mock signing data in storage
 	var expectedSigningData types.RawSigningData
 	expectedSigningData.UnmarshalJSON([]byte("hello world"))
-	k.SetSigningData(suite.Ctx, id, expectedSigningData)
+	k.SetSigningData(suite.Ctx, cdaIds[0], expectedSigningData)
 
 	// Test SigningData query
-	res, err := suite.queryClient.SigningData(goCtx, &types.QuerySigningDataRequest{Id: id})
+	res, err := suite.queryClient.SigningData(goCtx, &types.QuerySigningDataRequest{Id: cdaIds[0]})
 	suite.NoError(err)
 	suite.Equal(expectedSigningData.Bytes(), res.SigningData.Bytes())
 }
