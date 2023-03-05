@@ -27,12 +27,14 @@ const (
 func (suite *KeeperTestSuite) TestCdaQuery() {
 	queryClient := suite.queryClient
 	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids, _ := suite.PrepareCdas(signers, 1)
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
+	cda := suite.GetTemplateCda(*signers[0], signerIds)
+	cda.Id = 0
 	expected := types.QueryCdaResponse{
-		Cda: suite.GetCdas(ids)[0],
+		Cda: &cda,
 	}
 
-	response, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: ids[0]})
+	response, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: cdaIds[0]})
 	suite.NoError(err)
 	suite.EqualValues(*response, expected)
 }

@@ -33,14 +33,7 @@ func (s *KeeperTestHelper) PrepareCdas(signers []*sdk.AccAddress, count int) ([]
 	}
 
 	for i := 0; i < count; i++ {
-		var cda = types.CDA{
-			Creator:          signers[0].String(),
-			SignerIdentities: signerIds,
-			ContractId:       0,
-			LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
-			UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
-			Status:           types.CDA_Pending,
-		}
+		cda := s.GetTemplateCda(*signers[0], signerIds)
 
 		// Store CDA & grab cda id
 		id := k.AppendCDA(s.Ctx, cda)
@@ -66,14 +59,7 @@ func (s *KeeperTestHelper) PrepareVoidedCdaForSigners(signers []*sdk.AccAddress)
 		signerIds[i], _ = s.PrepareCertificate(issuer, signer)
 	}
 
-	var cda = types.CDA{
-		Creator:          signers[0].String(),
-		SignerIdentities: signerIds,
-		ContractId:       0,
-		LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
-		UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
-		Status:           types.CDA_Voided,
-	}
+	cda := s.GetTemplateCda(*signers[0], signerIds)
 
 	// Store CDA & grab cda id
 	id := k.AppendCDA(s.Ctx, cda)
@@ -112,23 +98,15 @@ func (s *KeeperTestHelper) PrepareContract() types.Contract {
 	return contract
 }
 
-func (s *KeeperTestHelper) GetCdas(ids []uint64) []*types.CDA {
-	k := s.App.CdaKeeper
-	result := make([]*types.CDA, len(ids))
-	goCtx := sdk.WrapSDKContext(s.Ctx)
-
-	for i, id := range ids {
-		req := types.QueryCdaRequest{Id: id}
-		res, err := k.Cda(goCtx, &req)
-		if err != nil {
-			panic(err)
-		}
-		if res == nil {
-			panic("Could not fetch CDA!")
-		}
-		result[i] = res.Cda
+func (s *KeeperTestHelper) GetTemplateCda(creator sdk.AccAddress, signerIds []uint64) types.CDA {
+	return types.CDA{
+		Creator:          creator.String(),
+		SignerIdentities: signerIds,
+		ContractId:       0,
+		LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
+		UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
+		Status:           types.CDA_Pending,
 	}
-	return result
 }
 
 func (s *KeeperTestHelper) GetSigningData() types.RawSigningData {
