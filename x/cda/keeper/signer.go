@@ -78,18 +78,18 @@ func (k Keeper) GetCdasBySigner(ctx sdk.Context, signerId uint64, pageReq *query
 // }
 
 // Increments the value of the owner's CDASignerCountKey ("CDA-signer-count-{signer identity ID}") in storage
-func (k Keeper) setSignerCDACount(ctx sdk.Context, signerId uint64, count uint64) {
-	store := k.getSignerCdaStore(ctx, signerId)
+// func (k Keeper) setSignerCDACount(ctx sdk.Context, signerId uint64, count uint64) {
+// 	store := k.getSignerCdaStore(ctx, signerId)
 
-	// Convert count to bytes
-	bzCount := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzCount, count)
+// 	// Convert count to bytes
+// 	bzCount := make([]byte, 8)
+// 	binary.BigEndian.PutUint64(bzCount, count)
 
-	// Set the count in storage
-	bzSignerId := make([]byte, 8)
-	binary.BigEndian.PutUint64(bzSignerId, signerId)
-	store.Set(bzSignerId, bzCount)
-}
+// 	// Set the count in storage
+// 	bzSignerId := make([]byte, 8)
+// 	binary.BigEndian.PutUint64(bzSignerId, signerId)
+// 	store.Set(bzSignerId, bzCount)
+// }
 
 func (k Keeper) getSignerCdaStore(ctx sdk.Context, signerId uint64) prefix.Store {
 	return prefix.NewStore(ctx.KVStore(k.storeKey), types.SignerCdaStoreKey(signerId))
