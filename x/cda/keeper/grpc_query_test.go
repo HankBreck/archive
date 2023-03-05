@@ -252,7 +252,7 @@ func (suite *KeeperTestSuite) TestApprovalQuery_NonexistentCda() {
 	req := types.QueryApprovalRequest{}
 	res, err := queryClient.Approval(context.Background(), &req)
 	suite.Nil(res)
-	suite.EqualError(err, "Could not find the cda with an id of 0: key not found")
+	suite.EqualError(err, "CDA with ID 0 not found: Invalid CdaId. Please ensure the CDA exists for the given ID.")
 }
 
 // Test SigningData
