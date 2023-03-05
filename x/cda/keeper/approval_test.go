@@ -8,55 +8,42 @@ import (
 
 // Assert expected behavior when setting approving for the first time
 func (suite *KeeperTestSuite) TestSetApproval() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
 	k := suite.App.CdaKeeper
 
-	msg := types.MsgApproveCda{
-		Creator:     owners[0].String(),
-		CdaId:       ids[0],
-		SigningData: suite.GetSigningData(),
-	}
-	err := k.SetApproval(suite.Ctx, &msg)
+	err := k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
 	suite.NoError(err)
 }
 
 // Assert fails with error when attempting to approve twice
 func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
 	k := suite.App.CdaKeeper
-	msg := types.MsgApproveCda{
-		Creator:     owners[0].String(),
-		CdaId:       ids[0],
-		SigningData: suite.GetSigningData(),
-	}
-	err := k.SetApproval(suite.Ctx, &msg)
+
+	err := k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
 	suite.NoError(err)
 
 	// Attempt to sign a second time
-	err2 := k.SetApproval(suite.Ctx, &msg)
-	suite.EqualError(err2, "The address has already given approval for this CDA.")
+	err = k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
+	suite.EqualError(err, "The address has already given approval for this CDA.")
 }
 
 // Assert fails with error on a CdaId that does not exist
 func (suite *KeeperTestSuite) TestSetApproval_NonexistentCdaId() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	_ = suite.PrepareCdasForOwner(owners, 1)
 	k := suite.App.CdaKeeper
-	msg := types.MsgApproveCda{
-		Creator:     owners[0].String(),
-		CdaId:       uint64(2), // The id 2 is not set in state
-		SigningData: suite.GetSigningData(),
-	}
-	err := k.SetApproval(suite.Ctx, &msg)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
+
+	err := k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
 	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
 }
 
 // Assert fails with error on invalid signing data
 func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
 	k := suite.App.CdaKeeper
 
 	var invalidSigningData types.RawSigningData
@@ -68,7 +55,7 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
 		]
 	}`))
 	msg := types.MsgApproveCda{
-		Creator:     owners[0].String(),
+		Creator:     signers[0].String(),
 		CdaId:       ids[0],
 		SigningData: invalidSigningData,
 	}
@@ -78,8 +65,8 @@ func (suite *KeeperTestSuite) TestSetApproval_InvalidSigningData() {
 
 // Assert fails with error on non-owner Creator
 func (suite *KeeperTestSuite) TestSetApproval_UnauthorizedCreator() {
-	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
-	ids := suite.PrepareCdasForOwner(owners, 1)
+	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
+	ids := suite.PrepareCdasForOwner(signers, 1)
 	k := suite.App.CdaKeeper
 	msg := types.MsgApproveCda{
 		Creator:     suite.TestAccs[1].String(),
