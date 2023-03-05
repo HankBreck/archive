@@ -25,3 +25,4 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 // 		Assert fails with error on invalid signing data
 // 		Assert fails with error on non-owner Creator
 // 		Assert fails with error on invalid cda.Status
+//		Assert fails with error on a CdaId that does not exist

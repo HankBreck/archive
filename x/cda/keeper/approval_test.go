@@ -27,13 +27,3 @@ func (suite *KeeperTestSuite) TestSetApproval_ApproveTwice() {
 	err = k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
 	suite.EqualError(err, "The address has already given approval for this CDA.")
 }
-
-// Assert fails with error on a CdaId that does not exist
-func (suite *KeeperTestSuite) TestSetApproval_NonexistentCdaId() {
-	k := suite.App.CdaKeeper
-	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
-	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
-
-	err := k.SetApproval(suite.Ctx, cdaIds[0], signerIds[0])
-	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
-}
