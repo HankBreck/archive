@@ -29,7 +29,7 @@ var (
 	// CDASignerKey defines the prefix for storing all ids of CDAs that a signer is a part of.
 	// It is a subprefix that requires the signer's identity ID be appended to the end.
 	//
-	// e.g. "CDA-owner-10-" --> {1: 0x1, 5: 0x1, 6: 0x1, 11: 0x1}
+	// e.g. "CDA-signer-10-" --> {1: 0x1, 5: 0x1, 6: 0x1, 11: 0x1}
 	CDASignerKey = []byte("CDA-signer-")
 
 	// CDASignerCountKey defines the prefix for storing the current number of CDAs an account
