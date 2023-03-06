@@ -6,8 +6,7 @@ on:
       - "**.go"
   push:
     branches:
-      - main
-      - test
+      - master
     paths:
       - "**.go"
 
