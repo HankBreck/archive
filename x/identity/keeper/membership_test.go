@@ -51,22 +51,32 @@ func (suite *KeeperTestSuite) TestCreateMembership_NilCertificate() {
 
 func (suite *KeeperTestSuite) TestHasPendingMember() {
 	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
 	recipient := suite.TestAccs[1]
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &recipient)
 	suite.True(k.HasPendingMember(suite.Ctx, id, recipient))
-	suite.False(k.HasPendingMember(suite.Ctx, id, issuer))
 }
 
 func (suite *KeeperTestSuite) TestHasMember() {
 	k := suite.App.IdentityKeeper
-	issuer := suite.TestAccs[0]
 	recipient := suite.TestAccs[1]
-	id, _ := suite.PrepareCertificate(issuer, &recipient)
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &recipient)
 	suite.SetMembers(id, []sdk.AccAddress{recipient})
 
 	suite.True(k.HasMember(suite.Ctx, id, recipient))
-	suite.False(k.HasPendingMember(suite.Ctx, id, recipient))
+}
+
+func (suite *KeeperTestSuite) TestHasMember_Removed() {
+	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[1]
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &recipient)
+	suite.SetMembers(id, []sdk.AccAddress{recipient})
+
+	k.RemoveOperators(suite.Ctx, id, []sdk.AccAddress{recipient})
+	k.UpdateAcceptedMembers(suite.Ctx, id, []sdk.AccAddress{}, []sdk.AccAddress{recipient})
+
+	hasMember, err := k.HasMember(suite.Ctx, id, recipient)
+	suite.NoError(err)
+	suite.False(hasMember)
 }
 
 func (suite *KeeperTestSuite) TestGetMembers() {

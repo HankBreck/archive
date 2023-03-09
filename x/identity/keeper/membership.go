@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"bytes"
+
 	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -63,7 +65,8 @@ func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccA
 
 	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, false)
-	return store.Has(member.Bytes()), nil
+	status := store.Get(member.Bytes())
+	return bytes.Equal([]byte{1}, status), nil
 }
 
 // HasMember returns true if the member is a "pending" member of the
@@ -78,7 +81,8 @@ func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member s
 
 	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, true)
-	return store.Has(member.Bytes()), nil
+	status := store.Get(member.Bytes())
+	return bytes.Equal([]byte{1}, status), nil
 }
 
 // UpdateMembers updates the pending membership list for the certificate referenced by id.
@@ -137,12 +141,12 @@ func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.A
 
 	// Grant membership to each address
 	for _, addr := range toAdd {
-		store.Set(addr.Bytes(), []byte{0})
+		store.Set(addr.Bytes(), []byte{1})
 	}
 
 	// Revoke membership from each address
 	for _, addr := range toRemove {
-		store.Delete(addr.Bytes())
+		store.Set(addr.Bytes(), []byte{0})
 	}
 }
 
