@@ -98,10 +98,6 @@ import (
 	tmos "github.com/tendermint/tendermint/libs/os"
 	dbm "github.com/tendermint/tm-db"
 
-	// monitoringp "github.com/tendermint/spn/x/monitoringp"
-	// monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
-	// monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
-
 	cdamodule "github.com/HankBreck/archive/x/cda"
 	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
 	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
@@ -511,6 +507,7 @@ func New(
 		genutiltypes.ModuleName,
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
+		wasm.ModuleName,
 		identitymoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 	)
@@ -534,6 +531,7 @@ func New(
 		upgradetypes.ModuleName,
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
+		wasm.ModuleName,
 		identitymoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 	)
@@ -562,6 +560,7 @@ func New(
 		upgradetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
+		wasm.ModuleName,
 		identitymoduletypes.ModuleName,
 		cdamoduletypes.ModuleName,
 	)
@@ -586,6 +585,7 @@ func New(
 		evidence.NewAppModule(app.EvidenceKeeper),
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
+		wasm.NewAppModule(appCodec, &app.WasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		identityModule,
 		cdaModule,
 	)
