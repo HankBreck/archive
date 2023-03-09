@@ -92,17 +92,33 @@ func (suite *KeeperTestSuite) TestGetMembers() {
 	k.UpdatePendingMembers(suite.Ctx, id, toAdd, toRemove)
 	expected := append(toAdd, recipient)
 
-	members, pageRes, err := k.GetMembers(suite.Ctx, id, true, &query.PageRequest{Limit: 1})
+	members, pageRes, err := k.GetMembers(suite.Ctx, id, true, false, &query.PageRequest{Limit: 1})
 	suite.NoError(err)
 	suite.NotNil(secondMember.Bytes(), pageRes.NextKey)
 	memberAddr, _ := sdk.AccAddressFromBech32(members[0])
 	suite.Contains(expected, memberAddr)
 
-	members, pageRes, err = k.GetMembers(suite.Ctx, id, true, &query.PageRequest{Limit: 1, Key: pageRes.NextKey})
+	members, pageRes, err = k.GetMembers(suite.Ctx, id, true, false, &query.PageRequest{Limit: 1, Key: pageRes.NextKey})
 	suite.NoError(err)
 	suite.Nil(pageRes.NextKey)
 	memberAddr, _ = sdk.AccAddressFromBech32(members[0])
 	suite.Contains(expected, memberAddr)
+}
+
+func (suite *KeeperTestSuite) TestGetMembers_SkipRemoved() {
+	k := suite.App.IdentityKeeper
+	recipient := suite.TestAccs[1]
+	id, _ := suite.PrepareCertificate(suite.TestAccs[0], &recipient)
+
+	// Prepare member list
+	suite.SetMembers(id, suite.TestAccs[1:5])
+	k.RemoveOperators(suite.Ctx, id, suite.TestAccs[1:3])
+	k.UpdateAcceptedMembers(suite.Ctx, id, []sdk.AccAddress{}, suite.TestAccs[1:3])
+
+	members, _, err := k.GetMembers(suite.Ctx, id, false, false, nil)
+	suite.NoError(err)
+	suite.NotContains(members, suite.TestAccs[1].String())
+	suite.NotContains(members, suite.TestAccs[2].String())
 }
 
 func (suite *KeeperTestSuite) TestUpdatePendingMembers() {

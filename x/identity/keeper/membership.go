@@ -28,7 +28,7 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 // into those that are pending and those that have accepted their membership.
 //
 // Returns a tuple of: the members found, the page response, and an error.
-func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
+func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool, includeRemoved bool, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
 	// Ensure certificateId exists in storage
 	if !k.HasCertificate(ctx, certificateId) {
 		return nil, nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", certificateId)
@@ -43,7 +43,9 @@ func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool
 		if err != nil {
 			return err
 		}
-		members = append(members, memberAddr.String())
+		if includeRemoved || bytes.Equal([]byte{1}, value) {
+			members = append(members, memberAddr.String())
+		}
 		return nil
 	})
 	if err != nil {
