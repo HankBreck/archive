@@ -28,7 +28,7 @@ func (k Keeper) IdentityMembers(goCtx context.Context, req *types.QueryIdentityM
 	}
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	members, pageRes, err := k.GetMembers(ctx, req.Id, req.IsPending, req.Pagination)
+	members, pageRes, err := k.GetMembers(ctx, req.Id, req.IsPending, false, req.Pagination)
 	if err != nil {
 		return nil, err
 	}

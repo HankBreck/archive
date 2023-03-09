@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"bytes"
+
 	"github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -26,7 +28,7 @@ func (k Keeper) CreateMembership(ctx sdk.Context, certificateId uint64, recipien
 // into those that are pending and those that have accepted their membership.
 //
 // Returns a tuple of: the members found, the page response, and an error.
-func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
+func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool, includeRemoved bool, pageReq *query.PageRequest) ([]string, *query.PageResponse, error) {
 	// Ensure certificateId exists in storage
 	if !k.HasCertificate(ctx, certificateId) {
 		return nil, nil, sdkerrors.ErrNotFound.Wrapf("A certificate with an ID of %d was not found", certificateId)
@@ -41,7 +43,9 @@ func (k Keeper) GetMembers(ctx sdk.Context, certificateId uint64, isPending bool
 		if err != nil {
 			return err
 		}
-		members = append(members, memberAddr.String())
+		if includeRemoved || bytes.Equal([]byte{1}, value) {
+			members = append(members, memberAddr.String())
+		}
 		return nil
 	})
 	if err != nil {
@@ -63,7 +67,8 @@ func (k Keeper) HasMember(ctx sdk.Context, certificateId uint64, member sdk.AccA
 
 	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, false)
-	return store.Has(member.Bytes()), nil
+	status := store.Get(member.Bytes())
+	return bytes.Equal([]byte{1}, status), nil
 }
 
 // HasMember returns true if the member is a "pending" member of the
@@ -78,7 +83,8 @@ func (k Keeper) HasPendingMember(ctx sdk.Context, certificateId uint64, member s
 
 	// Check store for member
 	store := k.getMembershipStoreForId(ctx, certificateId, true)
-	return store.Has(member.Bytes()), nil
+	status := store.Get(member.Bytes())
+	return bytes.Equal([]byte{1}, status), nil
 }
 
 // UpdateMembers updates the pending membership list for the certificate referenced by id.
@@ -137,12 +143,12 @@ func (k Keeper) uncheckedUpdateMembers(ctx sdk.Context, id uint64, toAdd []sdk.A
 
 	// Grant membership to each address
 	for _, addr := range toAdd {
-		store.Set(addr.Bytes(), []byte{0})
+		store.Set(addr.Bytes(), []byte{1})
 	}
 
 	// Revoke membership from each address
 	for _, addr := range toRemove {
-		store.Delete(addr.Bytes())
+		store.Set(addr.Bytes(), []byte{0})
 	}
 }
 

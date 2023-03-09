@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "archive/cda/params.proto";
 import "archive/cda/cda.proto";
-// this line is used by starport scaffolding # 1
+import "archive/cda/contract.proto";
 
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
@@ -27,21 +27,36 @@ service Query {
   }
 
   // Queries a list of CdasOwned items.
-  rpc CdasOwned(QueryCdasOwnedRequest) returns (QueryCdasOwnedResponse) {
-    option (google.api.http).get = "/archive/cda/cdas_owned/{owner}";
+  rpc CdasBySigner(QueryCdasBySignerRequest)
+      returns (QueryCdasBySignerResponse) {
+    option (google.api.http).get = "/archive/cda/cdas_owned/{signer}";
   }
 
   // Queries a list of Approvals items.
   rpc Approval(QueryApprovalRequest) returns (QueryApprovalResponse) {
-    option (google.api.http).get = "/archive/cda/approval/{cdaId}";
+    option (google.api.http).get = "/archive/cda/approval/{cda_id}/{signer_id}";
   }
 
-  // this line is used by starport scaffolding # 2
+  rpc Contract(QueryContractRequest) returns (QueryContractResponse) {
+    option (google.api.http).get = "/archive/cda/contract/{id}";
+  }
+
+  rpc Contracts(QueryContractsRequest) returns (QueryContractsResponse) {
+    option (google.api.http).get = "/archive/cda/contracts";
+  }
+
+  rpc SigningData(QuerySigningDataRequest) returns (QuerySigningDataResponse) {
+    option (google.api.http).get = "/archive/cda/signing_data/{id}";
+  }
+
+  rpc SigningDataSchema(QuerySigningDataSchemaRequest)
+      returns (QuerySigningDataSchemaResponse) {
+    option (google.api.http).get = "/archive/cda/signing_data_schema/{id}";
+  }
 }
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
-
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
   // params holds all the parameters of this module.
@@ -49,14 +64,12 @@ message QueryParamsResponse {
 }
 
 message QueryCdaRequest { uint64 id = 1; }
-
 message QueryCdaResponse { CDA cda = 1; }
 
 message QueryCdasRequest {
   // Pagination to view all CDAs
   cosmos.base.query.v1beta1.PageRequest pagination = 1;
 }
-
 message QueryCdasResponse {
   // List of CDA objects
   repeated CDA CDAs = 1;
@@ -65,15 +78,14 @@ message QueryCdasResponse {
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
-message QueryCdasOwnedRequest {
+message QueryCdasBySignerRequest {
   // Account address for the owner
-  string owner = 1;
+  uint64 signer = 1;
 
   // Pagination to view all ids
   cosmos.base.query.v1beta1.PageRequest pagination = 2;
 }
-
-message QueryCdasOwnedResponse {
+message QueryCdasBySignerResponse {
   // List of CDA ids belonging to the owner
   repeated uint64 ids = 1;
 
@@ -82,13 +94,54 @@ message QueryCdasOwnedResponse {
 }
 
 message QueryApprovalRequest {
-  // The id of the CDA to check
-  uint64 cdaId = 1;
+  // The CDA ID to check
+  uint64 cda_id = 1 [ (gogoproto.customname) = "CdaId" ];
 
-  // The wallet address of the owner to check
-  string owner = 2;
+  // The identity ID of the signer to check
+  uint64 signer_id = 2 [ (gogoproto.customname) = "SignerId" ];
 }
-
 message QueryApprovalResponse { bool approved = 1; }
 
-// this line is used by starport scaffolding # 3
+// QueryContractRequest is the request type for the Query/Contract RPC method.
+message QueryContractRequest { uint64 id = 1; }
+// QueryContractResponse is the response type for the Query/Contracts RPC
+// method.
+message QueryContractResponse {
+  Contract contract = 1 [ (gogoproto.nullable) = false ];
+}
+
+// QueryContractsRequest is the request type for the Query/Contracts RPC method.
+message QueryContractsRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+// QueryContractsResponse is the response type for the Query/Contracts RPC
+// method.
+message QueryContractsResponse {
+  // the ids of the contracts registered
+  repeated Contract contracts = 1 [ (gogoproto.nullable) = false ];
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QuerySigningDataRequest is the request type for the Query/SigningData RPC
+// method
+message QuerySigningDataRequest { uint64 id = 1; }
+// QuerySigningDataResponse is the response type for the Query/SigningData RPC
+// method
+message QuerySigningDataResponse {
+  bytes signing_data = 1 [
+    (gogoproto.customname) = "SigningData",
+    (gogoproto.casttype) = "RawSigningData"
+  ];
+}
+
+// QuerySigningDataSchemaRequest is the request type for the Query/SigningData
+// RPC method
+message QuerySigningDataSchemaRequest { uint64 id = 1; }
+// QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
+// method
+message QuerySigningDataSchemaResponse {
+  bytes schema = 1 [ (gogoproto.casttype) = "RawSigningData" ];
+}

@@ -20,3 +20,9 @@ func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {
 // Write tests for msg server functions
 // Create CDA
 //		Test signing metadata valid json but not schema match
+// Approve CDA
+//
+// 		Assert fails with error on invalid signing data
+// 		Assert fails with error on non-owner Creator
+// 		Assert fails with error on invalid cda.Status
+//		Assert fails with error on a CdaId that does not exist

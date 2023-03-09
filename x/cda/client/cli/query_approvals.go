@@ -7,7 +7,6 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +14,7 @@ var _ = strconv.Itoa(0)
 
 func CmdApproval() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "approval [cda-id] [owner]",
+		Use:   "approval [cda-id] [signer id]",
 		Short: "Responds with true if the owner has approved the CDA",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -24,7 +23,7 @@ func CmdApproval() *cobra.Command {
 				return err
 			}
 
-			owner, err := sdk.AccAddressFromBech32(args[1])
+			signerId, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				return err
 			}
@@ -37,8 +36,8 @@ func CmdApproval() *cobra.Command {
 			queryClient := types.NewQueryClient(clientCtx)
 
 			params := &types.QueryApprovalRequest{
-				CdaId: cdaId,
-				Owner: owner.String(),
+				CdaId:    cdaId,
+				SignerId: signerId,
 			}
 
 			res, err := queryClient.Approval(cmd.Context(), params)

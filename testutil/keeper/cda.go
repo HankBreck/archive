@@ -3,13 +3,11 @@ package keeper
 import (
 	"testing"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
-	crkeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
-
+	"github.com/HankBreck/archive/x/cda/keeper"
 	"github.com/HankBreck/archive/x/cda/types"
 
-	"github.com/HankBreck/archive/x/cda/keeper"
+	identitykeeper "github.com/HankBreck/archive/x/identity/keeper"
+	identitytypes "github.com/HankBreck/archive/x/identity/types"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -36,16 +34,21 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 	registry := codectypes.NewInterfaceRegistry()
 	cdc := codec.NewProtoCodec(registry)
 
-	crStoreKey := sdk.NewKVStoreKey(crtypes.StoreKey)
-	crMemStoreKey := storetypes.NewMemoryStoreKey(crtypes.MemStoreKey)
-	crSubspace := typesparams.NewSubspace(
+	idStoreKey := sdk.NewKVStoreKey(identitytypes.StoreKey)
+	idMemStoreKey := storetypes.NewMemoryStoreKey(identitytypes.MemStoreKey)
+	idParamsSubspace := typesparams.NewSubspace(
 		cdc,
-		crtypes.Amino,
-		crStoreKey,
-		crMemStoreKey,
-		"ContractregistryParams",
+		identitytypes.Amino,
+		idStoreKey,
+		idMemStoreKey,
+		"IdentityParams",
 	)
-	crKeeper := crkeeper.NewKeeper(cdc, crStoreKey, crMemStoreKey, crSubspace)
+	idKeeper := identitykeeper.NewKeeper(
+		cdc,
+		idStoreKey,
+		idMemStoreKey,
+		idParamsSubspace,
+	)
 
 	paramsSubspace := typesparams.NewSubspace(cdc,
 		types.Amino,
@@ -58,7 +61,7 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		storeKey,
 		memStoreKey,
 		paramsSubspace,
-		crKeeper,
+		idKeeper,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/HankBreck/archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -22,7 +22,6 @@ func CmdRegisterContract() *cobra.Command {
 		Short: "Broadcast message RegisterContract",
 		Args:  cobra.MinimumNArgs(7),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err

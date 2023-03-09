@@ -3,7 +3,7 @@ package cli
 import (
 	"strconv"
 
-	"github.com/HankBreck/archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -12,10 +12,10 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdQueryContract() *cobra.Command {
+func CmdQuerySigningDataSchema() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "contract [id]",
-		Short: "Query contract",
+		Use:   "signing-data-schema [id]",
+		Short: "Query the signing data schema for a contract",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			reqId := args[0]
@@ -33,11 +33,11 @@ func CmdQueryContract() *cobra.Command {
 				return err
 			}
 
-			req := &types.QueryContractRequest{
+			req := &types.QuerySigningDataSchemaRequest{
 				Id: id,
 			}
 
-			res, err := queryClient.Contract(cmd.Context(), req)
+			res, err := queryClient.SigningDataSchema(cmd.Context(), req)
 			if err != nil {
 				return err
 			}

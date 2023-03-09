@@ -2,10 +2,9 @@ syntax = "proto3";
 package archive.cda;
 
 import "archive/cda/cda.proto";
+import "archive/cda/contract.proto";
 import "gogoproto/gogo.proto";
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/any.proto";
-// this line is used by starport scaffolding # proto/tx/import
 
 option go_package = "github.com/HankBreck/archive/x/cda/types";
 
@@ -14,41 +13,72 @@ service Msg {
   rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
   rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
-  // this line is used by starport scaffolding # proto/tx/rpc
+  rpc RegisterContract(MsgRegisterContract)
+      returns (MsgRegisterContractResponse);
 }
 
 message MsgCreateCda {
+  // the account that sent the message
   string creator = 1;
-  repeated string signing_parties = 2;
+  // the list of identity IDs that must sign the CDA
+  repeated uint64 signer_ids = 2 [ (gogoproto.customname) = "SignerIds" ];
+  // the id of the registered contract template
   uint64 contract_id = 3;
+  // the URI pointing to the contract's metadata
   string legal_metadata_uri = 4;
+  // the on-chain data that should be used
   bytes signing_data = 5 [
     (gogoproto.customname) = "SigningData",
-    (gogoproto.casttype) =
-        "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
+    (gogoproto.casttype) = "RawSigningData"
   ];
+  // the expiration UTC timestamp of this agreement
   google.protobuf.Timestamp utc_expire_time = 6
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
 }
-
 message MsgCreateCdaResponse { uint64 id = 1; }
 
 message MsgApproveCda {
+  // the account that sent the message
   string creator = 1;
-  uint64 cda_id = 2;
-  bytes signing_data = 3 [
-    (gogoproto.casttype) =
-        "github.com/HankBreck/archive/x/contractregistry/types.RawSigningData"
-  ];
+  // the ID of the CDA to approve
+  uint64 cda_id = 2 [ (gogoproto.customname) = "CdaId" ];
+  // the identity ID to sign on behalf of
+  uint64 signer_id = 3 [ (gogoproto.customname) = "SignerId" ];
+  // the on-chain data specified in MsgCreateCda
+  bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
 }
-
 message MsgApproveCdaResponse {}
 
 message MsgFinalizeCda {
+  // the account that sent the message
   string creator = 1;
+  // the ID of the CDA to finalize
   uint64 cda_id = 2;
 }
-
 message MsgFinalizeCdaResponse {}
+
+message MsgRegisterContract {
+  // the account that sent the message
+  string creator = 1;
+  // the description of the contract
+  string description = 2;
+  // the list of contract authors
+  repeated string authors = 3;
+  // information on how to contract the authors
+  ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
+  // a URI pointing to extra information about the ocntract
+  string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
+  // the JSON schema that specifies the required on-chain data
+  bytes signing_data_schema = 6 [
+    (gogoproto.customname) = "SigningDataSchema",
+    (gogoproto.casttype) = "RawSigningData"
+  ];
+  // a URI pointing to the template legal contract
+  string template_uri = 7 [ (gogoproto.customname) = "TemplateUri" ];
+  // a URI pointing to the template legal contract's schema
+  string template_schema_uri = 8
+      [ (gogoproto.customname) = "TemplateSchemaUri" ];
+}
+message MsgRegisterContractResponse { uint64 id = 1; }
 
 // this line is used by starport scaffolding # proto/tx/message

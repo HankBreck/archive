@@ -3,44 +3,41 @@ package cli
 import (
 	"strconv"
 
-	"github.com/HankBreck/archive/x/identity/types"
+	"github.com/HankBreck/archive/x/cda/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 )
 
 var _ = strconv.Itoa(0)
 
-func CmdOperators() *cobra.Command {
+func CmdQuerySigningData() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "operators [id]",
-		Short: "Query operators",
+		Use:   "signing-data [id]",
+		Short: "Query the signing data for a contract",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqId, err := cast.ToUint64E(args[0])
-			if err != nil {
-				return err
-			}
+			reqId := args[0]
 
-			clientCtx, err := client.GetClientQueryContext(cmd)
+			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryOperatorsRequest{
-				Id: reqId,
-			}
-
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			// Parse id from arguments
+			id, err := strconv.ParseUint(reqId, 10, 64)
 			if err != nil {
 				return err
 			}
-			params.Pagination = pageReq
 
-			res, err := queryClient.Operators(cmd.Context(), params)
+			req := &types.QuerySigningDataRequest{
+				Id: id,
+			}
+
+			res, err := queryClient.SigningData(cmd.Context(), req)
 			if err != nil {
 				return err
 			}

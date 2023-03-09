@@ -16,6 +16,7 @@ import (
 // Returns the id of cda
 func (k Keeper) AppendCDA(ctx sdk.Context, cda types.CDA) uint64 {
 	count := k.getCDACount(ctx)
+	// TODO: probably want to avoid checking state for something that shouldn't ever happen
 	if k.HasCDA(ctx, count) {
 		panic("Duplicate CDA id found" + strconv.FormatUint(count, 10))
 	}
@@ -53,6 +54,25 @@ func (k Keeper) HasCDA(ctx sdk.Context, cdaId uint64) bool {
 	binary.BigEndian.PutUint64(bzKey, cdaId)
 
 	return store.Has(bzKey)
+}
+
+// UpdateCDA writes cda to state under the key of id.
+// This method should only be used for updates (like updating status).
+//
+// Returns an error if the CDA does not already exist in state
+func (k Keeper) UpdateCDA(ctx sdk.Context, id uint64, cda *types.CDA) error {
+	if cda == nil {
+		return types.ErrEmpty.Wrapf("cda pointer is nil! this is bad!")
+	}
+
+	if !k.HasCDA(ctx, id) {
+		return types.ErrExistingEntry.Wrapf("CDA already found for ID")
+	}
+
+	// TODO: any more checks necessary?
+
+	k.uncheckedSetCda(ctx, *cda)
+	return nil
 }
 
 func (k Keeper) uncheckedSetCda(ctx sdk.Context, cda types.CDA) {

@@ -11,27 +11,34 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdCdasOwned() *cobra.Command {
+func CmdCdasBySigner() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cdas-owned [owner]",
-		Short: "Query CdasOwned",
+		Use:   "cdas-by-signer [signer id]",
+		Short: "Query CdasBySigner",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			reqOwner := args[0]
+			signerId, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
-
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryCdasOwnedRequest{
-
-				Owner: reqOwner,
+			pageReq, err := client.ReadPageRequest(cmd.Flags())
+			if err != nil {
+				return err
 			}
 
-			res, err := queryClient.CdasOwned(cmd.Context(), params)
+			req := &types.QueryCdasBySignerRequest{
+				Signer:     signerId,
+				Pagination: pageReq,
+			}
+
+			res, err := queryClient.CdasBySigner(cmd.Context(), req)
 			if err != nil {
 				return err
 			}

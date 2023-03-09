@@ -99,17 +99,9 @@ import (
 
 	"github.com/HankBreck/archive/docs"
 
-	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
-
-	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
-
 	cdamodule "github.com/HankBreck/archive/x/cda"
-
-	contractregistrymoduletypes "github.com/HankBreck/archive/x/contractregistry/types"
-
-	contractregistrymodulekeeper "github.com/HankBreck/archive/x/contractregistry/keeper"
-
-	contractregistrymodule "github.com/HankBreck/archive/x/contractregistry"
+	cdamodulekeeper "github.com/HankBreck/archive/x/cda/keeper"
+	cdamoduletypes "github.com/HankBreck/archive/x/cda/types"
 
 	identitymodule "github.com/HankBreck/archive/x/identity"
 	identitymodulekeeper "github.com/HankBreck/archive/x/identity/keeper"
@@ -170,9 +162,8 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
-		cdamodule.AppModuleBasic{},
-		contractregistrymodule.AppModuleBasic{},
 		identitymodule.AppModuleBasic{},
+		cdamodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -244,11 +235,8 @@ type App struct {
 	ScopedTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
-	CdaKeeper cdamodulekeeper.Keeper
-
-	ContractregistryKeeper contractregistrymodulekeeper.Keeper
-
 	IdentityKeeper identitymodulekeeper.Keeper
+	CdaKeeper      cdamodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -285,9 +273,8 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
-		cdamoduletypes.StoreKey,
-		contractregistrymoduletypes.StoreKey,
 		identitymoduletypes.StoreKey,
+		cdamoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -409,23 +396,6 @@ func New(
 	)
 	monitoringModule := monitoringp.NewAppModule(appCodec, app.MonitoringKeeper)
 
-	app.ContractregistryKeeper = *contractregistrymodulekeeper.NewKeeper(
-		appCodec,
-		keys[contractregistrymoduletypes.StoreKey],
-		keys[contractregistrymoduletypes.MemStoreKey],
-		app.GetSubspace(contractregistrymoduletypes.ModuleName),
-	)
-	contractregistryModule := contractregistrymodule.NewAppModule(appCodec, app.ContractregistryKeeper)
-
-	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
-		appCodec,
-		keys[cdamoduletypes.StoreKey],
-		keys[cdamoduletypes.MemStoreKey],
-		app.GetSubspace(cdamoduletypes.ModuleName),
-		app.ContractregistryKeeper,
-	)
-	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
-
 	app.IdentityKeeper = *identitymodulekeeper.NewKeeper(
 		appCodec,
 		keys[identitymoduletypes.StoreKey],
@@ -433,6 +403,15 @@ func New(
 		app.GetSubspace(identitymoduletypes.ModuleName),
 	)
 	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper)
+
+	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
+		appCodec,
+		keys[cdamoduletypes.StoreKey],
+		keys[cdamoduletypes.MemStoreKey],
+		app.GetSubspace(cdamoduletypes.ModuleName),
+		app.IdentityKeeper,
+	)
+	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
@@ -447,7 +426,7 @@ func New(
 
 	// NOTE: we may consider parsing `appOpts` inside module constructors. For the moment
 	// we prefer to be more strict in what arguments the modules expect.
-	var skipGenesisInvariants = cast.ToBool(appOpts.Get(crisis.FlagSkipGenesisInvariants))
+	skipGenesisInvariants := cast.ToBool(appOpts.Get(crisis.FlagSkipGenesisInvariants))
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.
@@ -475,9 +454,8 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		monitoringModule,
-		cdaModule,
-		contractregistryModule,
 		identityModule,
+		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -505,9 +483,8 @@ func New(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -531,9 +508,8 @@ func New(
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -562,9 +538,8 @@ func New(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
-		cdamoduletypes.ModuleName,
-		contractregistrymoduletypes.ModuleName,
 		identitymoduletypes.ModuleName,
+		cdamoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -589,9 +564,8 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		monitoringModule,
-		cdaModule,
-		contractregistryModule,
 		identityModule,
+		cdaModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -781,9 +755,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
-	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
-	paramsKeeper.Subspace(contractregistrymoduletypes.ModuleName)
 	paramsKeeper.Subspace(identitymoduletypes.ModuleName)
+	paramsKeeper.Subspace(cdamoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

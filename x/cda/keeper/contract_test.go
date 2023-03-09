@@ -1,11 +1,11 @@
 package keeper_test
 
 import (
-	"github.com/HankBreck/archive/x/contractregistry/types"
+	"github.com/HankBreck/archive/x/cda/types"
 )
 
 func (suite *KeeperTestSuite) TestAppendContract() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	defaultContract := &types.Contract{
 		Description:       "dummy contract",
 		Authors:           []string{"hank", "david"},
@@ -72,7 +72,7 @@ func (suite *KeeperTestSuite) TestAppendContract() {
 }
 
 func (suite *KeeperTestSuite) TestAppendContract_SequentialIds() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	contract := types.Contract{
 		Description:       "dummy contract",
 		Authors:           []string{"hank", "david"},
@@ -91,7 +91,7 @@ func (suite *KeeperTestSuite) TestAppendContract_SequentialIds() {
 }
 
 func (suite *KeeperTestSuite) TestGetContract() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	ids := suite.PrepareContracts(1)
 	// Take from PrepareContracts
 	expected := types.Contract{
@@ -109,7 +109,7 @@ func (suite *KeeperTestSuite) TestGetContract() {
 }
 
 func (suite *KeeperTestSuite) TestHasContract() {
-	k := suite.App.ContractregistryKeeper
+	k := suite.App.CdaKeeper
 	ids := suite.PrepareContracts(1)
 
 	hasData := k.HasContract(suite.Ctx, ids[0])

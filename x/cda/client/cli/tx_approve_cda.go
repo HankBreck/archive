@@ -3,8 +3,6 @@ package cli
 import (
 	"strconv"
 
-	crtypes "github.com/HankBreck/archive/x/contractregistry/types"
-
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -22,7 +20,6 @@ func CmdApproveCda() *cobra.Command {
 		Short: "Broadcast message approve-cda",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
@@ -35,7 +32,7 @@ func CmdApproveCda() *cobra.Command {
 			}
 
 			// Signing Data
-			var signingData crtypes.RawSigningData
+			var signingData types.RawSigningData
 			signingData.UnmarshalJSON([]byte(args[1]))
 
 			msg := types.NewMsgApproveCda(
