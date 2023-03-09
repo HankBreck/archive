@@ -6,7 +6,7 @@ require (
 	github.com/CosmWasm/wasmd v0.30.0
 	github.com/cosmos/cosmos-sdk v0.45.12
 	github.com/cosmos/gogoproto v1.4.3
-	github.com/cosmos/ibc-go/v4 v4.3.0 // indirect
+	github.com/cosmos/ibc-go/v4 v4.3.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
@@ -28,8 +28,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 )
-
-require github.com/cosmos/ibc-go/v3 v3.4.0
 
 require (
 	github.com/CosmWasm/wasmvm v1.1.1 // indirect
