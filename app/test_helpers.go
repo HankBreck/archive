@@ -3,6 +3,7 @@ package app
 import (
 	"encoding/json"
 
+	"github.com/CosmWasm/wasmd/x/wasm"
 	appparams "github.com/HankBreck/archive/app/params"
 
 	"github.com/cosmos/cosmos-sdk/simapp"
@@ -41,6 +42,8 @@ func Setup(isCheckTx bool) *App {
 		5,
 		GetEncodingConfig(),
 		simapp.EmptyAppOptions{},
+		[]wasm.ProposalType{},
+		[]wasm.Option{},
 	)
 	if !isCheckTx {
 		stateBytes := getDefaultGenesisStateBytes()

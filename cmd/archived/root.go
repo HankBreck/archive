@@ -262,13 +262,13 @@ func (a appCreator) appExport(logger log.Logger, db dbm.DB, traceStore io.Writer
 
 	var archiveApp *app.App
 	if height != -1 {
-		archiveApp = app.New(logger, db, traceStore, false, map[int64]bool{}, homePath, cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)), a.encodingConfig, appOpts)
+		archiveApp = app.New(logger, db, traceStore, false, map[int64]bool{}, homePath, cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)), a.encodingConfig, appOpts, []wasm.ProposalType{}, []wasm.Option{})
 
 		if err := archiveApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		archiveApp = app.New(logger, db, traceStore, true, map[int64]bool{}, homePath, cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)), a.encodingConfig, appOpts)
+		archiveApp = app.New(logger, db, traceStore, true, map[int64]bool{}, homePath, cast.ToUint(appOpts.Get(server.FlagInvCheckPeriod)), a.encodingConfig, appOpts, []wasm.ProposalType{}, []wasm.Option{})
 	}
 
 	return archiveApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
