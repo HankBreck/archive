@@ -79,6 +79,6 @@ message MsgRegisterContract {
   string template_schema_uri = 8
       [ (gogoproto.customname) = "TemplateSchemaUri" ];
   // the ID of the wasm code to be used as the contract's witness
-  string witness_code_id = 9 [ (gogoproto.customname) = "WitnessCodeId" ];
+  uint64 witness_code_id = 9 [ (gogoproto.customname) = "WitnessCodeId" ];
 }
 message MsgRegisterContractResponse { uint64 id = 1; }
