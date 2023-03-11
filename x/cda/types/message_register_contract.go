@@ -9,7 +9,7 @@ const TypeMsgRegisterContract = "register_contract"
 
 var _ sdk.Msg = &MsgRegisterContract{}
 
-func NewMsgRegisterContract(creator string, description string, authors []string, contactInfo *ContactInfo, moreInfoUri string, signingDataSchema RawSigningData, templateUri string, templateSchemaUri string) *MsgRegisterContract {
+func NewMsgRegisterContract(creator string, description string, authors []string, contactInfo *ContactInfo, moreInfoUri string, signingDataSchema RawSigningData, templateUri string, templateSchemaUri string, witnessCodeId uint64) *MsgRegisterContract {
 	return &MsgRegisterContract{
 		Creator:           creator,
 		Description:       description,
@@ -19,6 +19,7 @@ func NewMsgRegisterContract(creator string, description string, authors []string
 		SigningDataSchema: signingDataSchema,
 		TemplateUri:       templateUri,
 		TemplateSchemaUri: templateSchemaUri,
+		WitnessCodeId:     witnessCodeId,
 	}
 }
 

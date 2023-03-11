@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/HankBreck/archive/x/cda/types"
@@ -18,9 +17,9 @@ const AUTHORS = "authors"
 
 func CmdRegisterContract() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-contract [description] [contact method (phone=0, email=1)] [contact value] [more info URI] [signing data schema stringified] [contract template URI] [contract template schema URI] [author 1] [author 2]...",
+		Use:   "register-contract [description] [contact method (phone=0, email=1)] [contact value] [more info URI] [signing data schema stringified] [contract template URI] [contract template schema URI] [witness code ID] [author 1] [author 2]...",
 		Short: "Broadcast message RegisterContract",
-		Args:  cobra.MinimumNArgs(7),
+		Args:  cobra.MinimumNArgs(8),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -33,7 +32,7 @@ func CmdRegisterContract() *cobra.Command {
 			// Contact Info
 			method, err := strconv.ParseInt(args[1], 10, 32)
 			if err != nil {
-				panic(err)
+				return err
 			}
 			contactInfo := types.ContactInfo{
 				Method: types.ContactMethod(method),
@@ -46,7 +45,7 @@ func CmdRegisterContract() *cobra.Command {
 			// Signing Data Schema
 			bzSchema := []byte(args[4])
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			// Template URI
@@ -55,11 +54,14 @@ func CmdRegisterContract() *cobra.Command {
 			// Temlate Schema URI
 			templateSchemaUri := args[6]
 
-			// Authors
-			authors := args[7:]
-			for i, author := range authors {
-				fmt.Println("Author", i, ":", author)
+			// Witness Code ID
+			witnessCodeId, err := strconv.ParseUint(args[7], 10, 64)
+			if err != nil {
+				return err
 			}
+
+			// Authors
+			authors := args[8:]
 
 			msg := types.NewMsgRegisterContract(
 				clientCtx.GetFromAddress().String(),
@@ -70,6 +72,7 @@ func CmdRegisterContract() *cobra.Command {
 				bzSchema,
 				templateUri,
 				templateSchemaUri,
+				witnessCodeId,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
