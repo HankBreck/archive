@@ -14,6 +14,7 @@ message Contract {
   string template_uri = 6 [ (gogoproto.customname) = "TemplateUri" ];
   string template_schema_uri = 7
       [ (gogoproto.customname) = "TemplateSchemaUri" ];
+  string witness_code_id = 8 [ (gogoproto.customname) = "WitnessCodeId" ];
 }
 
 message ContactInfo {

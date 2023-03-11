@@ -78,7 +78,7 @@ message MsgRegisterContract {
   // a URI pointing to the template legal contract's schema
   string template_schema_uri = 8
       [ (gogoproto.customname) = "TemplateSchemaUri" ];
+  // the ID of the wasm code to be used as the contract's witness
+  string witness_code_id = 9 [ (gogoproto.customname) = "WitnessCodeId" ];
 }
 message MsgRegisterContractResponse { uint64 id = 1; }
-
-// this line is used by starport scaffolding # proto/tx/message
