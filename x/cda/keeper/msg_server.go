@@ -44,6 +44,14 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		return nil, types.ErrInvalidSigningData.Wrap("does not match schema")
 	}
 
+	// TODO: Check if the contract specifies a code_id
+	//	if so,
+	//		instantiate the contract
+	//		set signing data field in the contract_info
+	//		clear the contract admin
+
+	// witnessAddress, err := k.wasmKeeper.instantiate()
+
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
 	for i := range cda.SignerIdentities {
