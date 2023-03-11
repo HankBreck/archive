@@ -172,6 +172,7 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 		MoreInfoUri:       msg.MoreInfoUri,
 		TemplateUri:       msg.TemplateUri,
 		TemplateSchemaUri: msg.TemplateSchemaUri,
+		WitnessCodeId:     msg.WitnessCodeId,
 	}
 
 	// Store the Contract in state
