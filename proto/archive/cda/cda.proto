@@ -31,6 +31,8 @@ message CDA {
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
   // the current status of the CDA
   ContractStatus status = 7;
+  // the address of the witness smart contract
+  string witness_address = 8;
 }
 
 message Ownership {
