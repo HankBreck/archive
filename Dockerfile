@@ -50,6 +50,7 @@ COPY --from=builder /archive/build/archived /bin/archived
 ENV HOME /archive
 WORKDIR $HOME
 
+# TODO: ensure this doesn't affect prod builds
 COPY /tests/localarchive/scripts/setup.sh /archive/setup.sh
 COPY /tests/testnet/scripts/testnet-setup.sh /archive/testnet-setup.sh
 
