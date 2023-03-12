@@ -201,12 +201,6 @@ func (k msgServer) WitnessApproveCda(goCtx context.Context, msg *types.MsgWitnes
 func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda) (*types.MsgFinalizeCdaResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// validator creator address (duplicate of VB)
-	_, err := sdk.AccAddressFromBech32(msg.Creator)
-	if err != nil {
-		return nil, err
-	}
-
 	// Ensure CDA exists and is pending
 	cda, err := k.GetCDA(ctx, msg.CdaId)
 	if err != nil {
@@ -237,7 +231,53 @@ func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda)
 		return nil, err
 	}
 
+	// Emit event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgFinalizeCda,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute("contract_id", strconv.FormatUint(cda.Id, 10)),
+	))
+
 	return &types.MsgFinalizeCdaResponse{}, nil
+}
+
+func (k msgServer) VoidCda(goCtx context.Context, msg *types.MsgVoidCda) (*types.MsgVoidCdaResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Ensure CDA exists
+	cda, err := k.GetCDA(ctx, msg.CdaId)
+	if err != nil {
+		return nil, err
+	} else if cda == nil {
+		panic("CDA should never be nil")
+	}
+
+	// TODO: Should we prevent voiding for certain statuses?
+	// TODO: Should we have a "reason" field under voids?
+	// 		Could help with tracking if terms were violated
+
+	// Ensure a CDA may only be voided once
+	if cda.Status == types.CDA_Voided {
+		return nil, types.ErrInvalidCdaStatus.Wrap("CDA already in voided status")
+	}
+
+	// Update in state
+	cda.Status = types.CDA_Voided
+	err = k.UpdateCDA(ctx, cda.Id, cda)
+	if err != nil {
+		return nil, err
+	}
+
+	// Emit event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgVoidCda,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute("contract_id", strconv.FormatUint(cda.Id, 10)),
+	))
+
+	return &types.MsgVoidCdaResponse{}, nil
 }
 
 func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
