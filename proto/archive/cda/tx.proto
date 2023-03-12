@@ -78,10 +78,10 @@ message MsgFinalizeCda {
 message MsgFinalizeCdaResponse {}
 
 message MsgVoidCda {
-    // the account that sent the message
-    string creator = 1;
-    // the ID of the CDA to void
-    uint64 cda_id = 2;
+  // the account that sent the message
+  string creator = 1;
+  // the ID of the CDA to void
+  uint64 cda_id = 2;
 }
 message MsgVoidCdaResponse {}
 
