@@ -27,22 +27,21 @@ message MsgCreateCda {
   // the URI pointing to the contract's metadata
   string legal_metadata_uri = 4;
   // the json encoded on-chain data that should be used
-  bytes signing_data = 5 [
-    (gogoproto.casttype) = "RawSigningData"
-  ];
+  bytes signing_data = 5 [ (gogoproto.casttype) = "RawSigningData" ];
   // the expiration UTC timestamp of this agreement
   google.protobuf.Timestamp utc_expire_time = 6
       [ (gogoproto.stdtime) = true, (gogoproto.nullable) = false ];
-  // the json encoded message to be passed to the witness contract on instantiation
-  bytes witness_init_msg = 7 [(gogoproto.casttype) = "RawSigningData"];
+  // the json encoded message to be passed to the witness contract on
+  // instantiation
+  bytes witness_init_msg = 7 [ (gogoproto.casttype) = "RawSigningData" ];
 }
-message MsgCreateCdaResponse { 
-    // the ID of the new CDA
-    uint64 id = 1;
-    // the address of the witness contract
-    string witness_address = 2;
-    // the response from the witness contract
-    bytes witness_init_response = 3;
+message MsgCreateCdaResponse {
+  // the ID of the new CDA
+  uint64 id = 1;
+  // the address of the witness contract
+  string witness_address = 2;
+  // the response from the witness contract
+  bytes witness_init_response = 3;
 }
 
 message MsgApproveCda {
