@@ -180,6 +180,13 @@ func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda)
 		}
 	}
 
+	// Ensure witness approval if required
+	if cda.WitnessAddress != "" {
+		if !k.HasWitnessApproval(ctx, cda.Id) {
+			return nil, types.ErrMissingApproval.Wrapf("missing approval from witness (address: %s)", cda.WitnessAddress)
+		}
+	}
+
 	// Update the CDA in storage
 	cda.Status = types.CDA_Finalized
 	err = k.UpdateCDA(ctx, cda.Id, cda)
