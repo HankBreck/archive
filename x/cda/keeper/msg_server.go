@@ -156,6 +156,48 @@ func (k msgServer) ApproveCda(goCtx context.Context, msg *types.MsgApproveCda) (
 	return &types.MsgApproveCdaResponse{}, nil
 }
 
+func (k msgServer) WitnessApproveCda(goCtx context.Context, msg *types.MsgWitnessApproveCda) (*types.MsgWitnessApproveCdaResponse, error) {
+	ctx := sdk.UnwrapSDKContext(goCtx)
+
+	// Ensure CDA exists
+	cda, err := k.GetCDA(ctx, msg.CdaId)
+	if err != nil {
+		return nil, err
+	} else if cda == nil {
+		return nil, types.ErrNonExistentCdaId.Wrapf("no CDA found for ID %d", msg.CdaId)
+	}
+
+	// Only allow approval when in the pending state
+	if cda.Status != types.CDA_Pending {
+		return nil, types.ErrInvalidCdaStatus.Wrap("The CDA must have a status of pending to be approved")
+	}
+
+	// Ensure the sender is the CDA's witness
+	if cda.WitnessAddress != msg.Creator {
+		return nil, types.ErrInvalid.Wrapf("sender (%s) must be the CDA's witness (%s)", msg.Creator, cda.WitnessAddress)
+	}
+
+	// Ensure signing data matches
+	// TODO: is this necessary?
+	metadata, err := k.GetSigningData(ctx, msg.CdaId)
+	if err != nil {
+		return nil, err
+	}
+	if !bytes.Equal(metadata.Bytes(), msg.SigningData.Bytes()) {
+		return nil, types.ErrInvalidSigningData
+	}
+
+	// Set approval
+	err = k.SetWitnessApproval(ctx, cda.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: emit events
+
+	return &types.MsgWitnessApproveCdaResponse{}, nil
+}
+
 func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda) (*types.MsgFinalizeCdaResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
