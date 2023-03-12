@@ -32,17 +32,6 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		return nil, err
 	}
 
-	// Create the CDA
-	cda := types.CDA{
-		// Id set inside k.AppendCDA
-		Creator:          msg.Creator,
-		SignerIdentities: msg.SignerIds,
-		ContractId:       msg.ContractId,
-		LegalMetadataUri: msg.LegalMetadataUri,
-		UtcExpireTime:    msg.UtcExpireTime,
-		Status:           types.CDA_Pending,
-	}
-
 	// Ensure the signing data matches the expected contract's schema
 	matches, err := k.MatchesSigningDataSchema(ctx, msg.ContractId, msg.SigningData)
 	if err != nil || !matches {
@@ -64,6 +53,7 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		if err != nil {
 			return nil, err
 		}
+
 		// Set signing data to witness ContractInfo
 		err = k.wasmKeeper.SetContractInfoExtension(ctx, witnessAddress, &types.SigningDataExtension{SigningData: msg.SigningData})
 		if err != nil {
@@ -74,6 +64,18 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	// Create the CDA
+	cda := types.CDA{
+		// Id set inside k.AppendCDA
+		Creator:          msg.Creator,
+		SignerIdentities: msg.SignerIds,
+		ContractId:       msg.ContractId,
+		LegalMetadataUri: msg.LegalMetadataUri,
+		UtcExpireTime:    msg.UtcExpireTime,
+		Status:           types.CDA_Pending,
+		WitnessAddress:   witnessAddress.String(),
 	}
 
 	// Store CDA & grab cda id
