@@ -27,6 +27,11 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 	// Unwrap the context
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
+	creatorAddr, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return nil, err
+	}
+
 	// Create the CDA
 	cda := types.CDA{
 		// Id set inside k.AppendCDA
@@ -46,11 +51,33 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 
 	// TODO: Check if the contract specifies a code_id
 	//	if so,
-	//		instantiate the contract
-	//		set signing data field in the contract_info
 	//		clear the contract admin
 
-	// witnessAddress, err := k.wasmKeeper.instantiate()
+	// Fetch registered contract from storage
+	contract, err := k.GetContract(ctx, msg.ContractId)
+	if err != nil {
+		return nil, err
+	}
+
+	// Setup witness contract if WitnessCodeId was set
+	if contract.WitnessCodeId != 0 {
+		// Instantiate the witness contract
+		initMsg := []byte("Hello") // TOOD: replace this with new field in MsgCreateCda
+		witnessAddress, _, err := k.wasmKeeper.Instantiate(ctx, contract.WitnessCodeId, creatorAddr, creatorAddr, initMsg, "", sdk.Coins{})
+		if err != nil {
+			return nil, err
+		}
+		// Set signing data to witness ContractInfo
+		err = k.wasmKeeper.SetContractInfoExtension(ctx, witnessAddress, &types.SigningDataExtension{SigningData: msg.SigningData})
+		if err != nil {
+			return nil, err
+		}
+		// Remove contract admin to ensure the witness cannot be corrupted
+		err = k.wasmKeeper.ClearContractAdmin(ctx, witnessAddress, creatorAddr)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// Store CDA & grab cda id
 	id := k.AppendCDA(ctx, cda)
@@ -74,6 +101,7 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(id, 10)),
 	))
 
+	// TODO: Add contract_response to MsgCreateCdaResponse
 	return &types.MsgCreateCdaResponse{Id: id}, nil
 }
 
