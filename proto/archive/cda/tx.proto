@@ -12,6 +12,7 @@ option go_package = "github.com/HankBreck/archive/x/cda/types";
 service Msg {
   rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
+  rpc WitnessApproveCda(MsgWitnessApproveCda) returns (MsgWitnessApproveCdaResponse);
   rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
   rpc RegisterContract(MsgRegisterContract)
       returns (MsgRegisterContractResponse);
@@ -21,7 +22,7 @@ message MsgCreateCda {
   // the account that sent the message
   string creator = 1;
   // the list of identity IDs that must sign the CDA
-  repeated uint64 signer_ids = 2 [ (gogoproto.customname) = "SignerIds" ];
+  repeated uint64 signer_ids = 2;
   // the id of the registered contract template
   uint64 contract_id = 3;
   // the URI pointing to the contract's metadata
@@ -48,13 +49,23 @@ message MsgApproveCda {
   // the account that sent the message
   string creator = 1;
   // the ID of the CDA to approve
-  uint64 cda_id = 2 [ (gogoproto.customname) = "CdaId" ];
+  uint64 cda_id = 2;
   // the identity ID to sign on behalf of
-  uint64 signer_id = 3 [ (gogoproto.customname) = "SignerId" ];
+  uint64 signer_id = 3;
   // the on-chain data specified in MsgCreateCda
   bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
 }
 message MsgApproveCdaResponse {}
+
+message MsgWitnessApproveCda {
+    // the account that sent the message
+    string creator = 1;
+    // the ID of the CDA to approve
+    uint64 cda_id = 2;
+    // the on-chain data specified in MsgCreateCda
+    bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
+  }
+  message MsgWitnessApproveCdaResponse {}
 
 message MsgFinalizeCda {
   // the account that sent the message
@@ -72,20 +83,18 @@ message MsgRegisterContract {
   // the list of contract authors
   repeated string authors = 3;
   // information on how to contract the authors
-  ContactInfo contact_info = 4 [ (gogoproto.customname) = "ContactInfo" ];
+  ContactInfo contact_info = 4;
   // a URI pointing to extra information about the ocntract
-  string more_info_uri = 5 [ (gogoproto.customname) = "MoreInfoUri" ];
+  string more_info_uri = 5;
   // the JSON schema that specifies the required on-chain data
   bytes signing_data_schema = 6 [
-    (gogoproto.customname) = "SigningDataSchema",
     (gogoproto.casttype) = "RawSigningData"
   ];
   // a URI pointing to the template legal contract
-  string template_uri = 7 [ (gogoproto.customname) = "TemplateUri" ];
+  string template_uri = 7;
   // a URI pointing to the template legal contract's schema
-  string template_schema_uri = 8
-      [ (gogoproto.customname) = "TemplateSchemaUri" ];
+  string template_schema_uri = 8;
   // the ID of the wasm code to be used as the contract's witness
-  uint64 witness_code_id = 9 [ (gogoproto.customname) = "WitnessCodeId" ];
+  uint64 witness_code_id = 9;
 }
 message MsgRegisterContractResponse { uint64 id = 1; }
