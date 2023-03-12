@@ -117,7 +117,7 @@ func (suite *KeeperTestSuite) TestHasSigningDataSchema() {
 func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
 	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
-	signingDataSchema.UnmarshalJSON([]byte(getTestSchema()))
+	signingDataSchema.UnmarshalJSON([]byte(suite.getTestSchema()))
 	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
 		Creator:     string(suite.TestAccs[0]),
 		Description: "",
@@ -133,7 +133,7 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
 	})
 
 	var inputData types.RawSigningData
-	inputData.UnmarshalJSON([]byte(getTestDoc()))
+	inputData.UnmarshalJSON([]byte(suite.getTestDoc()))
 	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
 	suite.NoError(err)
 	suite.True(matches)
@@ -142,7 +142,7 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema() {
 func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_NoMatch() {
 	k := suite.App.CdaKeeper
 	var signingDataSchema types.RawSigningData
-	signingDataSchema.UnmarshalJSON(getTestSchema())
+	signingDataSchema.UnmarshalJSON(suite.getTestSchema())
 	res, _ := suite.msgServer.RegisterContract(sdk.WrapSDKContext(suite.Ctx), &types.MsgRegisterContract{
 		Creator:     string(suite.TestAccs[0]),
 		Description: "",
@@ -189,13 +189,13 @@ func (suite *KeeperTestSuite) TestMatchesSigningDataSchema_InvalidJSONSchema() {
 	})
 
 	var inputData types.RawSigningData
-	inputData.UnmarshalJSON(getTestDoc())
+	inputData.UnmarshalJSON(suite.getTestDoc())
 	matches, err := k.MatchesSigningDataSchema(suite.Ctx, res.Id, inputData)
 	suite.Error(err)
 	suite.False(matches)
 }
 
-func getTestDoc() []byte {
+func (suite *KeeperTestSuite) getTestDoc() []byte {
 	return []byte(`
 	{
 		"ownerships": [
@@ -205,7 +205,7 @@ func getTestDoc() []byte {
 	}`)
 }
 
-func getTestSchema() []byte {
+func (suite *KeeperTestSuite) getTestSchema() []byte {
 	return []byte(`
 	{
 		"$schema": "https://json-schema.org/draft/2019-09/schema",

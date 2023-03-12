@@ -62,6 +62,7 @@ func CdaKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		memStoreKey,
 		paramsSubspace,
 		idKeeper,
+		nil, // TODO: need wasm keeper
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

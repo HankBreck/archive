@@ -84,6 +84,7 @@ func (s *KeeperTestHelper) PrepareContract() types.Contract {
 		MoreInfoUri:       "",
 		TemplateUri:       "",
 		TemplateSchemaUri: "",
+		WitnessCodeId:     0,
 	}
 	id := k.AppendContract(s.Ctx, types.Contract{
 		Description:       "",
@@ -92,10 +93,32 @@ func (s *KeeperTestHelper) PrepareContract() types.Contract {
 		MoreInfoUri:       "",
 		TemplateUri:       "",
 		TemplateSchemaUri: "",
+		WitnessCodeId:     0,
 	})
 	contract.Id = id
 
 	return contract
+}
+
+func (s *KeeperTestHelper) PrepareContractWithSchema(codeId uint64, schema types.RawSigningData) (*types.Contract, error) {
+	k := s.App.CdaKeeper
+	contract := types.Contract{
+		Description:       "",
+		Authors:           []string{},
+		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Phone, Value: "(123) 456-7890"},
+		MoreInfoUri:       "",
+		TemplateUri:       "",
+		TemplateSchemaUri: "",
+		WitnessCodeId:     codeId,
+	}
+	id := k.AppendContract(s.Ctx, contract)
+	contract.Id = id
+	err := k.SetSigningDataSchema(s.Ctx, id, schema)
+	if err != nil {
+		return nil, err
+	}
+
+	return &contract, nil
 }
 
 func (s *KeeperTestHelper) GetTemplateCda(creator sdk.AccAddress, signerIds []uint64) types.CDA {

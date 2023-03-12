@@ -8,6 +8,7 @@ import (
 	"github.com/HankBreck/archive/x/cda/keeper"
 	"github.com/HankBreck/archive/x/cda/types"
 
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/HankBreck/archive/app/apptesting"
 )
 
@@ -16,6 +17,8 @@ type KeeperTestSuite struct {
 
 	queryClient types.QueryClient
 	msgServer   types.MsgServer
+
+	wasmKeeper *wasmkeeper.PermissionedKeeper
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -26,6 +29,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.Setup()
 	suite.queryClient = types.NewQueryClient(suite.QueryHelper)
 	suite.msgServer = keeper.NewMsgServerImpl(suite.App.CdaKeeper)
+	suite.wasmKeeper = wasmkeeper.NewDefaultPermissionKeeper(suite.App.WasmKeeper)
 }
 
 func (suite *KeeperTestSuite) PrepareContracts(count int) []uint64 {
