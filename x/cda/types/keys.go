@@ -52,9 +52,6 @@ var (
 	// e.g. "CDA-approval-1"
 	CDAMetadataKey = "CDA-metadata-"
 
-	// Key for the CDA attribute in a cosmos event
-	AttributeKeyCdaId = "cda-id"
-
 	// ContractKey defines the prefix under which Contract objects are stored
 	ContractKey = "contracts-"
 
@@ -64,6 +61,11 @@ var (
 
 	// SigningDataKey defines the prefix under which signing data is stored
 	SigningDataKey = "signing_data-"
+
+	// Key for the CDA ID attribute in an event
+	AttributeKeyCdaId = "cda-id"
+	// Key for the contract ID attribute in an event
+	AttributeKeyContractId = "contract-id"
 )
 
 func KeyPrefix(p string) []byte {

@@ -49,10 +49,6 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		return nil, types.ErrInvalidSigningData.Wrap("does not match schema")
 	}
 
-	// TODO: Check if the contract specifies a code_id
-	//	if so,
-	//		clear the contract admin
-
 	// Fetch registered contract from storage
 	contract, err := k.GetContract(ctx, msg.ContractId)
 	if err != nil {
@@ -60,10 +56,11 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 	}
 
 	// Setup witness contract if WitnessCodeId was set
+	var witnessAddress sdk.AccAddress
+	var witnessResponse []byte
 	if contract.WitnessCodeId != 0 {
 		// Instantiate the witness contract
-		initMsg := []byte("Hello") // TOOD: replace this with new field in MsgCreateCda
-		witnessAddress, _, err := k.wasmKeeper.Instantiate(ctx, contract.WitnessCodeId, creatorAddr, creatorAddr, initMsg, "", sdk.Coins{})
+		witnessAddress, witnessResponse, err = k.wasmKeeper.Instantiate(ctx, contract.WitnessCodeId, creatorAddr, creatorAddr, msg.WitnessInitMsg, "", sdk.Coins{})
 		if err != nil {
 			return nil, err
 		}
@@ -99,10 +96,14 @@ func (k msgServer) CreateCda(goCtx context.Context, msg *types.MsgCreateCda) (*t
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
 		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(id, 10)),
+		sdk.NewAttribute(types.AttributeKeyContractId, strconv.FormatUint(msg.ContractId, 10)),
 	))
 
-	// TODO: Add contract_response to MsgCreateCdaResponse
-	return &types.MsgCreateCdaResponse{Id: id}, nil
+	return &types.MsgCreateCdaResponse{
+		Id:                  id,
+		WitnessAddress:      witnessAddress.String(),
+		WitnessInitResponse: witnessResponse,
+	}, nil
 }
 
 func (k msgServer) ApproveCda(goCtx context.Context, msg *types.MsgApproveCda) (*types.MsgApproveCdaResponse, error) {
