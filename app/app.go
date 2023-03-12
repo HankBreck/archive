@@ -417,6 +417,7 @@ func New(
 		govRouter.AddRoute(wasm.RouterKey, wasm.NewWasmProposalHandler(app.WasmKeeper, wasmEnabledProposals))
 	}
 
+	// Setup Identity keeper
 	app.IdentityKeeper = *identitymodulekeeper.NewKeeper(
 		appCodec,
 		keys[identitymoduletypes.StoreKey],
@@ -425,12 +426,14 @@ func New(
 	)
 	identityModule := identitymodule.NewAppModule(appCodec, app.IdentityKeeper, app.AccountKeeper)
 
+	// Setup CDA keeper
 	app.CdaKeeper = *cdamodulekeeper.NewKeeper(
 		appCodec,
 		keys[cdamoduletypes.StoreKey],
 		keys[cdamoduletypes.MemStoreKey],
 		app.GetSubspace(cdamoduletypes.ModuleName),
 		app.IdentityKeeper,
+		wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper),
 	)
 	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
