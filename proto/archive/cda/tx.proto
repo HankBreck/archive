@@ -12,7 +12,8 @@ option go_package = "github.com/HankBreck/archive/x/cda/types";
 service Msg {
   rpc CreateCda(MsgCreateCda) returns (MsgCreateCdaResponse);
   rpc ApproveCda(MsgApproveCda) returns (MsgApproveCdaResponse);
-  rpc WitnessApproveCda(MsgWitnessApproveCda) returns (MsgWitnessApproveCdaResponse);
+  rpc WitnessApproveCda(MsgWitnessApproveCda)
+      returns (MsgWitnessApproveCdaResponse);
   rpc FinalizeCda(MsgFinalizeCda) returns (MsgFinalizeCdaResponse);
   rpc RegisterContract(MsgRegisterContract)
       returns (MsgRegisterContractResponse);
@@ -58,14 +59,14 @@ message MsgApproveCda {
 message MsgApproveCdaResponse {}
 
 message MsgWitnessApproveCda {
-    // the account that sent the message
-    string creator = 1;
-    // the ID of the CDA to approve
-    uint64 cda_id = 2;
-    // the on-chain data specified in MsgCreateCda
-    bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
-  }
-  message MsgWitnessApproveCdaResponse {}
+  // the account that sent the message
+  string creator = 1;
+  // the ID of the CDA to approve
+  uint64 cda_id = 2;
+  // the on-chain data specified in MsgCreateCda
+  bytes signing_data = 4 [ (gogoproto.casttype) = "RawSigningData" ];
+}
+message MsgWitnessApproveCdaResponse {}
 
 message MsgFinalizeCda {
   // the account that sent the message
@@ -87,9 +88,7 @@ message MsgRegisterContract {
   // a URI pointing to extra information about the ocntract
   string more_info_uri = 5;
   // the JSON schema that specifies the required on-chain data
-  bytes signing_data_schema = 6 [
-    (gogoproto.casttype) = "RawSigningData"
-  ];
+  bytes signing_data_schema = 6 [ (gogoproto.casttype) = "RawSigningData" ];
   // a URI pointing to the template legal contract
   string template_uri = 7;
   // a URI pointing to the template legal contract's schema
