@@ -1,6 +1,7 @@
 package types
 
 import (
+	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,7 +12,7 @@ func RegisterCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreateCda{}, "cda/CreateCda", nil)
 	cdc.RegisterConcrete(&MsgApproveCda{}, "cda/ApproveCda", nil)
 	cdc.RegisterConcrete(&MsgFinalizeCda{}, "cda/FinalizeCda", nil)
-	// this line is used by starport scaffolding # 2
+	cdc.RegisterConcrete(&SigningDataExtension{}, "cda/SigningDataExtension", nil)
 }
 
 func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
@@ -20,8 +21,7 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgApproveCda{},
 		&MsgFinalizeCda{},
 	)
-	// this line is used by starport scaffolding # 3
-
+	registry.RegisterImplementations((*wasmtypes.ContractInfoExtension)(nil), &SigningDataExtension{})
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 

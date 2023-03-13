@@ -8,6 +8,7 @@ import (
 	"github.com/HankBreck/archive/x/cda/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
 )
@@ -18,9 +19,9 @@ const SIGNING_PARTIES = "signing-parties"
 
 func CmdCreateCda() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-cda [signer ids] [legal contract ID] [legal metadata URI] [signing data stringified] [expiration time UTC]",
+		Use:   "create-cda [signer ids] [legal contract ID] [legal metadata URI] [signing data stringified] [expiration time UTC] [json-encoded witness init msg]",
 		Short: "Broadcast message CreateCda",
-		Args:  cobra.ExactArgs(5),
+		Args:  cobra.ExactArgs(6),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -58,6 +59,9 @@ func CmdCreateCda() *cobra.Command {
 				return err
 			}
 
+			// Witness Initialization Message
+			witnessInitMsg := []byte(args[5])
+
 			msg := types.NewMsgCreateCda(
 				clientCtx.GetFromAddress().String(),
 				signerIds,
@@ -65,6 +69,7 @@ func CmdCreateCda() *cobra.Command {
 				legalMetadataUri,
 				signingData,
 				utcExpireTime,
+				witnessInitMsg,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
@@ -72,6 +77,8 @@ func CmdCreateCda() *cobra.Command {
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
+
+	flags.AddTxFlagsToCmd(cmd)
 
 	return cmd
 }
