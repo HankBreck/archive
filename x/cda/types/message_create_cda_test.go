@@ -2,8 +2,6 @@ package types
 
 import (
 	"testing"
-
-	"github.com/HankBreck/archive/testutil/sample"
 )
 
 // TODO: Test the new fields
@@ -11,19 +9,19 @@ import (
 // Ownership
 func TestMsgCreateCDA_ValidateBasic(t *testing.T) {
 	// Valid test values
-	var validOwnerships = make([]*Ownership, 1)
-	validOwnerships = append(validOwnerships, &Ownership{
-		Owner:     sample.AccAddress(),
-		Ownership: 100_000_000,
-	})
-	// validCid := "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W"
-	// validExpiration := uint64(time.Now().UnixMilli()) + 5000 // current time + 5 seconds
+	// var validOwnerships = make([]*Ownership, 1)
+	// validOwnerships = append(validOwnerships, &Ownership{
+	// 	Owner:     sample.AccAddress(),
+	// 	Ownership: 100_000_000,
+	// })
+	// // validCid := "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W"
+	// // validExpiration := uint64(time.Now().UnixMilli()) + 5000 // current time + 5 seconds
 
-	var invalidOwnerships = make([]*Ownership, 1)
-	invalidOwnerships = append(invalidOwnerships, &Ownership{
-		Owner:     "invalid address",
-		Ownership: 100_000_000,
-	})
+	// var invalidOwnerships = make([]*Ownership, 1)
+	// invalidOwnerships = append(invalidOwnerships, &Ownership{
+	// 	Owner:     "invalid address",
+	// 	Ownership: 100_000_000,
+	// })
 
 	// tests := []struct {
 	// 	name string
