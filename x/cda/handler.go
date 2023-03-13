@@ -25,10 +25,18 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		case *types.MsgApproveCda:
 			res, err := msgServer.ApproveCda(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgWitnessApproveCda:
+			res, err := msgServer.WitnessApproveCda(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		case *types.MsgFinalizeCda:
 			res, err := msgServer.FinalizeCda(sdk.WrapSDKContext(ctx), msg)
 			return sdk.WrapServiceResult(ctx, res, err)
-			// this line is used by starport scaffolding # 1
+		case *types.MsgRegisterContract:
+			res, err := msgServer.RegisterContract(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
+		case *types.MsgVoidCda:
+			res, err := msgServer.VoidCda(sdk.WrapSDKContext(ctx), msg)
+			return sdk.WrapServiceResult(ctx, res, err)
 		default:
 			errMsg := fmt.Sprintf("unrecognized %s message type: %T", types.ModuleName, msg)
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, errMsg)
