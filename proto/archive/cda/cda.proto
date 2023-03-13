@@ -35,7 +35,6 @@ message CDA {
   string witness_address = 8;
 }
 
-message Ownership {
-  string owner = 1;
-  uint64 ownership = 2;
+message SigningDataExtension {
+    bytes signing_data = 1 [ (gogoproto.casttype) = "RawSigningData" ];
 }
