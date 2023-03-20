@@ -39,7 +39,7 @@ func CmdApproveCda() *cobra.Command {
 
 			// Signing Data
 			var signingData types.RawSigningData
-			signingData.UnmarshalJSON([]byte(args[1]))
+			signingData.UnmarshalJSON([]byte(args[2]))
 
 			msg := types.NewMsgApproveCda(
 				clientCtx.GetFromAddress().String(),
