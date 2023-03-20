@@ -9,10 +9,11 @@ const TypeMsgApproveCda = "approve_cda"
 
 var _ sdk.Msg = &MsgApproveCda{}
 
-func NewMsgApproveCda(creator string, cdaId uint64, signingData RawSigningData) *MsgApproveCda {
+func NewMsgApproveCda(creator string, cdaId uint64, signerId uint64, signingData RawSigningData) *MsgApproveCda {
 	return &MsgApproveCda{
 		Creator:     creator,
 		CdaId:       cdaId,
+		SignerId:    signerId,
 		SigningData: signingData,
 	}
 }
