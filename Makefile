@@ -189,7 +189,7 @@ test:
 localnet-init: localnet-clean localnet-build
 
 localnet-build:
-	@DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f tests/localarchive/docker-compose.yml build --progress tty
+	@STATE="" DOCKER_BUILDKIT=1 COMPOSE_DOCKER_CLI_BUILD=1 docker-compose -f tests/localarchive/docker-compose.yml build --progress tty
 
 localnet-start:
 	@STATE="" docker-compose -f tests/localarchive/docker-compose.yml up
