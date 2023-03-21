@@ -8,3 +8,7 @@ type ArchiveQuery struct {
 type SigningData struct {
 	CdaId uint64 `json:"cda_id"`
 }
+
+type SigningDataResponse struct {
+	SigningData []byte `json:"signing_data"`
+}
