@@ -41,7 +41,7 @@ func (m *CustomMessenger) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAddre
 		// leave everything else for the wrapped version
 		var contractMsg bindings.ArchiveMsg
 		if err := json.Unmarshal(msg.Custom, &contractMsg); err != nil {
-			return nil, nil, sdkerrors.Wrap(err, "osmosis msg")
+			return nil, nil, sdkerrors.Wrap(err, "archive msg")
 		}
 		if contractMsg.WitnessApproveCda != nil {
 			return m.witnessApproveCda(ctx, contractAddr, contractMsg.WitnessApproveCda)

@@ -10,6 +10,7 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	awasm "github.com/HankBreck/archive/wasmbinding"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -393,6 +394,7 @@ func New(
 		},
 	)
 	wasmOpts = append(wasmOpts, querierOpts)
+	wasmOpts = append(wasmOpts, awasm.RegisterCustomPlugins(&app.CdaKeeper)...)
 
 	// Set up wasm keeper
 	app.WasmKeeper = wasm.NewKeeper(
