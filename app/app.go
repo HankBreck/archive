@@ -437,6 +437,10 @@ func New(
 	)
 	cdaModule := cdamodule.NewAppModule(appCodec, app.CdaKeeper)
 
+	// wasmkeeper.WithMessageHandler(wasm.NewMessageHandler(cdaModule.Route(), app.IBCKeeper.ChannelKeeper, scopedWasmKeeper, app.BankKeeper, ))
+
+	wasmkeeper.WithMessageHandler()
+
 	// Create gov keeper with final govRouter
 	app.GovKeeper = govkeeper.NewKeeper(
 		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
