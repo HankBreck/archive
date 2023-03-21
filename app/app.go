@@ -1,7 +1,6 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -11,7 +10,6 @@ import (
 	"github.com/CosmWasm/wasmd/x/wasm"
 	wasmclient "github.com/CosmWasm/wasmd/x/wasm/client"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
@@ -395,34 +393,6 @@ func New(
 		},
 	)
 	wasmOpts = append(wasmOpts, querierOpts)
-
-	// Add encoder for CosmosMsg::Custom(T) types
-	// TODO: move this to CDA module
-	customEncoder := &wasmkeeper.MessageEncoders{Custom: func(sender sdk.AccAddress, msg json.RawMessage) ([]sdk.Msg, error) {
-		// Get message bytes
-		bz, err := msg.MarshalJSON()
-		if err != nil {
-			return []sdk.Msg{}, err
-		}
-
-		// Try to unmarshal to MsgWitnessApproveCda
-		var witnessApprove cdamoduletypes.MsgWitnessApproveCda
-		err = cdamoduletypes.ModuleCdc.Unmarshal(bz, &witnessApprove)
-		if err == nil {
-			return []sdk.Msg{&witnessApprove}, nil
-		}
-
-		// Try to unmarshal to MsgVoidCda
-		var voidCda cdamoduletypes.MsgVoidCda
-		err = cdamoduletypes.ModuleCdc.Unmarshal(bz, &voidCda)
-		if err == nil {
-			return []sdk.Msg{&voidCda}, nil
-		}
-
-		return []sdk.Msg{}, wasmtypes.ErrUnknownMsg.Wrapf("unknown CDA message variant")
-	}}
-	encoderOpts := wasmkeeper.WithMessageEncoders(customEncoder)
-	wasmOpts = append(wasmOpts, encoderOpts)
 
 	// Set up wasm keeper
 	app.WasmKeeper = wasm.NewKeeper(
