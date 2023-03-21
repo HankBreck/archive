@@ -31,7 +31,7 @@ func CmdApproveCda() *cobra.Command {
 				return err
 			}
 
-			// CDA ID
+			// Signer ID
 			signerId, err := cast.ToUint64E(args[1])
 			if err != nil {
 				return err
