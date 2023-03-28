@@ -9,14 +9,12 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// TODO: Check that the contract id exists
 func (k Keeper) SetSigningData(ctx sdk.Context, cdaId uint64, metadata types.RawSigningData) error {
 	// Ensure cdaId references an existing CDA
 	if !k.HasCDA(ctx, cdaId) {
 		return types.ErrNonExistentCdaId
 	}
 
-	// TODO: Should we throw an error if the metadata already exists?
 	err := k.uncheckedSetMetadata(ctx, cdaId, metadata)
 	return err
 }

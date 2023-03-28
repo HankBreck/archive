@@ -15,8 +15,6 @@ import (
 // SetSigningDataSchema stores signingData with a key of id. The most recent contract stored must have a contract.Id == id.
 // This function should only be called from RegisterContract.
 //
-// Panics on any id that is not equal to the current contract count - 1.
-//
 // Returns an error if the signingData is nil.
 func (k Keeper) SetSigningDataSchema(ctx sdk.Context, id uint64, signingData types.RawSigningData) error {
 	// Ensure the signing data references a valid contract
@@ -36,7 +34,8 @@ func (k Keeper) SetSigningDataSchema(ctx sdk.Context, id uint64, signingData typ
 	return nil
 }
 
-// GetSigningDataSchema fetches the contract stored under the key of id. If no contract is found, an error is returned
+// GetSigningDataSchema fetches the contract stored under the key of id.
+// If no contract is found, an error is returned
 func (k Keeper) GetSigningDataSchema(ctx sdk.Context, id uint64) (types.RawSigningData, error) {
 	store := k.getSigningDataSchemaStore(ctx)
 	bzKey := make([]byte, 8)
@@ -52,6 +51,7 @@ func (k Keeper) GetSigningDataSchema(ctx sdk.Context, id uint64) (types.RawSigni
 	return result, nil
 }
 
+// HasSigningDataSchema returns true if id exists as a key in the signingDataSchema store
 func (k Keeper) HasSigningDataSchema(ctx sdk.Context, id uint64) bool {
 	store := k.getSigningDataSchemaStore(ctx)
 	bzKey := make([]byte, 8)
