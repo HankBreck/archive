@@ -46,6 +46,9 @@ func (m *CustomMessenger) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAddre
 		if contractMsg.WitnessApproveCda != nil {
 			return m.witnessApproveCda(ctx, contractAddr, contractMsg.WitnessApproveCda)
 		}
+		if contractMsg.FinalizeCda != nil {
+			return m.finalizeCda(ctx, contractAddr, contractMsg.FinalizeCda)
+		}
 		if contractMsg.VoidCda != nil {
 			return m.voidCda(ctx, contractAddr, contractMsg.VoidCda)
 		}
@@ -91,6 +94,19 @@ func PerformWitnessApproveCda(cdaKeeper *cdakeeper.Keeper, ctx sdk.Context, cont
 		return err
 	}
 
+	return nil
+}
+
+func (m *CustomMessenger) finalizeCda(ctx sdk.Context, contractAddr sdk.AccAddress, msg *bindings.FinalizeCda) ([]sdk.Event, [][]byte, error) {
+	err := PerformFinalizeCda(m.cda, ctx, contractAddr, msg)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return nil, nil, nil
+}
+
+func PerformFinalizeCda(cdaKeeper *cdakeeper.Keeper, ctx sdk.Context, contractAddr sdk.AccAddress, msg *bindings.FinalizeCda) error {
 	return nil
 }
 

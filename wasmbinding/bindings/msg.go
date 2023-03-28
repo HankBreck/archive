@@ -3,6 +3,8 @@ package bindings
 type ArchiveMsg struct {
 	// Contracts can send CDA approvals as a witness
 	WitnessApproveCda *WitnessApproveCda `json:"witness_approve_cda,omitempty"`
+	// Contracts can finalize CDAs
+	FinalizeCda *FinalizeCda `json:"finalize_cda,omitempty"`
 	// Contracts can void CDAs
 	VoidCda *VoidCda `json:"void_cda,omitempty"`
 }
@@ -12,6 +14,11 @@ type WitnessApproveCda struct {
 	CdaId uint64 `json:"cda_id"`
 	// the on-chain data specified in MsgCreateCda
 	SigningData []byte `json:"signing_data"`
+}
+
+type FinalizeCda struct {
+	// the ID of the CDA to void
+	CdaId uint64 `json:"cda_id"`
 }
 
 type VoidCda struct {
