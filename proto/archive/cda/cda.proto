@@ -36,5 +36,5 @@ message CDA {
 }
 
 message SigningDataExtension {
-    bytes signing_data = 1 [ (gogoproto.casttype) = "RawSigningData" ];
+  bytes signing_data = 1 [ (gogoproto.casttype) = "RawSigningData" ];
 }
