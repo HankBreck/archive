@@ -92,8 +92,10 @@ func (k Keeper) getContractStore(ctx sdk.Context) prefix.Store {
 func (k Keeper) getContractCount(ctx sdk.Context) uint64 {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.ContractCountKey))
 	bzCount := store.Get([]byte{0})
+
+	// Return 1 if the key is nil (first time accessing)
 	if bzCount == nil {
-		return 0
+		return 1
 	}
 	return binary.BigEndian.Uint64(bzCount)
 }

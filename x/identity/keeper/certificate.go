@@ -79,9 +79,9 @@ func (k Keeper) getCertificateCount(ctx sdk.Context) uint64 {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte(types.CertificateCountKey))
 	bzCount := store.Get([]byte{0})
 
-	// Return 0 if the key is nil (first time accessing)
+	// Return 1 if the key is nil (first time accessing)
 	if bzCount == nil {
-		return 0
+		return 1
 	}
 	return binary.BigEndian.Uint64(bzCount)
 }

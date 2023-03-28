@@ -104,9 +104,9 @@ func (k Keeper) getCDACount(ctx sdk.Context) uint64 {
 	// Get the current count of CDAs
 	byteCount := store.Get(byteKey)
 
-	// Return 0 if the key is nil (first time accessing)
+	// Return 1 if this is the first time accessing
 	if byteCount == nil {
-		return 0
+		return 1
 	}
 
 	// Return count as uint64
