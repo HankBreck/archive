@@ -17,7 +17,7 @@ func (suite *KeeperTestSuite) TestAppendCertificate() {
 
 	// Add new certificate
 	certificate := types.Certificate{
-		Id:                0,
+		Id:                1,
 		IssuerAddress:     issuer.Creator,
 		Salt:              "salt",
 		MetadataSchemaUri: "google.com/metadata-schema",
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestAppendCertificate_OverwritePresetId() {
 	}
 	id := k.AppendCertificate(suite.Ctx, certificate)
 	suite.NotEqual(certificate.Id, id)
-	suite.Equal(uint64(0), id)
+	suite.Equal(uint64(1), id)
 }
 
 func (suite *KeeperTestSuite) TestGetCertificate() {
@@ -65,7 +65,7 @@ func (suite *KeeperTestSuite) TestGetCertificate() {
 	issuer := suite.TestAccs[0]
 	id, _ := suite.PrepareCertificate(issuer, nil)
 	expected := types.Certificate{
-		Id:                uint64(0),
+		Id:                uint64(1),
 		IssuerAddress:     issuer.String(),
 		Salt:              "salt",
 		MetadataSchemaUri: "google.com/metadata-schema",

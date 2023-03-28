@@ -12,10 +12,10 @@ func (suite *KeeperTestSuite) TestGetCDA() {
 	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
 	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
 	expected := types.CDA{
-		Id:               0,
+		Id:               1,
 		Creator:          signers[0].String(),
 		SignerIdentities: signerIds,
-		ContractId:       0,
+		ContractId:       1,
 		LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
 		UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
 		Status:           types.CDA_Pending,
@@ -52,8 +52,8 @@ func (suite *KeeperTestSuite) TestAppendCda() {
 	firstId := k.AppendCDA(suite.Ctx, cda)
 	secondId := k.AppendCDA(suite.Ctx, cda)
 
-	suite.Equal(uint64(0), firstId)
-	suite.Equal(uint64(1), secondId)
+	suite.Equal(uint64(1), firstId)
+	suite.Equal(uint64(2), secondId)
 }
 
 func (suite *KeeperTestSuite) TestAppendCda_OverwritesId() {
@@ -72,5 +72,5 @@ func (suite *KeeperTestSuite) TestAppendCda_OverwritesId() {
 		Status:           types.CDA_Voided,
 	}
 	id := k.AppendCDA(suite.Ctx, cda)
-	suite.Equal(uint64(0), id)
+	suite.Equal(uint64(1), id)
 }

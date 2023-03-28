@@ -165,7 +165,7 @@ func (suite *KeeperTestSuite) TestIssueCertificate() {
 				suite.AssertEventEmitted(ctx, types.TypeMsgIssueCertificate, 1)
 				certificateId := res.Id
 				recipientAddr, _ := sdk.AccAddressFromBech32(test.inputMsg.Recipient)
-				suite.Equal(uint64(0), certificateId)
+				suite.Equal(uint64(1), certificateId)
 
 				// Assert correct state transition
 				// Initial recipient is a pending member
@@ -219,7 +219,7 @@ func (suite *KeeperTestSuite) TestAcceptIdentity() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgAcceptIdentity{
 		Creator: recipient.String(),
-		Id:      uint64(0), // Overwritten inside test
+		Id:      uint64(1), // Overwritten inside test
 	}
 	tests := map[string]struct {
 		inputIssuer    *sdk.AccAddress
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestAcceptIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgAcceptIdentity{
 				Creator: "creator",
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -247,7 +247,7 @@ func (suite *KeeperTestSuite) TestAcceptIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgAcceptIdentity{
 				Creator: suite.TestAccs[8].String(),
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -321,7 +321,7 @@ func (suite *KeeperTestSuite) TestRejectIdentity() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgRejectIdentity{
 		Creator: recipient.String(),
-		Id:      uint64(0), // Overwritten inside test
+		Id:      uint64(1), // Overwritten inside test
 	}
 	tests := map[string]struct {
 		inputIssuer    *sdk.AccAddress
@@ -340,7 +340,7 @@ func (suite *KeeperTestSuite) TestRejectIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgRejectIdentity{
 				Creator: "creator",
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -349,7 +349,7 @@ func (suite *KeeperTestSuite) TestRejectIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgRejectIdentity{
 				Creator: suite.TestAccs[8].String(),
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -423,7 +423,7 @@ func (suite *KeeperTestSuite) TestRenounceIdentity() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgRenounceIdentity{
 		Creator: recipient.String(),
-		Id:      uint64(0), // Overwritten inside test
+		Id:      uint64(1), // Overwritten inside test
 	}
 	tests := map[string]struct {
 		inputIssuer    *sdk.AccAddress
@@ -442,7 +442,7 @@ func (suite *KeeperTestSuite) TestRenounceIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgRenounceIdentity{
 				Creator: "creator",
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -451,7 +451,7 @@ func (suite *KeeperTestSuite) TestRenounceIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgRenounceIdentity{
 				Creator: suite.TestAccs[8].String(),
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -549,7 +549,7 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgUpdateMembers{
 		Creator:  recipient.String(),
-		Id:       uint64(0), // Overwritten inside test
+		Id:       uint64(1), // Overwritten inside test
 		ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 		ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 	}
@@ -574,7 +574,7 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 			inputMembers:   defaultInputMembers,
 			inputMsg: &types.MsgUpdateMembers{
 				Creator:  "creator",
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -586,7 +586,7 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 			inputMembers:   defaultInputMembers,
 			inputMsg: &types.MsgUpdateMembers{
 				Creator:  suite.TestAccs[8].String(), // member but not operator
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -598,7 +598,7 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 			inputMembers:   defaultInputMembers,
 			inputMsg: &types.MsgUpdateMembers{
 				Creator:  issuer.String(),
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{recipient.String()}, // fail to remove operator
 			},
@@ -617,7 +617,7 @@ func (suite *KeeperTestSuite) TestUpdateMembers() {
 			inputMembers:   defaultInputMembers,
 			inputMsg: &types.MsgUpdateMembers{
 				Creator:  issuer.String(),
-				Id:       uint64(0), // Overwritten inside test
+				Id:       uint64(1), // Overwritten inside test
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -763,7 +763,7 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgUpdateOperators{
 		Creator:  recipient.String(),
-		Id:       uint64(0), // Overwritten inside test
+		Id:       uint64(1), // Overwritten inside test
 		ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 		ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 	}
@@ -793,7 +793,7 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputOperators: defaultInputOperators,
 			inputMsg: &types.MsgUpdateOperators{
 				Creator:  "creator",
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -806,7 +806,7 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputOperators: defaultInputOperators,
 			inputMsg: &types.MsgUpdateOperators{
 				Creator:  suite.TestAccs[12].String(), // non-operator account
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -819,7 +819,7 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputOperators: defaultInputOperators,
 			inputMsg: &types.MsgUpdateOperators{
 				Creator:  issuer.String(),
-				Id:       uint64(0),
+				Id:       uint64(1),
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[2].String()},
 				ToRemove: []string{},
 			},
@@ -840,7 +840,7 @@ func (suite *KeeperTestSuite) TestUpdateOperators() {
 			inputOperators: defaultInputOperators,
 			inputMsg: &types.MsgUpdateOperators{
 				Creator:  issuer.String(),
-				Id:       uint64(0), // Overwritten inside test
+				Id:       uint64(1), // Overwritten inside test
 				ToAdd:    []string{suite.TestAccs[2].String(), suite.TestAccs[3].String()},
 				ToRemove: []string{suite.TestAccs[8].String(), suite.TestAccs[9].String()},
 			},
@@ -1014,7 +1014,7 @@ func (suite *KeeperTestSuite) TestFreezeIdentity() {
 	recipient := suite.TestAccs[1]
 	defaultMsg := types.MsgFreezeIdentity{
 		Creator: issuer.String(),
-		Id:      uint64(0),
+		Id:      uint64(1),
 	}
 
 	tests := map[string]struct {
@@ -1034,7 +1034,7 @@ func (suite *KeeperTestSuite) TestFreezeIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgFreezeIdentity{
 				Creator: "creator",
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},
@@ -1043,7 +1043,7 @@ func (suite *KeeperTestSuite) TestFreezeIdentity() {
 			inputRecipient: &recipient,
 			inputMsg: &types.MsgFreezeIdentity{
 				Creator: recipient.String(), // recipient cannot freeze
-				Id:      uint64(0),
+				Id:      uint64(1),
 			},
 			expErr: true,
 		},

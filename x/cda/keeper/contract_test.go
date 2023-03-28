@@ -24,7 +24,7 @@ func (suite *KeeperTestSuite) TestAppendContract() {
 			inputContract: defaultContract,
 			expPanic:      false,
 			expContract: &types.Contract{
-				Id:                uint64(0),
+				Id:                uint64(1),
 				Description:       "dummy contract",
 				Authors:           []string{"hank", "david"},
 				ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
@@ -45,7 +45,7 @@ func (suite *KeeperTestSuite) TestAppendContract() {
 			},
 			expPanic: false,
 			expContract: &types.Contract{
-				Id:                uint64(1),
+				Id:                uint64(2),
 				Description:       "dummy contract",
 				Authors:           []string{"hank", "david"},
 				ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
@@ -95,12 +95,14 @@ func (suite *KeeperTestSuite) TestGetContract() {
 	ids := suite.PrepareContracts(1)
 	// Take from PrepareContracts
 	expected := types.Contract{
+		Id:                1,
 		Description:       "dummy contract",
 		Authors:           []string{"hank", "david"},
 		ContactInfo:       &types.ContactInfo{Method: types.ContactMethod_Email, Value: "hank@archive.com"},
 		MoreInfoUri:       "google.com",
 		TemplateUri:       "google.com/template",
 		TemplateSchemaUri: "google.com/template-schema",
+		WitnessCodeId:     1,
 	}
 
 	actual, err := k.GetContract(suite.Ctx, ids[0])

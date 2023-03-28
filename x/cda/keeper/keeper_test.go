@@ -42,6 +42,7 @@ func (suite *KeeperTestSuite) PrepareContracts(count int) []uint64 {
 			MoreInfoUri:       "google.com",
 			TemplateUri:       "google.com/template",
 			TemplateSchemaUri: "google.com/template-schema",
+			WitnessCodeId:     1,
 		}
 		id := suite.App.CdaKeeper.AppendContract(suite.Ctx, defaultContract)
 		result = append(result, id)

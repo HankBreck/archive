@@ -29,7 +29,7 @@ func (suite *KeeperTestSuite) TestCdaQuery() {
 	signers := []*sdk.AccAddress{&suite.TestAccs[0]}
 	cdaIds, signerIds := suite.PrepareCdas(signers, 1)
 	cda := suite.GetTemplateCda(*signers[0], signerIds)
-	cda.Id = 0
+	cda.Id = 1
 	expected := types.QueryCdaResponse{
 		Cda: &cda,
 	}
@@ -44,10 +44,10 @@ func (suite *KeeperTestSuite) TestCdaQuery_UnsetId() {
 	owners := []*sdk.AccAddress{&suite.TestAccs[0]}
 	ids, _ := suite.PrepareCdas(owners, 1)
 
-	suite.NotContains(ids, 1)
+	suite.NotContains(ids, 2)
 
 	// Attempt to query for unset ID
-	_, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: 1})
+	_, err := queryClient.Cda(context.Background(), &types.QueryCdaRequest{Id: 2})
 
 	suite.EqualError(err, "Invalid CdaId. Please ensure the CDA exists for the given ID.")
 }

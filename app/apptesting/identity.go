@@ -15,14 +15,11 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 	k := s.App.IdentityKeeper
 
 	// Create the issuer
-	err := k.SetIssuer(s.Ctx, types.Issuer{
+	k.SetIssuer(s.Ctx, types.Issuer{
 		Creator:     issuer.String(),
 		Name:        "Test Issuer",
 		MoreInfoUri: "google.com/more-info",
 	})
-	if err != nil {
-		return 0, err
-	}
 
 	// Issue the certificate
 	cert := types.Certificate{
@@ -41,6 +38,7 @@ func (s *KeeperTestHelper) PrepareCertificate(issuer sdk.AccAddress, recipient *
 		k.SetInitialOperator(s.Ctx, id, *recipient)
 	}
 
+	// TODO: remove error type
 	return id, nil
 }
 

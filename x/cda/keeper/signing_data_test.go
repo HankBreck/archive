@@ -19,7 +19,7 @@ func (suite *KeeperTestSuite) TestSetSigningDataSchema() {
 	k := suite.App.CdaKeeper
 	var defaultData types.RawSigningData
 	defaultData.UnmarshalJSON([]byte(`{"test":1}`))
-	defaultId := uint64(0)
+	defaultId := uint64(1)
 	defaultContracts := []*types.Contract{{
 		Description:       "dummy contract",
 		Authors:           []string{"hank", "david"},
@@ -27,6 +27,7 @@ func (suite *KeeperTestSuite) TestSetSigningDataSchema() {
 		MoreInfoUri:       "google.com",
 		TemplateUri:       "google.com/template",
 		TemplateSchemaUri: "google.com/template-schema",
+		WitnessCodeId:     1,
 	}}
 
 	tests := map[string]struct {
@@ -72,22 +73,22 @@ func (suite *KeeperTestSuite) TestSetSigningDataSchema() {
 func (suite *KeeperTestSuite) TestDuplicateSetSigningDataSchema() {
 	k := suite.App.CdaKeeper
 
-	suite.PrepareContracts(1)
+	id := suite.PrepareContracts(1)[0]
 
 	var firstData types.RawSigningData
 	firstData.UnmarshalJSON([]byte("test 1"))
 	var secondData types.RawSigningData
 	secondData.UnmarshalJSON([]byte("test 2"))
 
-	// Set the first signing data for id 0
-	err := k.SetSigningDataSchema(suite.Ctx, 0, firstData)
+	// Set the first signing data for id 1
+	err := k.SetSigningDataSchema(suite.Ctx, id, firstData)
 	suite.NoError(err)
 
 	// Try to set the second signing data for the same id
-	err = k.SetSigningDataSchema(suite.Ctx, 0, secondData)
+	err = k.SetSigningDataSchema(suite.Ctx, id, secondData)
 	suite.Error(err)
 
-	actualData, err := k.GetSigningDataSchema(suite.Ctx, 0)
+	actualData, err := k.GetSigningDataSchema(suite.Ctx, id)
 	suite.NoError(err)
 	suite.Equal(firstData, actualData)
 }

@@ -125,7 +125,7 @@ func (s *KeeperTestHelper) GetTemplateCda(creator sdk.AccAddress, signerIds []ui
 	return types.CDA{
 		Creator:          creator.String(),
 		SignerIdentities: signerIds,
-		ContractId:       0,
+		ContractId:       1,
 		LegalMetadataUri: "bafkreifbcafazw72o3hogmftvf2bfc7n7t67movnrarx26nyzdz6j6ohpe",
 		UtcExpireTime:    time.Date(2100, time.September, 10, 9, 0, 0, 0, time.UTC), // Wednesday, September 1, 2100 9:00:00 AM UTC
 		Status:           types.CDA_Pending,
@@ -142,4 +142,78 @@ func (s *KeeperTestHelper) GetSigningData() types.RawSigningData {
 		]
 	}`))
 	return data
+}
+
+func (suite *KeeperTestHelper) GetTestDoc() []byte {
+	return []byte(`
+	{
+		"ownerships": [
+			{ "owner": "address", "ownership_proportion": 1 },
+			{ "owner": "address2", "ownership_proportion": 99 }
+		]
+	}`)
+}
+
+func (suite *KeeperTestHelper) GetTestSchema() []byte {
+	return []byte(`
+	{
+		"$schema": "https://json-schema.org/draft/2019-09/schema",
+		"$id": "http://example.com/example.json",
+		"type": "object",
+		"default": {},
+		"title": "Root Schema",
+		"required": [
+			"ownerships"
+		],
+		"properties": {
+			"ownerships": {
+				"type": "array",
+				"default": [],
+				"title": "The ownerships Schema",
+				"items": {
+					"type": "object",
+					"default": {},
+					"title": "A Schema",
+					"required": [
+						"owner",
+						"ownership_proportion"
+					],
+					"properties": {
+						"owner": {
+							"type": "string",
+							"default": "",
+							"title": "The owner Schema",
+							"examples": [
+								"address"
+							]
+						},
+						"ownership_proportion": {
+							"type": "integer",
+							"default": 0,
+							"title": "The ownership_proportion Schema",
+							"examples": [
+								1
+							]
+						}
+					},
+					"examples": [{
+						"owner": "address",
+						"ownership_proportion": 1
+					}]
+				},
+				"examples": [
+					[{
+						"owner": "address",
+						"ownership_proportion": 1
+					}]
+				]
+			}
+		},
+		"examples": [{
+			"ownerships": [{
+				"owner": "address",
+				"ownership_proportion": 1
+			}]
+		}]
+	}`)
 }
