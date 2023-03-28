@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/CosmWasm/wasmd v0.30.0
+	github.com/CosmWasm/wasmvm v1.1.1
 	github.com/cosmos/cosmos-sdk v0.45.12
 	github.com/cosmos/gogoproto v1.4.3
 	github.com/cosmos/ibc-go/v4 v4.3.0
@@ -30,7 +31,6 @@ require (
 )
 
 require (
-	github.com/CosmWasm/wasmvm v1.1.1 // indirect
 	github.com/cosmos/cosmos-proto v1.0.0-alpha8 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/gin-gonic/gin v1.7.0 // indirect
