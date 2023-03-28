@@ -107,6 +107,25 @@ func (m *CustomMessenger) finalizeCda(ctx sdk.Context, contractAddr sdk.AccAddre
 }
 
 func PerformFinalizeCda(cdaKeeper *cdakeeper.Keeper, ctx sdk.Context, contractAddr sdk.AccAddress, msg *bindings.FinalizeCda) error {
+	if msg == nil {
+		return wasmvmtypes.InvalidRequest{Err: "finalizeCda is nil"}
+	}
+
+	// Build and validate the MsgFinalizeCda
+	msgFinalizeCda := cdatypes.NewMsgFinalizeCda(contractAddr.String(), msg.CdaId)
+	err := msgFinalizeCda.ValidateBasic()
+	if err != nil {
+		return err
+	}
+
+	// Perform the finalize through the msgServer
+	msgServer := cdakeeper.NewMsgServerImpl(*cdaKeeper)
+	// TODO: add event manager
+	_, err = msgServer.FinalizeCda(sdk.WrapSDKContext(ctx), msgFinalizeCda)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
