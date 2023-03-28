@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"strconv"
 	"strings"
 	"time"
@@ -49,8 +50,20 @@ func CmdCreateCda() *cobra.Command {
 			legalMetadataUri := args[2]
 
 			// Signing Data
+			var temp map[string]interface{}
+			err = json.Unmarshal([]byte(args[3]), &temp)
+			if err != nil {
+				return err
+			}
+			bzSigningData, err := json.Marshal(temp)
+			if err != nil {
+				return err
+			}
 			var signingData types.RawSigningData
-			signingData.UnmarshalJSON([]byte(args[3]))
+			err = signingData.UnmarshalJSON(bzSigningData)
+			if err != nil {
+				return err
+			}
 
 			// Parse expiration time from argument string
 			// TODO: Figure out how to limit this to UTC times

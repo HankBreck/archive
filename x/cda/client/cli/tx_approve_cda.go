@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"strconv"
 
 	"github.com/HankBreck/archive/x/cda/types"
@@ -38,8 +39,20 @@ func CmdApproveCda() *cobra.Command {
 			}
 
 			// Signing Data
+			var temp map[string]interface{}
+			err = json.Unmarshal([]byte(args[2]), &temp)
+			if err != nil {
+				return err
+			}
+			bzSigningData, err := json.Marshal(temp)
+			if err != nil {
+				return err
+			}
 			var signingData types.RawSigningData
-			signingData.UnmarshalJSON([]byte(args[2]))
+			err = signingData.UnmarshalJSON(bzSigningData)
+			if err != nil {
+				return err
+			}
 
 			msg := types.NewMsgApproveCda(
 				clientCtx.GetFromAddress().String(),
