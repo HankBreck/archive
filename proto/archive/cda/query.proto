@@ -131,10 +131,7 @@ message QuerySigningDataRequest { uint64 id = 1; }
 // QuerySigningDataResponse is the response type for the Query/SigningData RPC
 // method
 message QuerySigningDataResponse {
-  bytes signing_data = 1 [
-    (gogoproto.customname) = "SigningData",
-    (gogoproto.casttype) = "RawSigningData"
-  ];
+  bytes signing_data = 1;
 }
 
 // QuerySigningDataSchemaRequest is the request type for the Query/SigningData
@@ -143,5 +140,5 @@ message QuerySigningDataSchemaRequest { uint64 id = 1; }
 // QuerySigningDataResponse is the reseponse type for the Query/SigningData RPC
 // method
 message QuerySigningDataSchemaResponse {
-  bytes schema = 1 [ (gogoproto.casttype) = "RawSigningData" ];
+  bytes schema = 1;
 }
