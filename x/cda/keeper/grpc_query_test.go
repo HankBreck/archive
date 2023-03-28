@@ -269,7 +269,7 @@ func (suite *KeeperTestSuite) TestSigningData() {
 	// Test SigningData query
 	res, err := suite.queryClient.SigningData(goCtx, &types.QuerySigningDataRequest{Id: cdaIds[0]})
 	suite.NoError(err)
-	suite.Equal(expectedSigningData.Bytes(), res.SigningData.Bytes())
+	suite.Equal(expectedSigningData.Bytes(), res.SigningData)
 }
 
 func (suite *KeeperTestSuite) TestSigningData_InvalidId() {
@@ -303,7 +303,7 @@ func (suite *KeeperTestSuite) TestSigningDataSchema() {
 	// Test SigningDataSchema query
 	res, err := suite.queryClient.SigningDataSchema(goCtx, &types.QuerySigningDataSchemaRequest{Id: contract.Id})
 	suite.NoError(err)
-	suite.Equal(expectedSchema.Bytes(), res.Schema.Bytes())
+	suite.Equal(expectedSchema.Bytes(), res.Schema)
 }
 
 func (suite *KeeperTestSuite) TestSigningDataSchema_InvalidId() {
