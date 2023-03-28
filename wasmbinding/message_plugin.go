@@ -37,7 +37,7 @@ var _ wasmkeeper.Messenger = (*CustomMessenger)(nil)
 // DispatchMsg executes on the contractMsg.
 func (m *CustomMessenger) DispatchMsg(ctx sdk.Context, contractAddr sdk.AccAddress, contractIBCPortID string, msg wasmvmtypes.CosmosMsg) ([]sdk.Event, [][]byte, error) {
 	if msg.Custom != nil {
-		// only handle the happy path where this is really creating / minting / swapping ...
+		// only handle MsgWitnessApproveCda and MsgVoidCda
 		// leave everything else for the wrapped version
 		var contractMsg bindings.ArchiveMsg
 		if err := json.Unmarshal(msg.Custom, &contractMsg); err != nil {
@@ -117,6 +117,7 @@ func PerformVoidCda(cdaKeeper *cdakeeper.Keeper, ctx sdk.Context, contractAddr s
 
 	// Perform the void through the msgServer
 	msgServer := cdakeeper.NewMsgServerImpl(*cdaKeeper)
+	// TODO: add event manager
 	_, err = msgServer.VoidCda(sdk.WrapSDKContext(ctx), msgVoidCda)
 	if err != nil {
 		return err
