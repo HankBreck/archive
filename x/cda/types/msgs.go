@@ -54,6 +54,16 @@ func (msg *MsgApproveCda) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if msg.CdaId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "CDA ID must be greater than 0")
+	}
+	if msg.SignerId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "signer ID must be greater than 0")
+	}
+	err = msg.SigningData.ValidateBasic()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -97,8 +107,23 @@ func (msg *MsgCreateCda) GetSignBytes() []byte {
 func (msg *MsgCreateCda) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if len(msg.SignerIds) < 1 {
+		return sdkerrors.Wrapf(ErrEmpty, "signerIds cannot be empty")
+	}
+	for _, signerId := range msg.SignerIds {
+		if signerId < 1 {
+			return sdkerrors.Wrapf(ErrInvalid, "signer ID must be greater than 0")
+		}
+	}
+	if msg.ContractId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "contract ID must be greater than 0")
+	}
+	if len(msg.LegalMetadataUri) < 1 {
+		return sdkerrors.Wrapf(ErrEmpty, "legalMetadataUri cannot be empty")
+	}
+	// TODO: should we require signing data to exist?
 
 	return nil
 }
@@ -138,6 +163,9 @@ func (msg *MsgFinalizeCda) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if msg.CdaId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "CDA ID must be greater than 0")
 	}
 	return nil
 }
@@ -183,22 +211,17 @@ func (msg *MsgRegisterContract) GetSignBytes() []byte {
 func (msg *MsgRegisterContract) ValidateBasic() error {
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "Invalid creator address (%s)", err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	// Validate that Schema is valid JSON
-	// TODO: Use the JSON Schema library here
 	err = msg.SigningDataSchema.ValidateBasic()
 	if err != nil {
-		return ErrInvalid.Wrapf("Signing data schema must be valid JSON")
-	}
-	if msg.SigningDataSchema.Bytes() == nil {
-		return ErrEmpty.Wrapf("Signing data schema cannot be null")
+		return ErrInvalid.Wrapf("signing data schema must be valid JSON")
 	}
 
 	// Should we allow no contact info?
 	if msg.ContactInfo == nil {
-		return ErrEmpty.Wrapf("Contact info cannot be null")
+		return ErrEmpty.Wrapf("contact info cannot be null")
 	}
 
 	return nil
@@ -240,6 +263,9 @@ func (msg *MsgVoidCda) ValidateBasic() error {
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
+	if msg.CdaId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "CDA ID must be greater than 0")
+	}
 	return nil
 }
 
@@ -276,9 +302,17 @@ func (msg *MsgWitnessApproveCda) GetSignBytes() []byte {
 }
 
 func (msg *MsgWitnessApproveCda) ValidateBasic() error {
+	// TODO: should we enforce address length here?
 	_, err := sdk.AccAddressFromBech32(msg.Creator)
 	if err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	if msg.CdaId < 1 {
+		return sdkerrors.Wrapf(ErrInvalid, "CDA ID must be greater than 0")
+	}
+	err = msg.SigningData.ValidateBasic()
+	if err != nil {
+		return ErrInvalid.Wrapf("signing data must be valid JSON")
 	}
 	return nil
 }

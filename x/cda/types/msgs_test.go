@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TODO: test passing an empty message as input (should fail)
+
 // MsgApproveCda
 func TestMsgApproveCda_ValidateBasic(t *testing.T) {
 	tests := []struct {

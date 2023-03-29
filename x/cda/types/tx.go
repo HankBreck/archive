@@ -33,5 +33,3 @@ func (r *RawSigningData) ValidateBasic() error {
 func (r RawSigningData) Bytes() []byte {
 	return r
 }
-
-// TODO: Add validate basic checks for all message types
