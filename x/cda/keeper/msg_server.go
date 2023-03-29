@@ -151,7 +151,14 @@ func (k msgServer) ApproveCda(goCtx context.Context, msg *types.MsgApproveCda) (
 		return nil, err
 	}
 
-	// TODO: emit events
+	// Emit Event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgApproveCda,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(cda.Id, 10)),
+		sdk.NewAttribute("signer-id", strconv.FormatUint(msg.SignerId, 10)),
+	))
 
 	return &types.MsgApproveCdaResponse{}, nil
 }
@@ -193,7 +200,14 @@ func (k msgServer) WitnessApproveCda(goCtx context.Context, msg *types.MsgWitnes
 		return nil, err
 	}
 
-	// TODO: emit events
+	// Emit Event
+	ctx.EventManager().EmitEvent(sdk.NewEvent(
+		types.TypeMsgWitnessApproveCda,
+		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
+		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
+		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(cda.Id, 10)),
+		sdk.NewAttribute("witness-address", cda.WitnessAddress),
+	))
 
 	return &types.MsgWitnessApproveCdaResponse{}, nil
 }
@@ -227,7 +241,6 @@ func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda)
 	cda.Status = types.CDA_Finalized
 	err = k.UpdateCDA(ctx, cda.Id, cda)
 	if err != nil {
-		// TODO: abstract away internal error messages
 		return nil, err
 	}
 
@@ -236,7 +249,7 @@ func (k msgServer) FinalizeCda(goCtx context.Context, msg *types.MsgFinalizeCda)
 		types.TypeMsgFinalizeCda,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
-		sdk.NewAttribute("contract_id", strconv.FormatUint(cda.Id, 10)),
+		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(cda.Id, 10)),
 	))
 
 	return &types.MsgFinalizeCdaResponse{}, nil
@@ -251,6 +264,10 @@ func (k msgServer) VoidCda(goCtx context.Context, msg *types.MsgVoidCda) (*types
 		return nil, err
 	} else if cda == nil {
 		panic("CDA should never be nil")
+	}
+
+	if cda.WitnessAddress != msg.Creator {
+		return nil, sdkerrors.ErrUnauthorized.Wrapf("sender (%s) must be the witness (%s)", msg.Creator, cda.WitnessAddress)
 	}
 
 	// TODO: Should we prevent voiding for certain statuses?
@@ -274,13 +291,13 @@ func (k msgServer) VoidCda(goCtx context.Context, msg *types.MsgVoidCda) (*types
 		types.TypeMsgVoidCda,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
-		sdk.NewAttribute("contract_id", strconv.FormatUint(cda.Id, 10)),
+		sdk.NewAttribute(types.AttributeKeyCdaId, strconv.FormatUint(cda.Id, 10)),
 	))
 
 	return &types.MsgVoidCdaResponse{}, nil
 }
 
-func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
+func (k msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
 	if msg == nil {
 		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
 	}
@@ -301,10 +318,10 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 	}
 
 	// Store the Contract in state
-	id := m.AppendContract(ctx, contract)
+	id := k.AppendContract(ctx, contract)
 
 	// Store the schema in state
-	err := m.SetSigningDataSchema(ctx, id, msg.SigningDataSchema)
+	err := k.SetSigningDataSchema(ctx, id, msg.SigningDataSchema)
 	if err != nil {
 		return nil, err
 	}
@@ -314,8 +331,7 @@ func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegiste
 		types.TypeMsgRegisterContract,
 		sdk.NewAttribute(sdk.AttributeKeyModule, types.ModuleName),
 		sdk.NewAttribute(sdk.AttributeKeySender, msg.Creator),
-		sdk.NewAttribute(sdk.AttributeKeyAction, "RegisterContract"),
-		sdk.NewAttribute("contract_id", strconv.FormatUint(id, 10)),
+		sdk.NewAttribute(types.AttributeKeyContractId, strconv.FormatUint(id, 10)),
 	))
 
 	return &types.MsgRegisterContractResponse{Id: id}, nil
