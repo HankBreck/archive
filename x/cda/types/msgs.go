@@ -123,6 +123,10 @@ func (msg *MsgCreateCda) ValidateBasic() error {
 	if len(msg.LegalMetadataUri) < 1 {
 		return sdkerrors.Wrapf(ErrEmpty, "legalMetadataUri cannot be empty")
 	}
+	err = msg.SigningData.ValidateBasic()
+	if err != nil {
+		return sdkerrors.Wrapf(ErrInvalid, "signing data must be valid json")
+	}
 	// TODO: should we require signing data to exist?
 
 	return nil
@@ -217,11 +221,6 @@ func (msg *MsgRegisterContract) ValidateBasic() error {
 	err = msg.SigningDataSchema.ValidateBasic()
 	if err != nil {
 		return ErrInvalid.Wrapf("signing data schema must be valid JSON")
-	}
-
-	// Should we allow no contact info?
-	if msg.ContactInfo == nil {
-		return ErrEmpty.Wrapf("contact info cannot be null")
 	}
 
 	return nil

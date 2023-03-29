@@ -281,9 +281,6 @@ func (k msgServer) VoidCda(goCtx context.Context, msg *types.MsgVoidCda) (*types
 }
 
 func (m msgServer) RegisterContract(goCtx context.Context, msg *types.MsgRegisterContract) (*types.MsgRegisterContractResponse, error) {
-	// Validate Basic checks:
-	//		signingDataSchema != nil
-	//		signingDataSchema is valid JSON
 	if msg == nil {
 		return nil, types.ErrInvalid.Wrap("Type MsgRegisterContract cannot be nil.")
 	}

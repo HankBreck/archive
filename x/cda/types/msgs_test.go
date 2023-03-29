@@ -14,6 +14,7 @@ import (
 
 // MsgApproveCda
 func TestMsgApproveCda_ValidateBasic(t *testing.T) {
+	defaultSigningData := types.RawSigningData("{}")
 	tests := []struct {
 		name string
 		msg  types.MsgApproveCda
@@ -22,13 +23,46 @@ func TestMsgApproveCda_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: types.MsgApproveCda{
-				Creator: "invalid_address",
+				Creator:     "invalid_address",
+				CdaId:       1,
+				SignerId:    1,
+				SigningData: defaultSigningData,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid cda id",
 			msg: types.MsgApproveCda{
-				Creator: sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				CdaId:       0,
+				SignerId:    1,
+				SigningData: defaultSigningData,
+			},
+			err: types.ErrInvalid,
+		}, {
+			name: "invalid signer id",
+			msg: types.MsgApproveCda{
+				Creator:     sample.AccAddress(),
+				CdaId:       1,
+				SignerId:    0,
+				SigningData: defaultSigningData,
+			},
+			err: types.ErrInvalid,
+		}, {
+			name: "invalid signing data",
+			msg: types.MsgApproveCda{
+				Creator:     sample.AccAddress(),
+				CdaId:       1,
+				SignerId:    1,
+				SigningData: []byte{0x0},
+			},
+			err: types.ErrInvalid,
+		}, {
+			name: "valid address, cda id, signer id, and signing data",
+			msg: types.MsgApproveCda{
+				Creator:     sample.AccAddress(),
+				CdaId:       1,
+				SignerId:    1,
+				SigningData: defaultSigningData,
 			},
 		},
 	}
@@ -46,91 +80,94 @@ func TestMsgApproveCda_ValidateBasic(t *testing.T) {
 
 // MsgCreateCda
 func TestMsgCreateCda_ValidateBasic(t *testing.T) {
-	// Valid test values
-	// var validOwnerships = make([]*Ownership, 1)
-	// validOwnerships = append(validOwnerships, &Ownership{
-	// 	Owner:     sample.AccAddress(),
-	// 	Ownership: 100_000_000,
-	// })
-	// // validCid := "QmSrnQXUtGqsVRcgY93CdWXf8GPE9Zjj7Tg3SZUgLKDN5W"
-	// // validExpiration := uint64(time.Now().UnixMilli()) + 5000 // current time + 5 seconds
+	defaultSigningData := types.RawSigningData([]byte("{}"))
 
-	// var invalidOwnerships = make([]*Ownership, 1)
-	// invalidOwnerships = append(invalidOwnerships, &Ownership{
-	// 	Owner:     "invalid address",
-	// 	Ownership: 100_000_000,
-	// })
-
-	// tests := []struct {
-	// 	name string
-	// 	msg  MsgCreateCDA
-	// 	err  error
-	// }{
-	// 	{
-	// 		name: "valid message",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    sample.AccAddress(),
-	// 			Cid:        validCid,
-	// 			Ownership:  validOwnerships,
-	// 			Expiration: validExpiration,
-	// 		},
-	// 	}, {
-	// 		name: "invalid address",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    "invalid address",
-	// 			Cid:        validCid,
-	// 			Ownership:  validOwnerships,
-	// 			Expiration: validExpiration,
-	// 		},
-	// 		err: sdkerrors.ErrInvalidAddress,
-	// 	}, {
-	// 		name: "invalid cid",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    sample.AccAddress(),
-	// 			Cid:        "invalid cid",
-	// 			Ownership:  validOwnerships,
-	// 			Expiration: validExpiration,
-	// 		},
-	// 		err: ErrInvalidCid,
-	// 	}, {
-	// 		name: "invalid ownership",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    sample.AccAddress(),
-	// 			Cid:        validCid,
-	// 			Ownership:  make([]*Ownership, 1), // empty map
-	// 			Expiration: validExpiration,
-	// 		},
-	// 		err: ErrInvalidOwnership,
-	// 	}, {
-	// 		name: "invalid ownership address",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    sample.AccAddress(),
-	// 			Cid:        validCid,
-	// 			Ownership:  invalidOwnerships,
-	// 			Expiration: validExpiration,
-	// 		},
-	// 		err: sdkerrors.ErrInvalidAddress,
-	// 	}, {
-	// 		name: "invalid expiration",
-	// 		msg: MsgCreateCDA{
-	// 			Creator:    sample.AccAddress(),
-	// 			Cid:        validCid,
-	// 			Ownership:  validOwnerships,
-	// 			Expiration: uint64(time.Now().UnixMilli()) - 50_000, // current time - 50 seconds
-	// 		},
-	// 		err: ErrInvalidExpiration,
-	// 	},
-	// }
-	// for _, tt := range tests {
-	// 	t.Run(tt.name, func(t *testing.T) {
-	// 		err := tt.msg.ValidateBasic()
-	// 		if tt.err != nil {
-	// 			require.ErrorIs(t, err, tt.err)
-	// 			return
-	// 		}
-	// 		require.NoError(t, err)
-	// 	})
-	// }
+	tests := []struct {
+		name string
+		msg  types.MsgCreateCda
+		err  error
+	}{
+		{
+			name: "invalid creator",
+			msg: types.MsgCreateCda{
+				Creator:          "invalid_address",
+				SignerIds:        []uint64{1},
+				ContractId:       1,
+				LegalMetadataUri: "google.com",
+				SigningData:      defaultSigningData,
+			},
+			err: sdkerrors.ErrInvalidAddress,
+		}, {
+			name: "invalid signer id length",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{},
+				ContractId:       1,
+				LegalMetadataUri: "google.com",
+				SigningData:      defaultSigningData,
+			},
+			err: sdkerrors.Wrapf(types.ErrEmpty, "signerIds cannot be empty"),
+		}, {
+			name: "zero signer id",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{0},
+				ContractId:       1,
+				LegalMetadataUri: "google.com",
+				SigningData:      defaultSigningData,
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "signer ID must be greater than 0"),
+		}, {
+			name: "zero contract id",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{1},
+				ContractId:       0,
+				LegalMetadataUri: "google.com",
+				SigningData:      defaultSigningData,
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "contract ID must be greater than 0"),
+		}, {
+			name: "empty legal metadata URI",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{1},
+				ContractId:       1,
+				LegalMetadataUri: "",
+				SigningData:      defaultSigningData,
+			},
+			err: sdkerrors.Wrapf(types.ErrEmpty, "legalMetadataUri cannot be empty"),
+		}, {
+			name: "invalid signing data",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{1},
+				ContractId:       1,
+				LegalMetadataUri: "google.com",
+				SigningData:      types.RawSigningData{0x0},
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "signing data must be valid json"),
+		}, {
+			name: "valid message",
+			msg: types.MsgCreateCda{
+				Creator:          sample.AccAddress(),
+				SignerIds:        []uint64{1},
+				ContractId:       1,
+				LegalMetadataUri: "google.com",
+				SigningData:      defaultSigningData,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.msg.ValidateBasic()
+			if tt.err != nil {
+				require.ErrorIs(t, err, tt.err)
+				return
+			}
+			require.NoError(t, err)
+		})
+	}
 }
 
 // MsgFinalizeCda
@@ -144,12 +181,21 @@ func TestMsgFinalizeCda_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: types.MsgFinalizeCda{
 				Creator: "invalid_address",
+				CdaId:   1,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "zero cda id",
 			msg: types.MsgFinalizeCda{
 				Creator: sample.AccAddress(),
+				CdaId:   0,
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "CDA ID must be greater than 0"),
+		}, {
+			name: "valid address and cda id",
+			msg: types.MsgFinalizeCda{
+				Creator: sample.AccAddress(),
+				CdaId:   1,
 			},
 		},
 	}
@@ -167,6 +213,7 @@ func TestMsgFinalizeCda_ValidateBasic(t *testing.T) {
 
 // MsgRegisterContract
 func TestMsgRegisterContract_ValidateBasic(t *testing.T) {
+	defaultSigningDataSchema := types.RawSigningData("{}")
 	tests := []struct {
 		name string
 		msg  types.MsgRegisterContract
@@ -175,13 +222,22 @@ func TestMsgRegisterContract_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: types.MsgRegisterContract{
-				Creator: "invalid_address",
+				Creator:           "invalid_address",
+				SigningDataSchema: defaultSigningDataSchema,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid signing data schema",
 			msg: types.MsgRegisterContract{
-				Creator: sample.AccAddress(),
+				Creator:           sample.AccAddress(),
+				SigningDataSchema: types.RawSigningData{0x0},
+			},
+			err: types.ErrInvalid.Wrapf("signing data schema must be valid JSON"),
+		}, {
+			name: "valid address and signing data schema",
+			msg: types.MsgRegisterContract{
+				Creator:           sample.AccAddress(),
+				SigningDataSchema: defaultSigningDataSchema,
 			},
 		},
 	}
@@ -208,12 +264,21 @@ func TestMsgVoidCda_ValidateBasic(t *testing.T) {
 			name: "invalid address",
 			msg: types.MsgVoidCda{
 				Creator: "invalid_address",
+				CdaId:   1,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "zero cda id",
 			msg: types.MsgVoidCda{
 				Creator: sample.AccAddress(),
+				CdaId:   0,
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "CDA ID must be greater than 0"),
+		}, {
+			name: "valid address and cda id",
+			msg: types.MsgVoidCda{
+				Creator: sample.AccAddress(),
+				CdaId:   1,
 			},
 		},
 	}
@@ -231,6 +296,8 @@ func TestMsgVoidCda_ValidateBasic(t *testing.T) {
 
 // MsgWitnessApproveCda
 func TestMsgWitnessApproveCda_ValidateBasic(t *testing.T) {
+	// requires valid JSON
+	defaultSigningDataSchema := types.RawSigningData("{}")
 	tests := []struct {
 		name string
 		msg  types.MsgWitnessApproveCda
@@ -239,13 +306,33 @@ func TestMsgWitnessApproveCda_ValidateBasic(t *testing.T) {
 		{
 			name: "invalid address",
 			msg: types.MsgWitnessApproveCda{
-				Creator: "invalid_address",
+				Creator:     "invalid_address",
+				CdaId:       1,
+				SigningData: defaultSigningDataSchema,
 			},
 			err: sdkerrors.ErrInvalidAddress,
 		}, {
-			name: "valid address",
+			name: "invalid cda id",
 			msg: types.MsgWitnessApproveCda{
-				Creator: sample.AccAddress(),
+				Creator:     sample.AccAddress(),
+				CdaId:       0,
+				SigningData: defaultSigningDataSchema,
+			},
+			err: sdkerrors.Wrapf(types.ErrInvalid, "CDA ID must be greater than 0"),
+		}, {
+			name: "invalid signing data",
+			msg: types.MsgWitnessApproveCda{
+				Creator:     sample.AccAddress(),
+				CdaId:       1,
+				SigningData: types.RawSigningData{0x0},
+			},
+			err: types.ErrInvalid.Wrapf("signing data must be valid JSON"),
+		}, {
+			name: "valid address, cda id, and signing data",
+			msg: types.MsgWitnessApproveCda{
+				Creator:     sample.AccAddress(),
+				CdaId:       1,
+				SigningData: defaultSigningDataSchema,
 			},
 		},
 	}
