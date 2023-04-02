@@ -166,23 +166,17 @@ func PrepareGenesis(clientCtx client.Context, appState map[string]json.RawMessag
 }
 
 type GenesisParams struct {
-	AirdropSupply sdk.Int
-
+	GenesisTime              time.Time
+	NativeCoinMetadatas      []banktypes.Metadata
+	CrisisConstantFee        sdk.Coin
 	StrategicReserveAccounts []banktypes.Balance
 
-	ConsensusParams *tmproto.ConsensusParams
-
-	GenesisTime         time.Time
-	NativeCoinMetadatas []banktypes.Metadata
-
-	StakingParams      stakingtypes.Params
-	MintParams         minttypes.Params
+	ConsensusParams    *tmproto.ConsensusParams
 	DistributionParams distributiontypes.Params
 	GovParams          govtypes.Params
-
-	CrisisConstantFee sdk.Coin
-
-	SlashingParams slashingtypes.Params
+	MintParams         minttypes.Params
+	SlashingParams     slashingtypes.Params
+	StakingParams      stakingtypes.Params
 }
 
 func MainnetGenesisParams() GenesisParams {
@@ -208,22 +202,6 @@ func MainnetGenesisParams() GenesisParams {
 			Base:    appparams.BaseCoinUnit,
 			Display: appparams.HumanCoinUnit,
 		},
-		// {
-		// 	DenomUnits: []*banktypes.DenomUnit{
-		// 		{
-		// 			Denom:    "uion",
-		// 			Exponent: 0,
-		// 			Aliases:  nil,
-		// 		},
-		// 		{
-		// 			Denom:    "ion",
-		// 			Exponent: 6,
-		// 			Aliases:  nil,
-		// 		},
-		// 	},
-		// 	Base:    "uion",
-		// 	Display: "ion",
-		// },
 	}
 
 	genParams.StakingParams = stakingtypes.DefaultParams()
@@ -232,22 +210,16 @@ func MainnetGenesisParams() GenesisParams {
 	genParams.StakingParams.BondDenom = genParams.NativeCoinMetadatas[0].Base
 
 	genParams.MintParams = minttypes.DefaultParams()
-	// genParams.MintParams.EpochIdentifier = "day"                                                // 1 day
-	// genParams.MintParams.GenesisEpochProvisions = sdk.NewDec(300_000_000_000_000).QuoInt64(365) // 300M * 10^6 / 365 = ~821917.8082191781 * 10^6
-	// genParams.MintParams.MintDenom = genParams.NativeCoinMetadatas[0].Base
-	// genParams.MintParams.ReductionFactor = sdk.NewDec(2).QuoInt64(3) // 2/3
-	// genParams.MintParams.ReductionPeriodInEpochs = 365               // 1 year (screw leap years)
-	// genParams.MintParams.DistributionProportions = minttypes.DistributionProportions{
-	// 	Staking:          sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	DeveloperRewards: sdk.MustNewDecFromStr("0.25"), // 25%
-	// 	PoolIncentives:   sdk.MustNewDecFromStr("0.45"), // 45%
-	// 	CommunityPool:    sdk.MustNewDecFromStr("0.05"), // 5%
-	// }
+	genParams.MintParams.InflationMax = sdk.ZeroDec()
+	genParams.MintParams.InflationMin = sdk.ZeroDec()
+	genParams.MintParams.InflationRateChange = sdk.ZeroDec()
+	genParams.MintParams.GoalBonded = sdk.NewDec(1)
+	genParams.MintParams.MintDenom = genParams.NativeCoinMetadatas[0].Base
 
 	genParams.DistributionParams = distributiontypes.DefaultParams()
-	genParams.DistributionParams.BaseProposerReward = sdk.MustNewDecFromStr("0.01")
-	genParams.DistributionParams.BonusProposerReward = sdk.MustNewDecFromStr("0.04")
-	genParams.DistributionParams.CommunityTax = sdk.MustNewDecFromStr("0")
+	genParams.DistributionParams.BaseProposerReward = sdk.NewDecWithPrec(1, 2)  // 1%
+	genParams.DistributionParams.BonusProposerReward = sdk.NewDecWithPrec(4, 2) // 4%
+	genParams.DistributionParams.CommunityTax = sdk.ZeroDec()
 	genParams.DistributionParams.WithdrawAddrEnabled = true
 
 	genParams.GovParams = govtypes.DefaultParams()
@@ -286,11 +258,24 @@ func TestnetGenesisParams() GenesisParams {
 
 	genParams.GenesisTime = time.Date(2023, 1, 23, 19, 0, 0, 0, time.UTC) // Jun 18, 2021 - 17:00 UTC
 
-	genParams.StakingParams.UnbondingTime = time.Hour * 24 * 7 * 2 // 2 weeks
+	// Mint params
+	genParams.MintParams = minttypes.DefaultParams()
+	genParams.MintParams.InflationMax = sdk.ZeroDec()
+	genParams.MintParams.InflationMin = sdk.ZeroDec()
+	genParams.MintParams.InflationRateChange = sdk.ZeroDec()
+	genParams.MintParams.GoalBonded = sdk.NewDec(1)
+	genParams.MintParams.MintDenom = genParams.NativeCoinMetadatas[0].Base
+
+	// Distribution params
+	genParams.DistributionParams = distributiontypes.DefaultParams()
+	genParams.DistributionParams.BaseProposerReward = sdk.NewDecWithPrec(1, 2)  // 1%
+	genParams.DistributionParams.BonusProposerReward = sdk.NewDecWithPrec(4, 2) // 4%
+	genParams.DistributionParams.CommunityTax = sdk.ZeroDec()
+	genParams.DistributionParams.WithdrawAddrEnabled = true
 
 	genParams.GovParams.DepositParams.MinDeposit = sdk.NewCoins(sdk.NewCoin(
 		genParams.NativeCoinMetadatas[0].Base,
-		sdk.NewInt(1000000), // 1 OSMO
+		sdk.NewInt(1000000), // 1 HIVE
 	))
 	genParams.GovParams.TallyParams.Quorum = sdk.MustNewDecFromStr("0.0000000001") // 0.00000001%
 	genParams.GovParams.VotingParams.VotingPeriod = time.Second * 300              // 300 seconds
